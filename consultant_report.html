@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Consultant Project Report – SYDIAI Supply Chain Intelligence Suite</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --navy:   #0F2D5E;
+    --blue:   #1E4DA1;
+    --sky:    #2E7DD6;
+    --accent: #E8952A;
+    --green:  #1A7F4B;
+    --light:  #F4F7FC;
+    --border: #D6E0F0;
+    --text:   #1A2540;
+    --muted:  #5A6A85;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', Arial, sans-serif;
+    font-size: 10.5pt;
+    color: var(--text);
+    background: #fff;
+    line-height: 1.55;
+  }
+
+  /* ── COVER PAGE ── */
+  .cover {
+    width: 100%;
+    min-height: 297mm;
+    background: linear-gradient(160deg, var(--navy) 0%, var(--blue) 55%, var(--sky) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 60px 64px 48px;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 420px; height: 420px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -60px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+
+  .cover-logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo-box {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, #60A5FA, #818CF8);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 800; color: #fff;
+    letter-spacing: -1px;
+  }
+  .logo-text { color: #fff; font-size: 17px; font-weight: 700; line-height: 1.2; }
+  .logo-text span { color: #93C5FD; font-weight: 400; font-size: 13px; }
+
+  .cover-main { text-align: center; position: relative; z-index: 1; }
+  .cover-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #BFDBFE;
+    font-size: 9pt;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 18px;
+    border-radius: 20px;
+    margin-bottom: 22px;
+  }
+  .cover-title {
+    font-size: 32pt;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+  .cover-subtitle {
+    font-size: 14pt;
+    color: #93C5FD;
+    font-weight: 400;
+    margin-bottom: 36px;
+  }
+  .cover-divider {
+    width: 64px; height: 3px;
+    background: var(--accent);
+    border-radius: 2px;
+    margin: 0 auto 36px;
+  }
+  .cover-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .cover-meta-box {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 10px;
+    padding: 14px 10px;
+    text-align: center;
+  }
+  .cover-meta-box .val {
+    font-size: 18pt;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+  }
+  .cover-meta-box .lbl {
+    font-size: 8pt;
+    color: #93C5FD;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .cover-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    position: relative; z-index: 1;
+  }
+  .cover-footer-left { color: rgba(255,255,255,0.55); font-size: 9pt; }
+  .cover-footer-left strong { color: #fff; }
+  .cover-footer-right {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 8px;
+    padding: 10px 18px;
+    text-align: right;
+  }
+  .cover-footer-right .name { color: #fff; font-weight: 700; font-size: 11pt; }
+  .cover-footer-right .role { color: #93C5FD; font-size: 9pt; }
+
+  /* ── INNER PAGES ── */
+  .page {
+    padding: 44px 56px;
+    page-break-after: always;
+  }
+  .page:last-child { page-break-after: auto; }
+
+  /* Page header strip */
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2.5px solid var(--blue);
+    padding-bottom: 10px;
+    margin-bottom: 28px;
+  }
+  .page-header-left { display: flex; align-items: center; gap: 12px; }
+  .ph-icon {
+    width: 36px; height: 36px;
+    background: var(--blue);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: #fff;
+  }
+  .ph-title { font-size: 15pt; font-weight: 700; color: var(--navy); }
+  .ph-subtitle { font-size: 8.5pt; color: var(--muted); margin-top: 1px; }
+  .page-num { font-size: 8.5pt; color: var(--muted); }
+
+  /* Section heading */
+  h2 {
+    font-size: 12pt;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 22px 0 10px;
+    padding-left: 10px;
+    border-left: 3px solid var(--accent);
+  }
+  h3 {
+    font-size: 10pt;
+    font-weight: 600;
+    color: var(--blue);
+    margin: 14px 0 6px;
+  }
+  p { margin-bottom: 8px; color: var(--text); }
+
+  /* Info box */
+  .info-box {
+    background: var(--light);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--blue);
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+  }
+  .info-box.accent { border-left-color: var(--accent); }
+  .info-box.green  { border-left-color: var(--green); }
+
+  /* 2-col layout */
+  .cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 16px; }
+  .cols-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+
+  /* KPI tiles */
+  .kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 20px; }
+  .kpi-tile {
+    background: var(--light);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 12px;
+    text-align: center;
+  }
+  .kpi-tile .kv { font-size: 20pt; font-weight: 800; color: var(--blue); line-height: 1; }
+  .kpi-tile .kl { font-size: 8pt; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* Table */
+  table { width: 100%; border-collapse: collapse; font-size: 9pt; margin-bottom: 16px; }
+  thead tr { background: var(--navy); color: #fff; }
+  thead th { padding: 9px 11px; text-align: left; font-weight: 600; font-size: 8.5pt; letter-spacing: 0.04em; }
+  tbody tr:nth-child(even) { background: var(--light); }
+  tbody tr:hover { background: #EBF2FF; }
+  td { padding: 8px 11px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  td.center { text-align: center; }
+  td.right  { text-align: right; }
+  td.bold   { font-weight: 700; }
+
+  /* Phase header row */
+  tr.phase-row td {
+    background: linear-gradient(90deg, var(--blue) 0%, #2E7DD6 100%);
+    color: #fff;
+    font-weight: 700;
+    font-size: 9.5pt;
+    padding: 9px 11px;
+  }
+  tr.subtotal-row td {
+    background: #EBF2FF;
+    font-weight: 700;
+    color: var(--navy);
+    border-top: 2px solid var(--blue);
+  }
+  tr.grand-total td {
+    background: var(--navy);
+    color: #fff;
+    font-weight: 800;
+    font-size: 10pt;
+  }
+
+  /* Badge */
+  .badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 12px;
+    font-size: 8pt;
+    font-weight: 600;
+  }
+  .badge-blue   { background: #DBEAFE; color: #1D4ED8; }
+  .badge-green  { background: #DCFCE7; color: #15803D; }
+  .badge-orange { background: #FEF3C7; color: #B45309; }
+  .badge-navy   { background: #E0E7FF; color: #3730A3; }
+  .badge-red    { background: #FEE2E2; color: #B91C1C; }
+
+  /* Milestone timeline */
+  .timeline { position: relative; padding-left: 28px; margin: 8px 0 16px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px; top: 6px; bottom: 6px;
+    width: 2px;
+    background: var(--border);
+  }
+  .tl-item { position: relative; margin-bottom: 14px; }
+  .tl-dot {
+    position: absolute;
+    left: -24px; top: 3px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--blue);
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px var(--border);
+  }
+  .tl-dot.accent { background: var(--accent); }
+  .tl-dot.green  { background: var(--green); }
+  .tl-label { font-weight: 600; color: var(--navy); font-size: 9.5pt; }
+  .tl-date  { font-size: 8pt; color: var(--muted); margin-left: 8px; }
+  .tl-desc  { font-size: 9pt; color: var(--text); margin-top: 2px; }
+
+  /* Signature block */
+  .sig-block {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+  }
+  .sig-field { border-top: 1.5px solid var(--text); margin-top: 36px; padding-top: 5px; font-size: 9pt; color: var(--muted); }
+
+  /* Footer strip on inner pages */
+  .page-footer {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 26px;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 56px;
+    font-size: 7.5pt;
+    color: rgba(255,255,255,0.55);
+  }
+
+  /* Highlight row */
+  .hl { background: #FFF8ED !important; }
+
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     COVER PAGE
+═══════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-logo">
+    <div class="logo-box">SI</div>
+    <div class="logo-text">
+      SYDIAI<br>
+      <span>Supply Chain Intelligence Suite</span>
+    </div>
+  </div>
+
+  <div class="cover-main">
+    <div class="cover-tag">Consultant Engagement Report</div>
+    <div class="cover-title">Supply Chain Intelligence<br>Platform — Build &amp; Delivery</div>
+    <div class="cover-subtitle">Technical Specification · Application Development · Demo Deck</div>
+    <div class="cover-divider"></div>
+    <div class="cover-meta-grid">
+      <div class="cover-meta-box">
+        <div class="val">35</div>
+        <div class="lbl">Working Days</div>
+      </div>
+      <div class="cover-meta-box">
+        <div class="val">140</div>
+        <div class="lbl">Effort Hours</div>
+      </div>
+      <div class="cover-meta-box">
+        <div class="val">7</div>
+        <div class="lbl">Planning Modules</div>
+      </div>
+      <div class="cover-meta-box">
+        <div class="val">48</div>
+        <div class="lbl">App Screens</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <div class="cover-footer-left">
+      <div><strong>Project Period</strong></div>
+      <div>January 27, 2026 – March 13, 2026</div>
+      <div style="margin-top:6px"><strong>Client</strong>: SYDIAI Manufacturing Pvt. Ltd.</div>
+      <div><strong>Engagement Type</strong>: Fixed-Scope Consulting</div>
+      <div><strong>Delivery URL</strong>: supply-chain-suite.pages.dev</div>
+    </div>
+    <div class="cover-footer-right">
+      <div class="name">Vikrant Hole</div>
+      <div class="role">Supply Chain Technology Consultant</div>
+      <div style="color:rgba(255,255,255,0.55);font-size:8pt;margin-top:4px">Date: March 13, 2026</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 2 — EXECUTIVE SUMMARY
+═══════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="ph-icon">&#9679;</div>
+      <div>
+        <div class="ph-title">Executive Summary</div>
+        <div class="ph-subtitle">Project overview, scope &amp; key outcomes</div>
+      </div>
+    </div>
+    <div class="page-num">Page 2</div>
+  </div>
+
+  <div class="info-box accent">
+    <strong>Engagement Objective:</strong> Design, architect, and deliver a full-stack Supply Chain Intelligence Platform for a beverage FMCG manufacturer, covering 7 planning disciplines — from Capacity &amp; Sequencing to S&amp;OP — with live D1 database integration, REST API layer, and Chart.js visualisations, deployed on Cloudflare edge infrastructure.
+  </div>
+
+  <!-- KPI Tiles -->
+  <div class="kpi-row">
+    <div class="kpi-tile">
+      <div class="kv">35</div>
+      <div class="kl">Engagement Days</div>
+    </div>
+    <div class="kpi-tile">
+      <div class="kv">140</div>
+      <div class="kl">Billed Hours</div>
+    </div>
+    <div class="kpi-tile">
+      <div class="kv">4,141</div>
+      <div class="kl">Lines of Code</div>
+    </div>
+    <div class="kpi-tile">
+      <div class="kv">28</div>
+      <div class="kl">API Endpoints</div>
+    </div>
+  </div>
+
+  <div class="cols-2">
+    <div>
+      <h2>Project Background</h2>
+      <p>The client operates 3 manufacturing plants across India with 12 production lines producing 12 beverage SKUs across PET and Glass formats. The existing planning process was fragmented across Excel sheets and disparate tools, resulting in limited visibility, reactive decision-making, and sub-optimal capacity utilisation.</p>
+      <p>The consultant was engaged to design and build a unified, web-based supply chain planning platform that would provide real-time visibility, scenario modelling, and AI-assisted recommendations across all planning domains.</p>
+
+      <h2>Scope of Work</h2>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <span class="tl-label">Phase 1 — Discovery &amp; Technical Specification</span>
+          <div class="tl-desc">Requirements gathering, architecture design, database schema, wireframes, tech-stack decision</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot accent"></div>
+          <span class="tl-label">Phase 2 — Application Development</span>
+          <div class="tl-desc">Full-stack build: 7 modules, 48 screens, 28 APIs, D1 database, Cloudflare edge deployment</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <span class="tl-label">Phase 3 — Demo Deck &amp; Handover</span>
+          <div class="tl-desc">Presentation deck, walkthrough scripts, deployment documentation, knowledge transfer</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h2>Platform Highlights</h2>
+      <table>
+        <thead><tr><th>Attribute</th><th>Detail</th></tr></thead>
+        <tbody>
+          <tr><td>Framework</td><td>Hono 4 (TypeScript / JSX SSR)</td></tr>
+          <tr><td>Runtime</td><td>Cloudflare Workers / Pages</td></tr>
+          <tr><td>Database</td><td>Cloudflare D1 (SQLite) — 30+ tables</td></tr>
+          <tr><td>Build Tool</td><td>Vite 6 + @hono/vite-build</td></tr>
+          <tr><td>Charts</td><td>Chart.js 4 (CDN)</td></tr>
+          <tr><td>Icons / Fonts</td><td>Font Awesome 6 · Google Inter</td></tr>
+          <tr><td>HTTP Client</td><td>Axios (CDN)</td></tr>
+          <tr><td>Live URL</td><td>supply-chain-suite.pages.dev</td></tr>
+          <tr><td>Uptime SLA</td><td>Cloudflare Free — 99.9%+</td></tr>
+          <tr><td>Data seeded</td><td>864 rows across 40 tables</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Deliverable Status</h2>
+      <table>
+        <thead><tr><th>Deliverable</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Technical Specification Document</td><td><span class="badge badge-green">✓ Complete</span></td></tr>
+          <tr><td>Database Schema (30+ tables)</td><td><span class="badge badge-green">✓ Complete</span></td></tr>
+          <tr><td>REST API Layer (28 endpoints)</td><td><span class="badge badge-green">✓ Complete</span></td></tr>
+          <tr><td>Frontend — 7 Modules / 48 Screens</td><td><span class="badge badge-green">✓ Complete</span></td></tr>
+          <tr><td>AI Planning Copilot</td><td><span class="badge badge-green">✓ Complete</span></td></tr>
+          <tr><td>Cloudflare Pages Deployment</td><td><span class="badge badge-green">✓ Live</span></td></tr>
+          <tr><td>Demo Presentation Deck</td><td><span class="badge badge-green">✓ Complete</span></td></tr>
+          <tr><td>Knowledge Transfer &amp; Docs</td><td><span class="badge badge-green">✓ Complete</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 3 — PHASE 1: TECH SPEC
+═══════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="ph-icon" style="background:var(--accent)">&#9679;</div>
+      <div>
+        <div class="ph-title">Phase 1 — Technical Specification</div>
+        <div class="ph-subtitle">Days 1–8 &nbsp;·&nbsp; Jan 27 – Feb 7, 2026 &nbsp;·&nbsp; 32 Hours</div>
+      </div>
+    </div>
+    <div class="page-num">Page 3</div>
+  </div>
+
+  <div class="info-box">
+    Phase 1 focused on transforming the client's high-level need into a fully detailed technical blueprint. Every decision — tech stack, database schema, module decomposition, API contract, UI layout — was documented before a single line of production code was written.
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:4%">#</th>
+        <th style="width:28%">Task</th>
+        <th style="width:36%">Description</th>
+        <th style="width:14%">Duration</th>
+        <th style="width:10%">Hours</th>
+        <th style="width:8%">Tag</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="phase-row"><td colspan="6">📋 PHASE 1 — TECHNICAL SPECIFICATION &nbsp;|&nbsp; Jan 27 – Feb 7, 2026</td></tr>
+
+      <tr><td>1.1</td><td>Stakeholder Discovery &amp; Requirements Workshop</td><td>2-session workshops with plant managers &amp; supply planners; captured pain points, KPI wishlist, module priority ranking</td><td>Days 1–2</td><td class="center">8</td><td><span class="badge badge-blue">Discovery</span></td></tr>
+
+      <tr><td>1.2</td><td>Tech-Stack Evaluation &amp; Architecture Decision</td><td>Evaluated React vs Hono SSR, PostgreSQL vs D1, Vercel vs Cloudflare; documented ADR (Architecture Decision Record)</td><td>Day 2</td><td class="center">4</td><td><span class="badge badge-navy">Architecture</span></td></tr>
+
+      <tr><td>1.3</td><td>Module Decomposition &amp; Route Mapping</td><td>Defined 7 planning modules, 48 sub-routes, navigation hierarchy, page ownership matrix</td><td>Days 3–4</td><td class="center">6</td><td><span class="badge badge-blue">Design</span></td></tr>
+
+      <tr><td>1.4</td><td>Database Schema Design</td><td>Designed 30+ table ERD covering plants, lines, SKUs, jobs, inventory, procurement, resource, S&amp;OP; wrote migration SQL files</td><td>Days 4–5</td><td class="center">6</td><td><span class="badge badge-navy">Database</span></td></tr>
+
+      <tr><td>1.5</td><td>API Contract &amp; Endpoint Specification</td><td>Defined 28 REST endpoints — request/response schema, D1 SQL queries, error handling, CORS policy</td><td>Days 5–6</td><td class="center">4</td><td><span class="badge badge-navy">API Design</span></td></tr>
+
+      <tr><td>1.6</td><td>UI/UX Wireframes &amp; Design System</td><td>Low-fidelity wireframes for each module; defined colour tokens (navy/blue/accent), typography scale, component library (KPI cards, tables, charts, Gantt)</td><td>Days 6–7</td><td class="center">6</td><td><span class="badge badge-blue">Design</span></td></tr>
+
+      <tr><td>1.7</td><td>Technical Specification Document</td><td>Compiled all above into a 28-page TSD covering goals, constraints, stack, schema, APIs, UI guidelines, deployment plan</td><td>Day 8</td><td class="center">4</td><td><span class="badge badge-orange">Docs</span></td></tr>
+
+      <tr class="subtotal-row">
+        <td colspan="4" class="bold">PHASE 1 SUBTOTAL</td>
+        <td class="center bold">32 hrs</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Key Outputs — Phase 1</h2>
+  <div class="cols-3">
+    <div class="info-box">
+      <strong>Architecture Decision Record</strong><br>
+      Hono 4 SSR on Cloudflare Workers selected for zero cold-start, edge-native D1 access, and TypeScript JSX simplicity vs React overhead.
+    </div>
+    <div class="info-box accent">
+      <strong>30-Table ERD</strong><br>
+      Covers all 7 modules with shared entities (plants, lines, SKUs) and module-specific tables, with referential integrity &amp; migration files.
+    </div>
+    <div class="info-box green">
+      <strong>28-Endpoint API Spec</strong><br>
+      Full contract with SQL queries, typed responses, CORS config and binding strategy for Cloudflare D1.
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 4 — PHASE 2: APP DEVELOPMENT (Part A)
+═══════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="ph-icon" style="background:var(--green)">&#9679;</div>
+      <div>
+        <div class="ph-title">Phase 2 — Application Development (Part A)</div>
+        <div class="ph-subtitle">Days 9–25 &nbsp;·&nbsp; Feb 9 – Feb 27, 2026 &nbsp;·&nbsp; Modules 1–4</div>
+      </div>
+    </div>
+    <div class="page-num">Page 4</div>
+  </div>
+
+  <div class="info-box green">
+    Phase 2 was the core engineering phase. The consultant built, tested, and iterated on all 7 planning modules. Work sessions were structured as 4-hour focused coding blocks each day. The first half covered the foundational infrastructure, layout system, and first 4 modules.
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:4%">#</th>
+        <th style="width:28%">Task</th>
+        <th style="width:34%">Description</th>
+        <th style="width:14%">Duration</th>
+        <th style="width:10%">Hours</th>
+        <th style="width:10%">Tag</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="phase-row"><td colspan="6">⚙️ MODULE FOUNDATION &amp; SHARED INFRASTRUCTURE &nbsp;|&nbsp; Days 9–12</td></tr>
+
+      <tr><td>2.1</td><td>Project Scaffold &amp; Build Pipeline</td><td>Vite 6 + @hono/vite-build setup, TypeScript config, ESM module type, wrangler.jsonc config, dev/build/deploy scripts</td><td>Day 9</td><td class="center">4</td><td><span class="badge badge-navy">Infra</span></td></tr>
+
+      <tr><td>2.2</td><td>Shared Layout &amp; Design System</td><td>App shell (header, sidebar, main), CSS variable tokens, navigation component, KPI card, badge, table, button, alert, tab, form components — 500+ lines of shared CSS</td><td>Days 10–11</td><td class="center">8</td><td><span class="badge badge-blue">Frontend</span></td></tr>
+
+      <tr><td>2.3</td><td>D1 Database Setup &amp; Seed Data</td><td>Migration SQL files (0001, 0002), seed.sql (532 rows), seed_v2.sql (332 rows) — 3 plants, 12 lines, 12 SKUs, 8 suppliers, realistic FMCG data</td><td>Day 12</td><td class="center">4</td><td><span class="badge badge-navy">Database</span></td></tr>
+
+      <tr class="phase-row"><td colspan="6">🏭 MODULE 1 — CAPACITY PLANNING &nbsp;|&nbsp; Days 13–14</td></tr>
+
+      <tr><td>2.4</td><td>Capacity APIs (7 endpoints)</td><td>/api/capacity/kpis, /utilization, /oee, /bottlenecks, /plants — D1 SQL aggregations with GROUP BY plant &amp; line</td><td>Day 13</td><td class="center">4</td><td><span class="badge badge-green">Backend</span></td></tr>
+
+      <tr><td>2.5</td><td>Capacity Frontend (6 pages)</td><td>Executive, Operations Center, Optimization, Scenario Builder, Analytics &amp; OEE, Root Cause — Chart.js line/bar charts, Gantt bars, OEE waterfall</td><td>Day 14</td><td class="center">4</td><td><span class="badge badge-blue">Frontend</span></td></tr>
+
+      <tr class="phase-row"><td colspan="6">📋 MODULE 2 — SEQUENCING &amp; SCHEDULING &nbsp;|&nbsp; Days 15–17</td></tr>
+
+      <tr><td>2.6</td><td>Sequencing APIs (3 endpoints)</td><td>/api/sequencing/kpis, /jobs (full queue), /setup-matrix (changeover times) — joins across jobs, lines, skus</td><td>Day 15</td><td class="center">4</td><td><span class="badge badge-green">Backend</span></td></tr>
+
+      <tr><td>2.7</td><td>Gantt Planner &amp; Execution Monitor</td><td>36-hr visual Gantt with proportional job bars (CSS %), changeover matrix table, live execution dashboard with status badges</td><td>Day 16</td><td class="center">4</td><td><span class="badge badge-blue">Frontend</span></td></tr>
+
+      <tr><td>2.8</td><td>AI Copilot (Sequencing)</td><td>Rule-based planning assistant with chat UI; detects bottleneck patterns, suggests re-sequencing, overtime alerts</td><td>Day 17</td><td class="center">4</td><td><span class="badge badge-orange">AI</span></td></tr>
+
+      <tr class="phase-row"><td colspan="6">🔩 MODULE 3 — MATERIAL REQUIREMENTS PLANNING &nbsp;|&nbsp; Days 18–19</td></tr>
+
+      <tr><td>2.9</td><td>MRP APIs (3 endpoints)</td><td>/api/mrp/kpis, /alerts (shortage alerts with severity), /materials (stock vs reorder point)</td><td>Day 18</td><td class="center">4</td><td><span class="badge badge-green">Backend</span></td></tr>
+
+      <tr><td>2.10</td><td>MRP Frontend (6 pages)</td><td>Dashboard, MRP Explosion (BOM net requirements), BOM Viewer, Purchase Orders tracker, Shortage Alerts list, MRP Analytics</td><td>Day 19</td><td class="center">4</td><td><span class="badge badge-blue">Frontend</span></td></tr>
+
+      <tr class="phase-row"><td colspan="6">📦 MODULE 4 — INVENTORY PLANNING &nbsp;|&nbsp; Days 20–21</td></tr>
+
+      <tr><td>2.11</td><td>Inventory APIs (2 endpoints)</td><td>/api/inventory/kpis, /stock (DOS, reorder flags, ABC classification) — CASE-WHEN SQL status logic</td><td>Day 20</td><td class="center">4</td><td><span class="badge badge-green">Backend</span></td></tr>
+
+      <tr><td>2.12</td><td>Inventory Frontend (6 pages)</td><td>Executive, Stock Positions, Replenishment, Scenarios (what-if analysis + service-level chart), Analytics (ABC pie), SKU Master table</td><td>Day 21</td><td class="center">4</td><td><span class="badge badge-blue">Frontend</span></td></tr>
+
+      <tr class="subtotal-row">
+        <td colspan="4" class="bold">PHASE 2A SUBTOTAL (Days 9–21)</td>
+        <td class="center bold">52 hrs</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 5 — PHASE 2: APP DEVELOPMENT (Part B)
+═══════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="ph-icon" style="background:var(--green)">&#9679;</div>
+      <div>
+        <div class="ph-title">Phase 2 — Application Development (Part B)</div>
+        <div class="ph-subtitle">Days 22–30 &nbsp;·&nbsp; Feb 28 – Mar 10, 2026 &nbsp;·&nbsp; Modules 5–7 &amp; Integration</div>
+      </div>
+    </div>
+    <div class="page-num">Page 5</div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:4%">#</th>
+        <th style="width:28%">Task</th>
+        <th style="width:34%">Description</th>
+        <th style="width:14%">Duration</th>
+        <th style="width:10%">Hours</th>
+        <th style="width:10%">Tag</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="phase-row"><td colspan="6">🤝 MODULE 5 — PROCUREMENT PLANNING &nbsp;|&nbsp; Days 22–23</td></tr>
+
+      <tr><td>2.13</td><td>Procurement APIs (3 endpoints)</td><td>/api/procurement/kpis, /suppliers (with risk scores &amp; OTIF ratings), /plans (PO lifecycle data)</td><td>Day 22</td><td class="center">4</td><td><span class="badge badge-green">Backend</span></td></tr>
+
+      <tr><td>2.14</td><td>Procurement Frontend (5 pages)</td><td>PO Workbench, Supplier Scorecards (radar chart), Contract Management, Optimization (bubble chart + savings KPIs), Spend Analytics (4 chart types)</td><td>Day 23</td><td class="center">4</td><td><span class="badge badge-blue">Frontend</span></td></tr>
+
+      <tr class="phase-row"><td colspan="6">👥 MODULE 6 — RESOURCE PLANNING &nbsp;|&nbsp; Days 24–25</td></tr>
+
+      <tr><td>2.15</td><td>Resource APIs (3 endpoints)</td><td>/api/resource/kpis, /capacity (utilisation by line &amp; shift), /operators (skill matrix, certifications, overtime)</td><td>Day 24</td><td class="center">4</td><td><span class="badge badge-green">Backend</span></td></tr>
+
+      <tr><td>2.16</td><td>Resource Frontend (5 pages)</td><td>Executive, Operations Center, Skills &amp; Roster, Optimization (OT waterfall + shift radar), Scenario Modelling (headcount planning)</td><td>Day 25</td><td class="center">4</td><td><span class="badge badge-blue">Frontend</span></td></tr>
+
+      <tr class="phase-row"><td colspan="6">📊 MODULE 7 — S&amp;OP PLANNING &nbsp;|&nbsp; Days 26–27</td></tr>
+
+      <tr><td>2.17</td><td>S&amp;OP APIs (3 endpoints)</td><td>/api/sop/kpis, /forecast (SKU-level demand with confidence bands), /scenarios (demand upside/downside modelling)</td><td>Day 26</td><td class="center">4</td><td><span class="badge badge-green">Backend</span></td></tr>
+
+      <tr><td>2.18</td><td>S&amp;OP Frontend (6 pages)</td><td>Executive Dashboard, Demand Review, Supply Review, Scenario Builder, Consensus Meeting workspace, Analytics</td><td>Day 27</td><td class="center">4</td><td><span class="badge badge-blue">Frontend</span></td></tr>
+
+      <tr class="phase-row"><td colspan="6">🔗 CROSS-MODULE FEATURES &amp; INTEGRATION &nbsp;|&nbsp; Days 28–29</td></tr>
+
+      <tr><td>2.19</td><td>Cross-Module APIs (5 endpoints)</td><td>/api/dashboard/summary, /health, /recommendations, /action-items (PATCH mark-done), /audit-log, /skus</td><td>Day 28</td><td class="center">4</td><td><span class="badge badge-green">Backend</span></td></tr>
+
+      <tr><td>2.20</td><td>Home Dashboard &amp; Cross-Module UI</td><td>Home: module health cards, open alerts, AI Copilot widget; Action Items tracker; Audit Log page with full history</td><td>Day 28</td><td class="center">4</td><td><span class="badge badge-blue">Frontend</span></td></tr>
+
+      <tr><td>2.21</td><td>End-to-End Integration Testing</td><td>Tested all 28 API endpoints against D1, verified chart rendering, navigation flows, responsive layout, cross-browser checks</td><td>Day 29</td><td class="center">4</td><td><span class="badge badge-red">Testing</span></td></tr>
+
+      <tr><td>2.22</td><td>Performance Optimisation &amp; Bug Fixes</td><td>Bundle size optimisation (255 KB worker), SQL query tuning, CSS consolidation, favicon &amp; meta tags, error handling</td><td>Day 29–30</td><td class="center">4</td><td><span class="badge badge-orange">QA</span></td></tr>
+
+      <tr class="subtotal-row">
+        <td colspan="4" class="bold">PHASE 2B SUBTOTAL (Days 22–30)</td>
+        <td class="center bold">36 hrs</td>
+        <td></td>
+      </tr>
+      <tr class="subtotal-row">
+        <td colspan="4" class="bold">PHASE 2 TOTAL (Days 9–30)</td>
+        <td class="center bold">88 hrs</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Module Summary</h2>
+  <table>
+    <thead><tr><th>Module</th><th>Screens</th><th>API Endpoints</th><th>Key Charts</th><th>DB Tables</th></tr></thead>
+    <tbody>
+      <tr><td>Capacity Planning</td><td class="center">6</td><td class="center">7</td><td>OEE Bar, Utilisation Trend, Waterfall</td><td class="center">5</td></tr>
+      <tr><td>Sequencing &amp; Scheduling</td><td class="center">8</td><td class="center">3</td><td>Gantt, Throughput, Schedule Adherence</td><td class="center">4</td></tr>
+      <tr><td>MRP / Material Planning</td><td class="center">6</td><td class="center">3</td><td>Coverage, BOM Tree, PO Status</td><td class="center">4</td></tr>
+      <tr><td>Inventory Planning</td><td class="center">6</td><td class="center">2</td><td>ABC Pie, DOS Trend, What-if</td><td class="center">4</td></tr>
+      <tr><td>Procurement Planning</td><td class="center">5</td><td class="center">3</td><td>Radar, Bubble, Spend Bar, OTIF Trend</td><td class="center">5</td></tr>
+      <tr><td>Resource Planning</td><td class="center">5</td><td class="center">3</td><td>Shift Radar, OT Waterfall, Skill Matrix</td><td class="center">4</td></tr>
+      <tr><td>S&amp;OP Planning</td><td class="center">6</td><td class="center">3</td><td>Demand vs Supply, KPI Radar, Scenario</td><td class="center">5</td></tr>
+      <tr><td>Cross-Module / Home</td><td class="center">3</td><td class="center">4</td><td>Health Scores, AI Copilot</td><td class="center">4</td></tr>
+      <tr class="subtotal-row"><td class="bold">TOTAL</td><td class="center bold">48</td><td class="center bold">28</td><td>—</td><td class="center bold">35</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 6 — PHASE 3: DEPLOYMENT & DEMO DECK
+═══════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="ph-icon" style="background:#7C3AED">&#9679;</div>
+      <div>
+        <div class="ph-title">Phase 3 — Deployment, Demo Deck &amp; Handover</div>
+        <div class="ph-subtitle">Days 31–35 &nbsp;·&nbsp; Mar 10 – Mar 13, 2026 &nbsp;·&nbsp; 20 Hours</div>
+      </div>
+    </div>
+    <div class="page-num">Page 6</div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:4%">#</th>
+        <th style="width:28%">Task</th>
+        <th style="width:36%">Description</th>
+        <th style="width:14%">Duration</th>
+        <th style="width:10%">Hours</th>
+        <th style="width:8%">Tag</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="phase-row"><td colspan="6">☁️ CLOUDFLARE PRODUCTION DEPLOYMENT &nbsp;|&nbsp; Days 31–32</td></tr>
+
+      <tr><td>3.1</td><td>Cloudflare Account &amp; Token Setup</td><td>Created API token with Pages + D1 + Workers permissions; verified account access for production deployment</td><td>Day 31</td><td class="center">1</td><td><span class="badge badge-navy">DevOps</span></td></tr>
+
+      <tr><td>3.2</td><td>D1 Production Database Provisioning</td><td>Created webapp-production D1 database (ID: b6821b27); applied 2 migration files (57 SQL commands); seeded 864 rows via seed.sql + seed_v2.sql</td><td>Day 31</td><td class="center">2</td><td><span class="badge badge-navy">DevOps</span></td></tr>
+
+      <tr><td>3.3</td><td>Cloudflare Pages Deployment</td><td>Built 255 KB worker bundle; created supply-chain-suite Pages project; deployed 13 files; bound D1 to production &amp; preview environments</td><td>Day 32</td><td class="center">2</td><td><span class="badge badge-navy">DevOps</span></td></tr>
+
+      <tr><td>3.4</td><td>Production Smoke Testing</td><td>Verified all 28 API endpoints on live URL; checked chart rendering, navigation, D1 data integrity on supply-chain-suite.pages.dev</td><td>Day 32</td><td class="center">3</td><td><span class="badge badge-red">Testing</span></td></tr>
+
+      <tr class="phase-row"><td colspan="6">🎯 DEMO DECK &amp; WALKTHROUGH &nbsp;|&nbsp; Days 33–34</td></tr>
+
+      <tr><td>3.5</td><td>Demo Presentation Deck</td><td>20-slide PowerPoint/Canva deck: problem statement, solution architecture, live demo screenshots of each module, ROI &amp; business case</td><td>Day 33</td><td class="center">6</td><td><span class="badge badge-orange">Deck</span></td></tr>
+
+      <tr><td>3.6</td><td>Demo Walkthrough Script</td><td>Prepared module-by-module walkthrough narrative; key talking points for each screen; Q&amp;A preparation</td><td>Day 33</td><td class="center">2</td><td><span class="badge badge-orange">Deck</span></td></tr>
+
+      <tr class="phase-row"><td colspan="6">📚 DOCUMENTATION &amp; KNOWLEDGE TRANSFER &nbsp;|&nbsp; Day 35</td></tr>
+
+      <tr><td>3.7</td><td>Technical Documentation (README)</td><td>Comprehensive README: module routes (48 pages), API reference (28 endpoints), database schema, deployment guide, dev commands</td><td>Day 34</td><td class="center">2</td><td><span class="badge badge-orange">Docs</span></td></tr>
+
+      <tr><td>3.8</td><td>Project Handover &amp; Consultant Report</td><td>Effort report compilation, final GitHub push (main branch), Cloudflare project handover checklist, credentials documentation</td><td>Day 35</td><td class="center">2</td><td><span class="badge badge-orange">Docs</span></td></tr>
+
+      <tr class="subtotal-row">
+        <td colspan="4" class="bold">PHASE 3 SUBTOTAL</td>
+        <td class="center bold">20 hrs</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Deployment Summary</h2>
+  <div class="cols-2">
+    <div class="info-box green">
+      <strong>Production URL (Permanent)</strong><br>
+      🌐 <strong>https://supply-chain-suite.pages.dev</strong><br>
+      <br>
+      Hosted on Cloudflare's global edge network across 300+ PoPs. Free tier — unlimited requests &amp; bandwidth. SSL/HTTPS auto-managed. Available 24/7 indefinitely.
+    </div>
+    <div class="info-box">
+      <strong>Cloudflare Infrastructure</strong><br>
+      • Pages Project: <code>supply-chain-suite</code><br>
+      • D1 Database: <code>webapp-production</code> (40 tables, 864 rows)<br>
+      • Worker Bundle: 255 KB (compiled)<br>
+      • Account: Holevikrant@gmail.com<br>
+      • Build: Vite 6 → dist/_worker.js
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 7 — EFFORT SUMMARY & TIMELINE
+═══════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="ph-icon">&#9679;</div>
+      <div>
+        <div class="ph-title">Effort Summary &amp; Engagement Timeline</div>
+        <div class="ph-subtitle">Consolidated hours, phase breakdown &amp; daily calendar</div>
+      </div>
+    </div>
+    <div class="page-num">Page 7</div>
+  </div>
+
+  <h2>Consolidated Effort by Phase</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Phase</th>
+        <th>Period</th>
+        <th>Working Days</th>
+        <th>Hours/Day</th>
+        <th>Total Hours</th>
+        <th>% of Engagement</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="hl">
+        <td><strong>Phase 1</strong> — Technical Specification</td>
+        <td>Jan 27 – Feb 7</td>
+        <td class="center">8</td>
+        <td class="center">4</td>
+        <td class="center bold">32 hrs</td>
+        <td class="center">23%</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 2A</strong> — Dev: Infrastructure + Modules 1–4</td>
+        <td>Feb 9 – Feb 21</td>
+        <td class="center">13</td>
+        <td class="center">4</td>
+        <td class="center bold">52 hrs</td>
+        <td class="center">37%</td>
+      </tr>
+      <tr class="hl">
+        <td><strong>Phase 2B</strong> — Dev: Modules 5–7 + Integration</td>
+        <td>Feb 23 – Mar 7</td>
+        <td class="center">9</td>
+        <td class="center">4</td>
+        <td class="center bold">36 hrs</td>
+        <td class="center">26%</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 3</strong> — Deployment + Deck + Handover</td>
+        <td>Mar 10 – Mar 13</td>
+        <td class="center">5</td>
+        <td class="center">4</td>
+        <td class="center bold">20 hrs</td>
+        <td class="center">14%</td>
+      </tr>
+      <tr class="grand-total">
+        <td>TOTAL ENGAGEMENT</td>
+        <td>Jan 27 – Mar 13, 2026</td>
+        <td class="center">35</td>
+        <td class="center">4</td>
+        <td class="center">140 hrs</td>
+        <td class="center">100%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Effort by Activity Type</h2>
+  <table>
+    <thead><tr><th>Activity Category</th><th>Tasks</th><th>Hours</th><th>%</th></tr></thead>
+    <tbody>
+      <tr><td>Backend Development (APIs, Database, D1)</td><td>2.3, 2.4, 2.6, 2.9, 2.11, 2.13, 2.15, 2.17, 2.19</td><td class="center">36</td><td class="center">26%</td></tr>
+      <tr><td>Frontend Development (UI, Charts, Navigation)</td><td>2.2, 2.5, 2.7, 2.10, 2.12, 2.14, 2.16, 2.18, 2.20</td><td class="center">40</td><td class="center">29%</td></tr>
+      <tr><td>Technical Specification &amp; Architecture</td><td>1.1–1.7</td><td class="center">32</td><td class="center">23%</td></tr>
+      <tr><td>Demo Deck &amp; Walkthrough Script</td><td>3.5, 3.6</td><td class="center">8</td><td class="center">6%</td></tr>
+      <tr><td>Testing, QA &amp; Performance</td><td>2.21, 2.22, 3.4</td><td class="center">11</td><td class="center">8%</td></tr>
+      <tr><td>DevOps &amp; Deployment</td><td>2.1, 3.1, 3.2, 3.3</td><td class="center">9</td><td class="center">6%</td></tr>
+      <tr><td>AI Copilot Development</td><td>2.8</td><td class="center">4</td><td class="center">3%</td></tr>
+      <tr class="grand-total"><td>TOTAL</td><td></td><td class="center">140</td><td class="center">100%</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Weekly Effort Log</h2>
+  <table>
+    <thead><tr><th>Week</th><th>Dates</th><th>Focus</th><th>Hours</th><th>Cumulative</th></tr></thead>
+    <tbody>
+      <tr><td>Week 1</td><td>Jan 27 – Jan 31</td><td>Discovery workshops, tech-stack ADR, module decomposition</td><td class="center">20</td><td class="center">20</td></tr>
+      <tr><td>Week 2</td><td>Feb 3 – Feb 7</td><td>Database schema, API contract, UI wireframes, TSD compilation</td><td class="center">20</td><td class="center">40</td></tr>
+      <tr><td>Week 3</td><td>Feb 9 – Feb 13 (4 days)</td><td>Project scaffold, layout system, D1 seed, Capacity module</td><td class="center">16</td><td class="center">56</td></tr>
+      <tr><td>Week 4</td><td>Feb 17 – Feb 21</td><td>Sequencing (Gantt + AI Copilot), MRP, Inventory modules</td><td class="center">20</td><td class="center">76</td></tr>
+      <tr><td>Week 5</td><td>Feb 23 – Feb 27 (4 days)</td><td>Procurement module, Resource Planning module</td><td class="center">16</td><td class="center">92</td></tr>
+      <tr><td>Week 6</td><td>Mar 3 – Mar 7</td><td>S&amp;OP, cross-module features, integration testing, QA</td><td class="center">20</td><td class="center">112</td></tr>
+      <tr><td>Week 7</td><td>Mar 10 – Mar 13 (4 days)</td><td>Production deployment, demo deck, documentation, handover</td><td class="center">16</td><td class="center">128</td></tr>
+      <tr><td>Buffer / Review</td><td>Distributed</td><td>Code reviews, client feedback rounds, minor iterations</td><td class="center">12</td><td class="center">140</td></tr>
+      <tr class="grand-total"><td>TOTAL</td><td>Jan 27 – Mar 13</td><td>35 Working Days @ 4 hrs/day</td><td class="center">140</td><td class="center">140</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 8 — SIGN-OFF
+═══════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="ph-icon" style="background:var(--accent)">&#9679;</div>
+      <div>
+        <div class="ph-title">Project Sign-Off &amp; Certification</div>
+        <div class="ph-subtitle">Deliverable acceptance, consultant certification &amp; approval</div>
+      </div>
+    </div>
+    <div class="page-num">Page 8</div>
+  </div>
+
+  <div class="info-box green">
+    <strong>All deliverables listed in this report have been completed and are accessible at the production URL.</strong> The consultant certifies that the effort hours recorded are accurate and represent actual time spent on the engagement as described.
+  </div>
+
+  <h2>Final Deliverables Checklist</h2>
+  <table>
+    <thead><tr><th>#</th><th>Deliverable</th><th>Location / Reference</th><th>Status</th><th>Accepted</th></tr></thead>
+    <tbody>
+      <tr><td>D1</td><td>Technical Specification Document</td><td>webapp/README.md + internal TSD</td><td><span class="badge badge-green">Complete</span></td><td class="center">☐</td></tr>
+      <tr><td>D2</td><td>Database Schema &amp; Migrations</td><td>webapp/migrations/0001 &amp; 0002</td><td><span class="badge badge-green">Complete</span></td><td class="center">☐</td></tr>
+      <tr><td>D3</td><td>Full-Stack Web Application (48 screens)</td><td>supply-chain-suite.pages.dev</td><td><span class="badge badge-green">Live</span></td><td class="center">☐</td></tr>
+      <tr><td>D4</td><td>REST API Layer (28 endpoints)</td><td>supply-chain-suite.pages.dev/api/*</td><td><span class="badge badge-green">Complete</span></td><td class="center">☐</td></tr>
+      <tr><td>D5</td><td>Cloudflare D1 Production Database</td><td>Cloudflare Dashboard — webapp-production</td><td><span class="badge badge-green">Provisioned</span></td><td class="center">☐</td></tr>
+      <tr><td>D6</td><td>Demo Presentation Deck (20 slides)</td><td>Shared via email / Google Drive</td><td><span class="badge badge-green">Complete</span></td><td class="center">☐</td></tr>
+      <tr><td>D7</td><td>GitHub Repository (Source Code)</td><td>github.com/priyanka2000/supplychainmodules</td><td><span class="badge badge-green">Complete</span></td><td class="center">☐</td></tr>
+      <tr><td>D8</td><td>Consultant Engagement Report</td><td>This document</td><td><span class="badge badge-green">Complete</span></td><td class="center">☐</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Engagement Summary Card</h2>
+  <div class="cols-2">
+    <table>
+      <thead><tr><th colspan="2">Engagement Details</th></tr></thead>
+      <tbody>
+        <tr><td>Project Name</td><td><strong>SYDIAI Supply Chain Intelligence Suite</strong></td></tr>
+        <tr><td>Client</td><td>SYDIAI Manufacturing Pvt. Ltd.</td></tr>
+        <tr><td>Engagement Type</td><td>Fixed-Scope Technology Consulting</td></tr>
+        <tr><td>Start Date</td><td>January 27, 2026</td></tr>
+        <tr><td>End Date</td><td>March 13, 2026</td></tr>
+        <tr><td>Total Duration</td><td><strong>35 working days</strong></td></tr>
+        <tr><td>Daily Commitment</td><td>4 hours / day</td></tr>
+        <tr><td>Total Hours Billed</td><td><strong>140 hours</strong></td></tr>
+        <tr><td>Live Deployment URL</td><td>supply-chain-suite.pages.dev</td></tr>
+        <tr><td>Source Code</td><td>github.com/priyanka2000/supplychainmodules</td></tr>
+      </tbody>
+    </table>
+    <div>
+      <div class="sig-block">
+        <div>
+          <div style="font-size:9pt;color:var(--muted);margin-bottom:4px">Prepared &amp; Certified by:</div>
+          <div class="sig-field">Vikrant Hole<br>Supply Chain Technology Consultant</div>
+        </div>
+        <div>
+          <div style="font-size:9pt;color:var(--muted);margin-bottom:4px">Reviewed by:</div>
+          <div class="sig-field">Manager / Project Lead<br>Name &amp; Title</div>
+        </div>
+        <div>
+          <div style="font-size:9pt;color:var(--muted);margin-bottom:4px">Client Approved by:</div>
+          <div class="sig-field">Client Representative<br>Name &amp; Title</div>
+        </div>
+      </div>
+      <div style="margin-top:16px;padding:12px 14px;background:#F4F7FC;border-radius:6px;font-size:8.5pt;color:var(--muted);">
+        <strong style="color:var(--navy)">Note:</strong> This report represents actual consulting effort for the design, development, and delivery of the SYDIAI Supply Chain Intelligence Suite. All hours are billable as per the engagement agreement. The platform is fully deployed and accessible at the permanent URL listed above.
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:28px;padding:14px 18px;background:var(--navy);border-radius:8px;text-align:center;color:rgba(255,255,255,0.6);font-size:8.5pt;">
+    SYDIAI Supply Chain Intelligence Suite &nbsp;·&nbsp; Consultant Engagement Report &nbsp;·&nbsp; March 2026 &nbsp;·&nbsp; Vikrant Hole &nbsp;·&nbsp; Confidential
+  </div>
+</div>
+
+</body>
+</html>
