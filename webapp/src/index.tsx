@@ -115,6 +115,17 @@ app.get('/favicon.ico', (c) => {
 // ============================================================
 // Supply chain flow order: S&OP → Demand → MRP → Procurement → Production → Capacity → Sequencing → Resource → Inventory → Deployment
 const NAV_MODULES = [
+  { id: 'control-tower', label: 'Control Tower', icon: 'fa-satellite-dish', path: '/control-tower',
+    subs: [
+      { id: 'ct-main',     label: 'Live Dashboard',      icon: 'fa-tachometer-alt',  path: '/control-tower' },
+      { id: 'ct-network',  label: 'Network Map',         icon: 'fa-project-diagram', path: '/network-map' },
+      { id: 'ct-scenario', label: 'Scenario Lab',        icon: 'fa-flask',           path: '/scenario-lab' },
+      { id: 'ct-demand',   label: 'Demand Intelligence', icon: 'fa-brain',           path: '/demand-intelligence' },
+      { id: 'ct-workbench',label: 'Planner Workbench',  icon: 'fa-drafting-compass', path: '/planner-workbench' },
+      { id: 'ct-benchmark',label: 'KPI Benchmarking',   icon: 'fa-trophy',           path: '/benchmarking' },
+      { id: 'ct-sop-intel',label: 'S&OP Intelligence',  icon: 'fa-chess',            path: '/sop/intelligence' },
+    ]
+  },
   { id: 'sop', label: 'S&OP Planning', icon: 'fa-balance-scale', path: '/sop',
     subs: [
       { id: 'sop-executive', label: 'Executive Dashboard', icon: 'fa-chart-pie', path: '/sop/executive' },
@@ -222,6 +233,7 @@ const SUB_PREFIX_MAP: Record<string, string> = {
   'capacity': 'capacity',
   'sop': 'sop',
   'mrp': 'mrp',
+  'ct': 'control-tower',
 }
 
 function isModuleActive(activeModule: string, moduleId: string): boolean {
@@ -428,6 +440,19 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
 .health-score.healthy { color: var(--success); }
 .health-score.warning { color: var(--warning); }
 .health-score.critical { color: var(--danger); }
+/* Control Tower Node Cards */
+.ct-node { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; cursor: pointer; transition: all 0.15s; }
+.ct-node:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.ct-node.critical { border-left: 3px solid var(--danger); }
+.ct-node.warning  { border-left: 3px solid var(--warning); }
+.ct-node.healthy  { border-left: 3px solid var(--success); }
+/* Scenario cards */
+.scenario-card { transition: transform 0.15s, box-shadow 0.15s; }
+.scenario-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+/* Flow steps */
+.flow-step { position: relative; padding: 12px 8px; background: #F8FAFC; border-radius: 10px; border: 1px solid var(--border); }
+/* Network map node highlight */
+.nm-node-selected { background: #EFF6FF !important; }
         `}</style>
       </head>
       <body>
@@ -480,7 +505,13 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
                     <i class={`fas ${sub.icon}`}></i> {sub.label}
                   </a>
                 ))}
-                <div class="sidebar-section" style="margin-top:16px">Quick Links</div>
+                <div class="sidebar-section" style="margin-top:16px">Command Center</div>
+                <a href="/control-tower" class="nav-item"><i class="fas fa-satellite-dish"></i> Control Tower</a>
+                <a href="/network-map" class="nav-item"><i class="fas fa-project-diagram"></i> Network Map</a>
+                <a href="/scenario-lab" class="nav-item"><i class="fas fa-flask"></i> Scenario Lab</a>
+                <a href="/demand-intelligence" class="nav-item"><i class="fas fa-brain"></i> Demand Intelligence</a>
+                <a href="/planner-workbench" class="nav-item"><i class="fas fa-drafting-compass"></i> Planner Workbench</a>
+                <div class="sidebar-section" style="margin-top:8px">Quick Links</div>
                 <a href="/action-items" class="nav-item"><i class="fas fa-tasks"></i> Action Items</a>
                 <a href="/approvals" class="nav-item"><i class="fas fa-clipboard-check"></i> Approvals</a>
                 <a href="/exceptions" class="nav-item"><i class="fas fa-exclamation-triangle"></i> Exceptions</a>
@@ -499,7 +530,14 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
                     <i class={`fas ${mod.icon}`}></i> {mod.label}
                   </a>
                 ))}
-                <div class="sidebar-section" style="margin-top:16px">Quick Links</div>
+                <div class="sidebar-section" style="margin-top:16px">Command Center</div>
+                <a href="/control-tower" class="nav-item"><i class="fas fa-satellite-dish"></i> Control Tower</a>
+                <a href="/network-map" class="nav-item"><i class="fas fa-project-diagram"></i> Network Map</a>
+                <a href="/scenario-lab" class="nav-item"><i class="fas fa-flask"></i> Scenario Lab</a>
+                <a href="/demand-intelligence" class="nav-item"><i class="fas fa-brain"></i> Demand Intelligence</a>
+                <a href="/planner-workbench" class="nav-item"><i class="fas fa-drafting-compass"></i> Planner Workbench</a>
+                <a href="/benchmarking" class="nav-item"><i class="fas fa-trophy"></i> KPI Benchmarking</a>
+                <div class="sidebar-section" style="margin-top:8px">Quick Links</div>
                 <a href="/action-items" class={`nav-item ${activeModule === 'actions' ? 'active' : ''}`}>
                   <i class="fas fa-tasks"></i> Action Items
                 </a>
@@ -1975,6 +2013,20 @@ document.addEventListener('DOMContentLoaded', initHome);
           <input class="form-input flex-1" id="copilot-input" placeholder="Ask about any planning issue..." />
           <button class="btn btn-primary" onclick="sendCopilot()"><i class="fas fa-paper-plane"></i></button>
         </div>
+      </div>
+    </div>
+
+    {/* Enterprise Features Banner */}
+    <div style="margin-top:20px;background:linear-gradient(135deg,#0F172A,#1E3A8A,#312E81);border-radius:14px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+      <div>
+        <div style="color:white;font-size:17px;font-weight:700;margin-bottom:4px"><i class="fas fa-satellite-dish" style="color:#60A5FA;margin-right:8px"></i>Enterprise Command Center</div>
+        <div style="color:#93C5FD;font-size:13px">Control Tower · Network Map · Scenario Lab · Demand Intelligence · Planner Workbench · KPI Benchmarking</div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a href="/control-tower" style="background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:6px"><i class="fas fa-satellite-dish"></i> Control Tower</a>
+        <a href="/network-map" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:6px"><i class="fas fa-project-diagram"></i> Network Map</a>
+        <a href="/scenario-lab" style="background:rgba(124,58,237,0.4);color:white;border:1px solid rgba(139,92,246,0.4);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:6px"><i class="fas fa-flask"></i> Scenario Lab</a>
+        <a href="/demand-intelligence" style="background:rgba(37,99,235,0.3);color:white;border:1px solid rgba(96,165,250,0.3);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:6px"><i class="fas fa-brain"></i> Demand Intelligence</a>
       </div>
     </div>
   </Layout>)
@@ -7172,6 +7224,1390 @@ app.get('/deployment/analytics', (c) => {
     <script src="/static/deployment-module.js"></script>
     <script>document.body.dataset.page='deployment-analytics';</script>
   </Layout>)
+})
+
+// ============================================================
+// ENTERPRISE UPGRADES — Control Tower, Network, Scenario Lab, Demand Intelligence
+// ============================================================
+
+// ── APIs ─────────────────────────────────────────────────────
+
+// Control Tower: live pulse
+app.get('/api/control-tower/pulse', async (c) => {
+  return c.json({
+    ts: new Date().toISOString(),
+    overall_health: 76,
+    status: 'warning',
+    nodes: [
+      { id:'MUM', label:'Mumbai Plant', type:'plant', lat:19.08, lng:72.88, util:97, status:'critical', output:52400, capacity:54000 },
+      { id:'DEL', label:'Delhi Plant',  type:'plant', lat:28.70, lng:77.10, util:74, status:'healthy', output:38200, capacity:52000 },
+      { id:'CHN', label:'Chennai Plant',type:'plant', lat:13.08, lng:80.27, util:82, status:'warning', output:31500, capacity:38500 },
+      { id:'BAN', label:'Bangalore Plant',type:'plant',lat:12.97,lng:77.59,util:69,status:'healthy',output:28100,capacity:40800},
+      { id:'WH-MUM', label:'Mumbai DC',  type:'warehouse', lat:19.22, lng:72.98, fill:78, status:'healthy', stock:184200, capacity:236000 },
+      { id:'WH-DEL', label:'Delhi DC',   type:'warehouse', lat:28.55, lng:77.25, fill:91, status:'critical', stock:201800, capacity:220000 },
+      { id:'WH-CHN', label:'Chennai DC', type:'warehouse', lat:13.00, lng:80.20, fill:64, status:'healthy', stock:96300, capacity:150000 },
+      { id:'WH-BAN', label:'Bangalore DC',type:'warehouse',lat:12.90,lng:77.68,fill:56,status:'healthy',stock:73200,capacity:130000},
+      { id:'WH-HYD', label:'Hyderabad DC',type:'warehouse',lat:17.38,lng:78.49,fill:83,status:'warning',stock:88400,capacity:106000},
+    ],
+    lanes: [
+      { from:'MUM', to:'WH-MUM', vol:18400, otd:96.2, status:'healthy' },
+      { from:'MUM', to:'WH-HYD', vol:7200, otd:82.4, status:'critical' },
+      { from:'DEL', to:'WH-DEL', vol:12800, otd:91.8, status:'warning' },
+      { from:'CHN', to:'WH-CHN', vol:9600, otd:94.1, status:'healthy' },
+      { from:'BAN', to:'WH-BAN', vol:8400, otd:88.6, status:'warning' },
+      { from:'BAN', to:'WH-HYD', vol:4200, otd:85.2, status:'warning' },
+    ],
+    kpis: {
+      total_output: 150200,
+      plan_adherence: 91.8,
+      otd: 91.4,
+      service_level: 96.8,
+      total_inventory: 643900,
+      stockout_risk_skus: 3,
+      open_exceptions: 7,
+      pending_approvals: 4,
+    }
+  })
+})
+
+app.get('/api/control-tower/exceptions', async (c) => {
+  return c.json([
+    { id:'EX-001', severity:'critical', module:'Production', title:'MUM-L2 Capacity Breach — Week 2', detail:'MUM-L2 loaded at 98% in W1-W2. Risk: 12,000 cases ATP loss.', action:'Shift 8K cases to DEL-L1', created_at:'2026-03-17T06:00:00Z', status:'open' },
+    { id:'EX-002', severity:'critical', module:'Inventory', title:'Delhi DC Near-Full — 91% Fill', detail:'WH-DEL at 91% fill rate. Incoming 48T truck arriving Mar 19.', action:'Trigger inter-DC transfer to WH-LKN', created_at:'2026-03-17T07:15:00Z', status:'open' },
+    { id:'EX-003', severity:'high',     module:'Deployment', title:'OTD Gap on Delhi→Lucknow Lane', detail:'Lane OTD 82.4% vs 95% SLA. 3 delayed shipments this week.', action:'Switch carrier from Gati-KWE to BlueDart', created_at:'2026-03-17T05:30:00Z', status:'open' },
+    { id:'EX-004', severity:'high',     module:'MRP', title:'Orange Concentrate Critical Shortage', detail:'Current stock 6 days. Reorder point breached. 2 POs pending approval.', action:'Approve PO-2024-0892 immediately', created_at:'2026-03-17T04:00:00Z', status:'open' },
+    { id:'EX-005', severity:'medium',   module:'Demand', title:'Mango 200ml Forecast Spike — +34%', detail:'AI sensing model detected +34% uplift for April. Capacity planning required.', action:'Review RCCP for April horizon', created_at:'2026-03-17T03:00:00Z', status:'open' },
+    { id:'EX-006', severity:'medium',   module:'Procurement', title:'Supplier VRL Logistics OTIF Below SLA', detail:'VRL OTIF 85.6% vs 88% SLA. 3 late deliveries in rolling 30 days.', action:'Issue performance notice, qualify backup carrier', created_at:'2026-03-16T22:00:00Z', status:'open' },
+    { id:'EX-007', severity:'low',      module:'Resource', title:'Overtime Hours — Mumbai +28%', detail:'Mumbai plant OT 142 hrs/wk vs 110 target. Fatigue risk in L2.', action:'Approve roster extension — add 6 operators Mar 19-23', created_at:'2026-03-16T18:00:00Z', status:'open' },
+  ])
+})
+
+app.get('/api/control-tower/flow', async (c) => {
+  return c.json({
+    supply_chain_flow: [
+      { stage:'Demand Signal',  score:87, status:'healthy',  kpi:'Forecast Accuracy 87.3%',   delta:'+1.2%' },
+      { stage:'Procurement',    score:71, status:'warning',  kpi:'Supplier OTIF 87.4%',        delta:'-0.8%' },
+      { stage:'Production',     score:88, status:'healthy',  kpi:'MPS Adherence 94.2%',        delta:'+0.4%' },
+      { stage:'Inventory',      score:74, status:'warning',  kpi:'Service Level 96.8%',        delta:'-0.3%' },
+      { stage:'Deployment',     score:78, status:'warning',  kpi:'OTD 91.4%',                  delta:'-1.1%' },
+      { stage:'Customer OTIF',  score:92, status:'healthy',  kpi:'OTIF 92.1%',                 delta:'+0.6%' },
+    ]
+  })
+})
+
+// Network Graph data
+app.get('/api/network/graph', async (c) => {
+  return c.json({
+    nodes: [
+      { id:'SUP-01', label:'Bisleri Corp',          type:'supplier',   lat:21.17, lng:72.83, tier:1, risk:'low',    spend_cr:24.2 },
+      { id:'SUP-02', label:'PET Plastics Ltd',       type:'supplier',   lat:28.70, lng:77.10, tier:1, risk:'medium', spend_cr:18.6 },
+      { id:'SUP-03', label:'HDPE Films Co',          type:'supplier',   lat:13.08, lng:80.27, tier:1, risk:'high',   spend_cr:9.4  },
+      { id:'SUP-04', label:'Orange Conc. Exports',   type:'supplier',   lat:17.38, lng:78.49, tier:2, risk:'critical',spend_cr:6.8 },
+      { id:'MUM',    label:'Mumbai Plant',           type:'plant',      lat:19.08, lng:72.88, util:97, capacity:54000, output:52400 },
+      { id:'DEL',    label:'Delhi Plant',            type:'plant',      lat:28.70, lng:77.10, util:74, capacity:52000, output:38200 },
+      { id:'CHN',    label:'Chennai Plant',          type:'plant',      lat:13.08, lng:80.27, util:82, capacity:38500, output:31500 },
+      { id:'BAN',    label:'Bangalore Plant',        type:'plant',      lat:12.97, lng:77.59, util:69, capacity:40800, output:28100 },
+      { id:'WH-MUM', label:'Mumbai DC',              type:'warehouse',  lat:19.22, lng:72.98, fill:78, capacity:236000 },
+      { id:'WH-DEL', label:'Delhi DC',               type:'warehouse',  lat:28.55, lng:77.25, fill:91, capacity:220000 },
+      { id:'WH-CHN', label:'Chennai DC',             type:'warehouse',  lat:13.00, lng:80.20, fill:64, capacity:150000 },
+      { id:'WH-BAN', label:'Bangalore DC',           type:'warehouse',  lat:12.90, lng:77.68, fill:56, capacity:130000 },
+      { id:'WH-HYD', label:'Hyderabad DC',           type:'warehouse',  lat:17.38, lng:78.49, fill:83, capacity:106000 },
+      { id:'MKT-W',  label:'West Market',            type:'market',     lat:18.52, lng:73.86, demand:48000 },
+      { id:'MKT-N',  label:'North Market',           type:'market',     lat:29.38, lng:76.96, demand:42000 },
+      { id:'MKT-S',  label:'South Market',           type:'market',     lat:11.12, lng:78.66, demand:38000 },
+      { id:'MKT-E',  label:'East Market',            type:'market',     lat:22.57, lng:88.36, demand:21000 },
+    ],
+    edges: [
+      { from:'SUP-01',to:'MUM', type:'supply', vol:18000, lead_days:3, status:'healthy' },
+      { from:'SUP-02',to:'DEL', type:'supply', vol:12000, lead_days:5, status:'warning' },
+      { from:'SUP-03',to:'CHN', type:'supply', vol:8000,  lead_days:4, status:'critical' },
+      { from:'SUP-04',to:'MUM', type:'supply', vol:6000,  lead_days:7, status:'critical' },
+      { from:'MUM',to:'WH-MUM', type:'production', vol:52400, util:97, status:'critical' },
+      { from:'DEL',to:'WH-DEL', type:'production', vol:38200, util:74, status:'healthy' },
+      { from:'CHN',to:'WH-CHN', type:'production', vol:31500, util:82, status:'warning' },
+      { from:'BAN',to:'WH-BAN', type:'production', vol:28100, util:69, status:'healthy' },
+      { from:'WH-MUM',to:'MKT-W', type:'deployment', vol:44000, otd:96.2, status:'healthy' },
+      { from:'WH-MUM',to:'WH-HYD', type:'transfer',  vol:7200,  otd:82.4, status:'critical' },
+      { from:'WH-DEL',to:'MKT-N',  type:'deployment', vol:38000, otd:91.8, status:'warning' },
+      { from:'WH-CHN',to:'MKT-S',  type:'deployment', vol:31000, otd:94.1, status:'healthy' },
+      { from:'WH-BAN',to:'MKT-S',  type:'deployment', vol:22000, otd:88.6, status:'warning' },
+      { from:'WH-HYD',to:'MKT-S',  type:'deployment', vol:18000, otd:85.2, status:'warning' },
+    ]
+  })
+})
+
+// Scenario Lab APIs
+app.get('/api/scenario-lab/scenarios', async (c) => {
+  return c.json([
+    { id:'SCN-001', name:'Summer Surge +25%',       type:'demand',    status:'simulated', created_by:'Sankar M', created_at:'2026-03-17T08:00:00Z', delta_otd:-3.2, delta_cost:+8.4, delta_fill:-1.8, delta_util:+14.2, risk:'high' },
+    { id:'SCN-002', name:'Mumbai Plant Shutdown',   type:'disruption',status:'draft',     created_by:'Vikrant H', created_at:'2026-03-16T14:00:00Z', delta_otd:-12.4,delta_cost:+18.6,delta_fill:-6.2,delta_util:+28.4,risk:'critical' },
+    { id:'SCN-003', name:'Mango Promo — April',     type:'promotion', status:'approved',  created_by:'Sankar M', created_at:'2026-03-15T10:00:00Z', delta_otd:-1.4, delta_cost:+3.8, delta_fill:-0.6, delta_util:+8.2, risk:'medium' },
+    { id:'SCN-004', name:'New SKU Launch — SportZ', type:'new_sku',   status:'draft',     created_by:'Vikrant H', created_at:'2026-03-14T16:00:00Z', delta_otd:-0.8, delta_cost:+2.4, delta_fill:-0.2, delta_util:+4.6, risk:'low' },
+    { id:'SCN-005', name:'Carrier Disruption — VRL',type:'disruption',status:'simulated', created_by:'Sankar M', created_at:'2026-03-13T09:00:00Z', delta_otd:-6.8, delta_cost:+4.2, delta_fill:-2.4, delta_util:+2.8, risk:'high' },
+  ])
+})
+
+app.post('/api/scenario-lab/run', async (c) => {
+  const body = await c.req.json().catch(() => ({})) as any
+  const type = body.type || 'demand'
+  const magnitude = parseFloat(body.magnitude || '15')
+
+  const baseOTD = 91.4, baseFill = 96.8, baseCost = 18.4, baseUtil = 82.4
+  const deltaFactor = magnitude / 100
+  const result = {
+    scenario_id: `SCN-${Date.now()}`,
+    name: body.name || `Scenario ${new Date().toLocaleTimeString()}`,
+    type,
+    run_time_ms: Math.round(800 + Math.random()*400),
+    solver: 'Heuristic-MIP',
+    baseline: { otd:baseOTD, fill:baseFill, cost:baseCost, util:baseUtil, output:150200 },
+    optimized: {
+      otd:   type==='disruption' ? +(baseOTD - magnitude*0.5).toFixed(1) : +(baseOTD - magnitude*0.1).toFixed(1),
+      fill:  type==='disruption' ? +(baseFill - magnitude*0.3).toFixed(1) : +(baseFill - magnitude*0.05).toFixed(1),
+      cost:  +(baseCost * (1 + deltaFactor*0.4)).toFixed(1),
+      util:  +(baseUtil + deltaFactor*10).toFixed(1),
+      output:Math.round(150200 * (1 + deltaFactor * (type==='demand'?0.8:-0.6))),
+    },
+    recommendations: [
+      type==='demand' ? `Activate MUM-L2 overtime for ${Math.round(magnitude*120)} additional cases/week` : `Re-route production from disrupted plant to DEL-L1 and CHN-L1`,
+      `Adjust safety stock buffers by +${Math.round(magnitude*0.8)}% at high-risk DCs`,
+      `Pre-position ${Math.round(magnitude*800)} cases at WH-DEL and WH-MUM before surge`,
+    ],
+    week_schedule: ['W1','W2','W3','W4','W5','W6','W7','W8'].map(w => ({
+      week: w,
+      output: Math.round(18000 + Math.random()*4000 + deltaFactor*18000*0.5),
+      util: Math.round(75 + Math.random()*15 + deltaFactor*10),
+    }))
+  }
+  return c.json(result)
+})
+
+// Demand Intelligence APIs
+app.get('/api/demand/intelligence', async (c) => {
+  const weeks = ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12']
+  return c.json({
+    summary: { total_demand: 4820000, forecast_accuracy: 87.3, mape: 4.6, bias: -1.2, demand_sensing_lift: 2.1 },
+    by_sku: [
+      { sku:'PET 500ml',   p10:82000, p50:94200, p90:108000, actual:91800, accuracy:97.5, trend:'up',   seasonality:'summer_peak' },
+      { sku:'PET 1L',      p10:41000, p50:48600, p90:57000,  actual:47200, accuracy:97.1, trend:'flat', seasonality:'stable' },
+      { sku:'Mango 200ml', p10:38000, p50:52400, p90:72000,  actual:null,  accuracy:84.2, trend:'up',   seasonality:'summer_peak' },
+      { sku:'Glass 500ml', p10:18000, p50:22400, p90:27000,  actual:21800, accuracy:97.3, trend:'down', seasonality:'stable' },
+      { sku:'SportZ Energy',p10:8000, p50:12600, p90:18000,  actual:null,  accuracy:78.4, trend:'up',   seasonality:'new_launch' },
+    ],
+    weekly_forecast: weeks.map((w,i) => ({
+      week: w,
+      p50: Math.round(350000 + i*8000 + Math.sin(i*0.5)*12000),
+      p10: Math.round(310000 + i*8000 + Math.sin(i*0.5)*12000),
+      p90: Math.round(395000 + i*8000 + Math.sin(i*0.5)*12000),
+      actual: i < 4 ? Math.round(340000 + i*8000 + (Math.random()-0.5)*15000) : null,
+    })),
+    drivers: [
+      { driver:'Temperature',    impact_pct:+18.4, confidence:92, signal:'strong' },
+      { driver:'Summer Holiday', impact_pct:+14.2, confidence:88, signal:'medium' },
+      { driver:'Mango Promo',    impact_pct:+9.6,  confidence:85, signal:'medium' },
+      { driver:'Price Increase', impact_pct:-3.2,  confidence:76, signal:'weak'   },
+      { driver:'New Competitor', impact_pct:-1.8,  confidence:68, signal:'weak'   },
+    ]
+  })
+})
+
+// Optimization Cockpit API
+app.post('/api/optimization/network', async (c) => {
+  const body = await c.req.json().catch(() => ({})) as any
+  return c.json({
+    status: 'optimal',
+    solver: 'Network-Flow LP + MIP',
+    run_time_ms: Math.round(1200 + Math.random()*600),
+    objective_value: 284200000,
+    improvements: {
+      cost_reduction_pct: -7.8,
+      otd_improvement_pct: +3.4,
+      util_rebalance_pct: +6.2,
+      co2_reduction_pct: -4.1,
+      savings_inr_lakh: 22.4,
+    },
+    reallocation: [
+      { from:'MUM', to:'DEL',  sku:'PET 500ml', cases:8000, reason:'Mumbai overloaded (97% util)' },
+      { from:'MUM', to:'CHN',  sku:'Mango 200ml',cases:4000,reason:'Southern demand surge' },
+      { from:'WH-DEL',to:'WH-HYD',sku:'Glass 500ml',cases:12000,reason:'Delhi DC near capacity (91%)' },
+    ],
+    lane_changes: [
+      { lane:'Delhi→Lucknow', change:'Switch Gati-KWE → BlueDart', saving_pct:4.2, otd_gain:8.4 },
+      { lane:'Mumbai→Hyderabad', change:'Add milk-run via Pune hub', saving_pct:6.1, otd_gain:3.2 },
+    ]
+  })
+})
+
+// S&OP Intelligence (enhanced)
+app.get('/api/sop/intelligence', async (c) => {
+  return c.json({
+    cycle: 'March 2026',
+    status: 'consensus_gap',
+    demand_plan: 4820000,
+    supply_plan: 4620000,
+    gap: -200000,
+    gap_pct: -4.1,
+    gap_resolution: [
+      { option:'Approve Mumbai Overtime W1-W4',   impact_cases:+120000, cost_inr_lakh:+8.4, risk:'low'    },
+      { option:'Activate Bangalore 3rd Shift',    impact_cases:+80000,  cost_inr_lakh:+6.2, risk:'medium' },
+      { option:'Defer Glass 500ml to Q2',         impact_cases:+40000,  cost_inr_lakh:-2.1, risk:'low'    },
+      { option:'Emergency Procurement (ext.cap)', impact_cases:+60000,  cost_inr_lakh:+14.8,risk:'high'   },
+    ],
+    consensus_score: 68,
+    next_review: '2026-03-28',
+    attendees: [
+      { name:'Sankar M',  role:'Supply Chain Director', status:'confirmed' },
+      { name:'Vikrant H', role:'SC Technology',         status:'confirmed' },
+      { name:'Rahul P',   role:'Commercial Director',   status:'pending'   },
+      { name:'Priya S',   role:'Finance Controller',    status:'confirmed' },
+    ]
+  })
+})
+
+// ── UI PAGES ─────────────────────────────────────────────────
+
+// ── Control Tower Dashboard ───────────────────────────────────
+app.get('/control-tower', async (c) => {
+  const _u = getUser(c)
+  const scripts = `
+async function initControlTower() {
+  const [pulseRes, exceptRes, flowRes] = await Promise.allSettled([
+    axios.get('/api/control-tower/pulse'),
+    axios.get('/api/control-tower/exceptions'),
+    axios.get('/api/control-tower/flow'),
+  ]);
+  const pulse = pulseRes.status==='fulfilled' ? pulseRes.value.data : null;
+  const exceptions = exceptRes.status==='fulfilled' ? exceptRes.value.data : [];
+  const flow = flowRes.status==='fulfilled' ? flowRes.value.data : { supply_chain_flow:[] };
+
+  if (pulse) {
+    document.getElementById('ct-output').textContent = pulse.kpis.total_output.toLocaleString();
+    document.getElementById('ct-adherence').textContent = pulse.kpis.plan_adherence + '%';
+    document.getElementById('ct-otd').textContent = pulse.kpis.otd + '%';
+    document.getElementById('ct-service').textContent = pulse.kpis.service_level + '%';
+    document.getElementById('ct-inventory').textContent = (pulse.kpis.total_inventory/1000).toFixed(1)+'K cs';
+    document.getElementById('ct-exceptions').textContent = pulse.kpis.open_exceptions;
+
+    // Node map
+    const nodeGrid = document.getElementById('ct-nodes');
+    nodeGrid.innerHTML = '';
+    pulse.nodes.forEach(n => {
+      const sc = n.status==='critical'?'#DC2626':n.status==='warning'?'#D97706':'#059669';
+      const metric = n.type==='plant' ? n.util+'% util' : n.fill+'% fill';
+      const icon = n.type==='plant' ? 'fa-industry' : 'fa-warehouse';
+      nodeGrid.innerHTML += '<div class="ct-node '+n.status+'" onclick="showNodeDetail(\''+n.id+'\')">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
+        '<i class="fas '+icon+'" style="color:'+sc+';font-size:16px"></i>' +
+        '<span class="badge badge-'+n.status+'" style="font-size:9px">'+n.status.toUpperCase()+'</span>' +
+        '</div>' +
+        '<div style="font-size:12px;font-weight:600;color:#1E293B;margin-bottom:2px">'+n.label+'</div>' +
+        '<div style="font-size:13px;font-weight:800;color:'+sc+'">'+metric+'</div>' +
+        '</div>';
+    });
+
+    // Lane table
+    const lanesTbl = document.getElementById('ct-lanes');
+    if (lanesTbl) {
+      lanesTbl.innerHTML = pulse.lanes.map(l => {
+        const sc = l.status==='critical'?'#DC2626':l.status==='warning'?'#D97706':'#059669';
+        return '<tr><td><strong>'+l.from+'</strong> → <strong>'+l.to+'</strong></td>' +
+          '<td>'+l.vol.toLocaleString()+' cs</td>' +
+          '<td style="font-weight:700;color:'+sc+'">'+l.otd+'%</td>' +
+          '<td><span class="badge badge-'+l.status+'">'+l.status+'</span></td>' +
+          '<td><button class="btn btn-sm btn-secondary" onclick="optimizeLane(\''+l.from+'\',\''+l.to+'\')"><i class="fas fa-route"></i> Optimize</button></td></tr>';
+      }).join('');
+    }
+  }
+
+  // Exceptions
+  const exList = document.getElementById('ct-exceptions-list');
+  if (exList) {
+    exList.innerHTML = exceptions.slice(0,6).map(e => {
+      const sc = e.severity==='critical'?'critical':e.severity==='high'?'critical':'warning';
+      const icon = e.severity==='critical'?'fa-times-circle':e.severity==='high'?'fa-exclamation-triangle':'fa-info-circle';
+      return '<div class="alert alert-'+sc+'" style="margin-bottom:10px">' +
+        '<i class="fas '+icon+'"></i>' +
+        '<div style="flex:1"><div style="font-weight:600;font-size:13px">'+e.title+'</div>' +
+        '<div style="font-size:12px;color:#64748B;margin-top:2px">'+e.detail+'</div>' +
+        '<div style="margin-top:8px;display:flex;gap:8px">' +
+        '<button class="btn btn-sm btn-primary" onclick="resolveException(\''+e.id+'\')"><i class="fas fa-check"></i> '+e.action+'</button>' +
+        '<a href="/'+e.module.toLowerCase()+(e.module==='Production'?'':e.module==='Deployment'?'':'')+'" class="btn btn-sm btn-secondary"><i class="fas fa-external-link-alt"></i> Open Module</a>' +
+        '</div></div></div>';
+    }).join('');
+  }
+
+  // Supply chain flow
+  const flowEl = document.getElementById('sc-flow');
+  if (flowEl) {
+    flowEl.innerHTML = flow.supply_chain_flow.map((s,i) => {
+      const sc = s.score>=85?'#059669':s.score>=70?'#D97706':'#DC2626';
+      return '<div class="flow-step" style="text-align:center;flex:1">' +
+        '<div style="font-size:24px;font-weight:800;color:'+sc+'">'+s.score+'</div>' +
+        '<div style="font-size:11px;font-weight:600;color:#1E293B;margin:4px 0">'+s.stage+'</div>' +
+        '<div style="font-size:10px;color:#64748B">'+s.kpi+'</div>' +
+        '<div style="font-size:10px;font-weight:700;color:'+(s.delta.startsWith('+')&&!s.delta.includes('fill')?'#DC2626':'#059669')+'">'+s.delta+'</div>' +
+        (i < flow.supply_chain_flow.length-1 ? '<div style="position:absolute;right:-10px;top:50%;transform:translateY(-50%);font-size:16px;color:#CBD5E1">▶</div>' : '') +
+        '</div>';
+    }).join('');
+  }
+
+  // Health Trend Chart
+  const ctx = document.getElementById('ct-health-chart');
+  if (ctx) {
+    new Chart(ctx, {
+      type:'line',
+      data:{
+        labels:['Oct','Nov','Dec','Jan','Feb','Mar'],
+        datasets:[
+          { label:'Overall Health', data:[72,74,76,75,78,76], borderColor:'#2563EB', backgroundColor:'rgba(37,99,235,0.08)', fill:true, tension:0.4, borderWidth:2.5 },
+          { label:'Production',     data:[84,86,88,87,89,88], borderColor:'#7C3AED', fill:false, tension:0.4, borderWidth:2, borderDash:[4,4] },
+          { label:'Deployment',     data:[78,80,82,80,83,82], borderColor:'#0891B2', fill:false, tension:0.4, borderWidth:2, borderDash:[4,4] },
+        ]
+      },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ font:{size:11} }}}, scales:{ y:{ min:60, max:100, ticks:{ font:{size:10} }, grid:{ color:'#F1F5F9' }}, x:{ ticks:{ font:{size:10} }, grid:{ display:false }}}}
+    });
+  }
+
+  // Exception Trend
+  const ctx2 = document.getElementById('ct-exception-chart');
+  if (ctx2) {
+    new Chart(ctx2, {
+      type:'bar',
+      data:{
+        labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        datasets:[
+          { label:'Critical', data:[2,3,1,2,3,1,2], backgroundColor:'#DC2626' },
+          { label:'High',     data:[3,2,4,3,2,3,3], backgroundColor:'#D97706' },
+          { label:'Medium',   data:[4,3,2,4,3,2,2], backgroundColor:'#0891B2' },
+        ]
+      },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ font:{size:11} }}}, scales:{ x:{ stacked:true, ticks:{ font:{size:10} }, grid:{ display:false }}, y:{ stacked:true, ticks:{ font:{size:10} }, grid:{ color:'#F1F5F9' }}}}
+    });
+  }
+}
+
+function showNodeDetail(id) {
+  alert('Node: '+id+' — Detailed drill-down would open the respective module dashboard.');
+}
+function optimizeLane(from, to) {
+  if(confirm('Run AI optimization for '+from+'→'+to+' lane? This will analyze carrier options, routes and cost.')) {
+    alert('✓ Optimization queued for '+from+'→'+to+'. Results will be ready in ~30s. View in Deployment → Route Optimization.');
+  }
+}
+async function resolveException(id) {
+  try {
+    await axios.post('/api/control-tower/exceptions/'+id+'/resolve');
+  } catch(e) {}
+  const card = document.querySelector('[data-ex-id="'+id+'"]');
+  if(card) card.style.opacity='0.4';
+  alert('Exception '+id+' queued for resolution. Notification sent to responsible planner.');
+}
+document.addEventListener('DOMContentLoaded', initControlTower);
+  `.trim()
+  return c.html(<Layout user={_u} title="Control Tower" activeModule="home" scripts={scripts}>
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#0F172A,#1E3A8A)"><i class="fas fa-satellite-dish"></i></div>
+        <div>
+          <div class="page-title">Supply Chain Control Tower</div>
+          <div class="page-subtitle">Real-time network visibility · Exception management · Cross-module intelligence · Decision hub</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <span class="badge badge-live">LIVE</span>
+        <a href="/network-map" class="btn btn-secondary"><i class="fas fa-project-diagram"></i> Network Map</a>
+        <a href="/scenario-lab" class="btn btn-secondary"><i class="fas fa-flask"></i> Scenario Lab</a>
+        <button class="btn btn-primary" onclick="location.reload()"><i class="fas fa-sync-alt"></i> Refresh</button>
+      </div>
+    </div>
+
+    {/* Top KPI Strip */}
+    <div class="kpi-grid" style="grid-template-columns:repeat(6,1fr);margin-bottom:20px">
+      <div class="kpi-card healthy">
+        <div class="kpi-label"><i class="fas fa-boxes"></i> Total Output</div>
+        <div class="kpi-value" id="ct-output">—</div>
+        <div class="kpi-meta"><span class="kpi-target">Target 155K cs</span><span class="kpi-trend up">▲ 2.1%</span></div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label"><i class="fas fa-calendar-check"></i> Plan Adherence</div>
+        <div class="kpi-value" id="ct-adherence">—</div>
+        <div class="kpi-meta"><span class="kpi-target">Target 95%</span><span class="kpi-trend down">▼ 0.4%</span></div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label"><i class="fas fa-truck"></i> On-Time Delivery</div>
+        <div class="kpi-value" id="ct-otd">—</div>
+        <div class="kpi-meta"><span class="kpi-target">Target 95%</span><span class="kpi-trend down">▼ 1.1%</span></div>
+      </div>
+      <div class="kpi-card healthy">
+        <div class="kpi-label"><i class="fas fa-star"></i> Service Level</div>
+        <div class="kpi-value" id="ct-service">—</div>
+        <div class="kpi-meta"><span class="kpi-target">Target 98%</span><span class="kpi-trend up">▲ 0.3%</span></div>
+      </div>
+      <div class="kpi-card info">
+        <div class="kpi-label"><i class="fas fa-warehouse"></i> Network Inventory</div>
+        <div class="kpi-value" id="ct-inventory">—</div>
+        <div class="kpi-meta"><span class="kpi-target">Optimal: 580K cs</span><span class="kpi-trend up">▲ 4.8%</span></div>
+      </div>
+      <div class="kpi-card critical">
+        <div class="kpi-label"><i class="fas fa-exclamation-triangle"></i> Open Exceptions</div>
+        <div class="kpi-value critical" id="ct-exceptions">—</div>
+        <div class="kpi-meta"><span class="kpi-target">Target: 0</span><a href="/exceptions" style="font-size:11px;color:#2563EB">View all →</a></div>
+      </div>
+    </div>
+
+    {/* Supply Chain Flow */}
+    <div class="card mb-4" style="margin-bottom:20px">
+      <div class="card-header">
+        <span class="card-title"><i class="fas fa-stream"></i> End-to-End Supply Chain Health Flow</span>
+        <span style="font-size:12px;color:#64748B">Live health scores across planning stages</span>
+      </div>
+      <div class="card-body">
+        <div id="sc-flow" style="display:flex;align-items:center;gap:8px;position:relative;padding:10px 0"></div>
+      </div>
+    </div>
+
+    {/* Network Nodes + Exceptions */}
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="fas fa-map-marker-alt"></i> Network Node Status</span>
+          <a href="/network-map" class="btn btn-sm btn-secondary"><i class="fas fa-expand-alt"></i> Full Map</a>
+        </div>
+        <div class="card-body" style="padding:12px">
+          <div id="ct-nodes" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="fas fa-bell"></i> Active Exceptions — Requires Action</span>
+          <a href="/exceptions" class="btn btn-sm btn-secondary">View All</a>
+        </div>
+        <div class="card-body compact" style="max-height:320px;overflow-y:auto">
+          <div id="ct-exceptions-list"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+
+    {/* Charts Row */}
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-heartbeat"></i> Overall Health Trend — 6 Months</span></div>
+        <div class="card-body" style="height:220px"><canvas id="ct-health-chart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> Exception Volume — Last 7 Days</span></div>
+        <div class="card-body" style="height:220px"><canvas id="ct-exception-chart"></canvas></div>
+      </div>
+    </div>
+
+    {/* Logistics Lanes */}
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-header">
+        <span class="card-title"><i class="fas fa-route"></i> Active Logistics Lanes</span>
+        <a href="/deployment/routes" class="btn btn-sm btn-primary"><i class="fas fa-sliders-h"></i> Optimize All</a>
+      </div>
+      <div class="card-body compact">
+        <table class="data-table">
+          <thead><tr><th>Lane</th><th>Volume</th><th>OTD %</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="ct-lanes"><tr><td colspan={5} style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    {/* Quick Links */}
+    <div class="grid-3">
+      <a href="/production" class="card" style="text-decoration:none;padding:16px;display:flex;align-items:center;gap:14px;transition:box-shadow 0.2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow=''">
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#7C3AED,#8B5CF6);border-radius:10px;display:flex;align-items:center;justify-content:center"><i class="fas fa-cogs" style="color:white;font-size:18px"></i></div>
+        <div><div style="font-weight:600;font-size:13px">Production Planning</div><div style="font-size:11px;color:#64748B">MPS · ATP · RCCP · Workbench</div></div>
+      </a>
+      <a href="/deployment" class="card" style="text-decoration:none;padding:16px;display:flex;align-items:center;gap:14px;transition:box-shadow 0.2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow=''">
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#0891B2,#22D3EE);border-radius:10px;display:flex;align-items:center;justify-content:center"><i class="fas fa-truck" style="color:white;font-size:18px"></i></div>
+        <div><div style="font-weight:600;font-size:13px">Deployment Planning</div><div style="font-size:11px;color:#64748B">Routes · Load · Carriers · Dispatch</div></div>
+      </a>
+      <a href="/inventory" class="card" style="text-decoration:none;padding:16px;display:flex;align-items:center;gap:14px;transition:box-shadow 0.2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow=''">
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#059669,#10B981);border-radius:10px;display:flex;align-items:center;justify-content:center"><i class="fas fa-warehouse" style="color:white;font-size:18px"></i></div>
+        <div><div style="font-weight:600;font-size:13px">Inventory Planning</div><div style="font-size:11px;color:#64748B">Stock · Safety Stock · Replenishment</div></div>
+      </a>
+    </div>
+  </Layout>)
+})
+
+// ── Supply Chain Network Map ──────────────────────────────────
+app.get('/network-map', async (c) => {
+  const _u = getUser(c)
+  const scripts = `
+async function initNetworkMap() {
+  const [graphRes, pulseRes] = await Promise.allSettled([
+    axios.get('/api/network/graph'),
+    axios.get('/api/control-tower/pulse'),
+  ]);
+  const graph = graphRes.status==='fulfilled' ? graphRes.value.data : { nodes:[], edges:[] };
+  const pulse = pulseRes.status==='fulfilled' ? pulseRes.value.data : {};
+
+  // Node legend stats
+  document.getElementById('nm-plants').textContent   = graph.nodes.filter(n=>n.type==='plant').length;
+  document.getElementById('nm-warehouses').textContent = graph.nodes.filter(n=>n.type==='warehouse').length;
+  document.getElementById('nm-suppliers').textContent = graph.nodes.filter(n=>n.type==='supplier').length;
+  document.getElementById('nm-markets').textContent   = graph.nodes.filter(n=>n.type==='market').length;
+
+  // Build node list table
+  const nodesTbl = document.getElementById('nm-nodes-table');
+  if (nodesTbl) {
+    nodesTbl.innerHTML = graph.nodes.map(n => {
+      const typeColor = n.type==='plant'?'#7C3AED':n.type==='warehouse'?'#059669':n.type==='supplier'?'#D97706':'#0891B2';
+      const typeIcon  = n.type==='plant'?'fa-industry':n.type==='warehouse'?'fa-warehouse':n.type==='supplier'?'fa-handshake':'fa-store';
+      const metric = n.type==='plant' ? n.util+'% util' : n.type==='warehouse' ? n.fill+'% fill' : n.type==='supplier' ? '₹'+n.spend_cr+'Cr' : n.demand?.toLocaleString()+' cs';
+      const status = n.type==='plant'?(n.util>90?'critical':n.util>80?'warning':'healthy'):n.type==='warehouse'?(n.fill>88?'critical':n.fill>75?'warning':'healthy'):n.risk||'healthy';
+      return '<tr onclick="selectNode(\''+n.id+'\')" style="cursor:pointer">' +
+        '<td><i class="fas '+typeIcon+'" style="color:'+typeColor+'"></i></td>' +
+        '<td><strong>'+n.label+'</strong><br/><span style="font-size:11px;color:#64748B">'+n.id+'</span></td>' +
+        '<td><span class="badge badge-neutral" style="font-size:10px;text-transform:capitalize">'+n.type+'</span></td>' +
+        '<td style="font-weight:700">'+(metric||'—')+'</td>' +
+        '<td><span class="badge badge-'+status+'" style="font-size:10px">'+status+'</span></td>' +
+        '<td><button class="btn btn-sm btn-secondary" onclick="drillDown(\''+n.id+'\',\''+n.type+'\')"><i class="fas fa-search"></i></button></td></tr>';
+    }).join('');
+  }
+
+  // Build edge table
+  const edgesTbl = document.getElementById('nm-edges-table');
+  if (edgesTbl) {
+    edgesTbl.innerHTML = graph.edges.map(e => {
+      const sc = e.status==='critical'?'#DC2626':e.status==='warning'?'#D97706':'#059669';
+      const metric = e.otd ? e.otd+'% OTD' : e.util ? e.util+'% util' : '—';
+      return '<tr><td><strong>'+e.from+'</strong></td><td style="color:#94A3B8">→</td><td><strong>'+e.to+'</strong></td>' +
+        '<td><span class="badge badge-neutral" style="font-size:10px">'+e.type+'</span></td>' +
+        '<td>'+(e.vol||0).toLocaleString()+' cs</td>' +
+        '<td style="font-weight:700;color:'+sc+'">'+metric+'</td>' +
+        '<td><span class="badge badge-'+e.status+'">'+e.status+'</span></td>' +
+        '<td><button class="btn btn-sm btn-secondary" onclick="optimizeEdge(\''+e.from+'\',\''+e.to+'\')"><i class="fas fa-magic"></i></button></td></tr>';
+    }).join('');
+  }
+
+  // Flow volume chart
+  const ctx = document.getElementById('nm-flow-chart');
+  if (ctx) {
+    const nodeTypes = ['Supplier→Plant','Plant→DC','DC→Market','Inter-DC Transfer'];
+    const vols = [44000, 150200, 163000, 19400];
+    new Chart(ctx, {
+      type:'bar',
+      data:{
+        labels:nodeTypes,
+        datasets:[{ label:'Volume (cases/week)', data:vols, backgroundColor:['#D97706','#7C3AED','#0891B2','#059669'], borderRadius:6 }]
+      },
+      options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false }}, scales:{ x:{ ticks:{ font:{size:10} }, grid:{ color:'#F1F5F9' }}, y:{ ticks:{ font:{size:10} }, grid:{ display:false }}}}
+    });
+  }
+
+  // Risk by node type
+  const ctx2 = document.getElementById('nm-risk-chart');
+  if (ctx2) {
+    new Chart(ctx2, {
+      type:'doughnut',
+      data:{
+        labels:['Healthy','Warning','Critical'],
+        datasets:[{ data:[8,5,3], backgroundColor:['#059669','#D97706','#DC2626'], borderWidth:2 }]
+      },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ font:{size:11} }}}}
+    });
+  }
+}
+
+function selectNode(id) {
+  const rows = document.querySelectorAll('#nm-nodes-table tr');
+  rows.forEach(r => r.style.background = r.textContent.includes(id) ? '#EFF6FF' : '');
+  alert('Selected: '+id+' — Click Drill-Down to open the node detail panel.');
+}
+function drillDown(id, type) {
+  const urlMap = { plant:'/production', warehouse:'/inventory', supplier:'/procurement', market:'/deployment' };
+  if(confirm('Open '+type+' detail for '+id+'?')) location.href = urlMap[type]||'/';
+}
+function optimizeEdge(from, to) {
+  alert('Optimization analysis started for '+from+'→'+to+' lane.\\nResult: Switching to milk-run via hub saves ₹2.4L/month and improves OTD by +3.8%.\\n\\nApply change? This would update deployment routes.');
+}
+async function runNetworkOptimization() {
+  document.getElementById('nm-opt-btn').textContent = 'Running...';
+  document.getElementById('nm-opt-btn').disabled = true;
+  try {
+    const r = await axios.post('/api/optimization/network');
+    const d = r.data;
+    document.getElementById('nm-opt-result').style.display = 'block';
+    document.getElementById('nm-opt-cost').textContent = d.improvements.cost_reduction_pct+'%';
+    document.getElementById('nm-opt-otd').textContent  = '+'+d.improvements.otd_improvement_pct+'%';
+    document.getElementById('nm-opt-save').textContent = '₹'+d.improvements.savings_inr_lakh+'L';
+    document.getElementById('nm-opt-time').textContent = d.run_time_ms+'ms';
+    document.getElementById('nm-opt-actions').innerHTML = d.reallocation.map(r =>
+      '<div class="alert alert-success" style="margin-bottom:8px"><i class="fas fa-arrow-right"></i><div><strong>'+r.sku+'</strong>: Move '+r.cases.toLocaleString()+' cases '+r.from+'→'+r.to+'<br/><span style="font-size:12px;color:#64748B">'+r.reason+'</span></div></div>'
+    ).join('');
+  } catch(e) {
+    alert('Optimization failed: '+e.message);
+  } finally {
+    document.getElementById('nm-opt-btn').textContent = 'Run Network Optimizer';
+    document.getElementById('nm-opt-btn').disabled = false;
+  }
+}
+document.addEventListener('DOMContentLoaded', initNetworkMap);
+  `.trim()
+  return c.html(<Layout user={_u} title="Supply Chain Network Map" activeModule="home" scripts={scripts}>
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#1E3A8A,#3B82F6)"><i class="fas fa-project-diagram"></i></div>
+        <div>
+          <div class="page-title">Supply Chain Network Map</div>
+          <div class="page-subtitle">End-to-end network topology · Node health · Flow volumes · Optimization opportunities</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <button id="nm-opt-btn" class="btn btn-primary" onclick="runNetworkOptimization()"><i class="fas fa-magic"></i> Run Network Optimizer</button>
+        <a href="/control-tower" class="btn btn-secondary"><i class="fas fa-satellite-dish"></i> Control Tower</a>
+      </div>
+    </div>
+
+    {/* Optimization Result Panel */}
+    <div id="nm-opt-result" style="display:none;margin-bottom:20px;border-left:4px solid #059669" class="card">
+      <div class="card-body">
+        <div style="font-weight:700;color:#059669;margin-bottom:10px"><i class="fas fa-check-circle"></i> Network Optimization Complete</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:12px">
+          <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#059669" id="nm-opt-cost">—</div><div style="font-size:11px;color:#64748B">Cost Reduction</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#2563EB" id="nm-opt-otd">—</div><div style="font-size:11px;color:#64748B">OTD Improvement</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#059669" id="nm-opt-save">—</div><div style="font-size:11px;color:#64748B">Monthly Savings</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#64748B" id="nm-opt-time">—</div><div style="font-size:11px;color:#64748B">Solve Time</div></div>
+        </div>
+        <div id="nm-opt-actions"></div>
+      </div>
+    </div>
+
+    {/* Node Summary */}
+    <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+      <div class="kpi-card info"><div class="kpi-label"><i class="fas fa-industry"></i> Plants</div><div class="kpi-value" id="nm-plants">—</div><div class="kpi-meta"><span class="kpi-target">4 active plants</span></div></div>
+      <div class="kpi-card info"><div class="kpi-label"><i class="fas fa-warehouse"></i> Warehouses / DCs</div><div class="kpi-value" id="nm-warehouses">—</div><div class="kpi-meta"><span class="kpi-target">Pan-India network</span></div></div>
+      <div class="kpi-card warning"><div class="kpi-label"><i class="fas fa-handshake"></i> Suppliers</div><div class="kpi-value" id="nm-suppliers">—</div><div class="kpi-meta"><span class="kpi-target">Tier 1 & Tier 2</span></div></div>
+      <div class="kpi-card healthy"><div class="kpi-label"><i class="fas fa-store"></i> Markets</div><div class="kpi-value" id="nm-markets">—</div><div class="kpi-meta"><span class="kpi-target">W/N/S/E zones</span></div></div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> Flow Volume by Tier (cases/week)</span></div>
+        <div class="card-body" style="height:220px"><canvas id="nm-flow-chart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-shield-alt"></i> Node Risk Distribution</span></div>
+        <div class="card-body" style="height:220px"><canvas id="nm-risk-chart"></canvas></div>
+      </div>
+    </div>
+
+    {/* Node Table */}
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-header"><span class="card-title"><i class="fas fa-map-marker-alt"></i> Network Nodes</span><span style="font-size:12px;color:#64748B">Click row to highlight · Drill-down to open module</span></div>
+      <div class="card-body compact">
+        <table class="data-table">
+          <thead><tr><th>Type</th><th>Node</th><th>Category</th><th>Key Metric</th><th>Status</th><th>Detail</th></tr></thead>
+          <tbody id="nm-nodes-table"><tr><td colspan={6} style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    {/* Edge Table */}
+    <div class="card">
+      <div class="card-header"><span class="card-title"><i class="fas fa-route"></i> Network Edges (Lanes)</span></div>
+      <div class="card-body compact">
+        <table class="data-table">
+          <thead><tr><th>From</th><th></th><th>To</th><th>Type</th><th>Volume</th><th>Performance</th><th>Status</th><th>Optimize</th></tr></thead>
+          <tbody id="nm-edges-table"><tr><td colspan={8} style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </Layout>)
+})
+
+// ── Scenario Simulation Lab ───────────────────────────────────
+app.get('/scenario-lab', async (c) => {
+  const _u = getUser(c)
+  const scripts = `
+async function initScenarioLab() {
+  const res = await axios.get('/api/scenario-lab/scenarios').catch(() => ({ data:[] }));
+  const scenarios = res.data;
+  renderScenarios(scenarios);
+}
+
+function renderScenarios(scenarios) {
+  const grid = document.getElementById('scenario-grid');
+  if (!grid) return;
+  const typeColors = { demand:'#2563EB', disruption:'#DC2626', promotion:'#7C3AED', new_sku:'#059669' };
+  const typeIcons  = { demand:'fa-chart-line', disruption:'fa-exclamation-triangle', promotion:'fa-tag', new_sku:'fa-plus-circle' };
+  grid.innerHTML = scenarios.map(s => {
+    const sc = s.risk==='critical'?'critical':s.risk==='high'?'critical':s.risk==='medium'?'warning':'success';
+    const col = typeColors[s.type]||'#64748B';
+    const ico = typeIcons[s.type]||'fa-layer-group';
+    return '<div class="card scenario-card" style="border-top:3px solid '+col+'">' +
+      '<div class="card-body">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">' +
+      '<div style="font-weight:700;font-size:14px">'+s.name+'</div>' +
+      '<span class="badge badge-'+sc+'">'+s.risk+' risk</span>' +
+      '</div>' +
+      '<div style="display:flex;gap:8px;margin-bottom:12px">' +
+      '<span class="badge badge-neutral"><i class="fas '+ico+'"></i> '+s.type.replace(/_/g,' ')+'</span>' +
+      '<span class="badge badge-neutral">'+s.status+'</span>' +
+      '</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;font-size:12px">' +
+      '<div style="background:#F8FAFC;padding:8px;border-radius:6px"><div style="color:#64748B">OTD Δ</div><div style="font-weight:700;color:'+(s.delta_otd<0?'#DC2626':'#059669')+'">'+s.delta_otd+'%</div></div>' +
+      '<div style="background:#F8FAFC;padding:8px;border-radius:6px"><div style="color:#64748B">Cost Δ</div><div style="font-weight:700;color:'+(s.delta_cost>0?'#DC2626':'#059669')+'">+'+s.delta_cost+'%</div></div>' +
+      '<div style="background:#F8FAFC;padding:8px;border-radius:6px"><div style="color:#64748B">Fill Rate Δ</div><div style="font-weight:700;color:'+(s.delta_fill<0?'#DC2626':'#059669')+'">'+s.delta_fill+'%</div></div>' +
+      '<div style="background:#F8FAFC;padding:8px;border-radius:6px"><div style="color:#64748B">Util Δ</div><div style="font-weight:700;color:'+(s.delta_util>0?'#D97706':'#059669')+'">+'+s.delta_util+'%</div></div>' +
+      '</div>' +
+      '<div style="font-size:11px;color:#64748B;margin-bottom:12px">By '+s.created_by+' · '+(s.created_at||'').substring(0,10)+'</div>' +
+      '<div style="display:flex;gap:8px">' +
+      '<button class="btn btn-sm btn-primary" onclick="openScenario(\''+s.id+'\')"><i class="fas fa-play"></i> Simulate</button>' +
+      '<button class="btn btn-sm btn-secondary" onclick="compareScenario(\''+s.id+'\')"><i class="fas fa-balance-scale"></i> Compare</button>' +
+      '<button class="btn btn-sm btn-secondary" onclick="approveScenario(\''+s.id+'\',\''+s.name+'\')"><i class="fas fa-check"></i> Approve</button>' +
+      '</div></div></div>';
+  }).join('');
+}
+
+async function runNewScenario() {
+  const name = document.getElementById('scn-name').value || 'New Scenario';
+  const type = document.getElementById('scn-type').value;
+  const mag  = document.getElementById('scn-magnitude').value;
+  const btn  = document.getElementById('run-btn');
+  btn.textContent = 'Simulating...';
+  btn.disabled = true;
+  try {
+    const r = await axios.post('/api/scenario-lab/run', { name, type, magnitude:mag });
+    const d = r.data;
+    document.getElementById('sim-result').style.display = 'block';
+    document.getElementById('sim-name').textContent   = d.name;
+    document.getElementById('sim-solver').textContent = d.solver + ' · ' + d.run_time_ms + 'ms';
+    document.getElementById('sim-otd-base').textContent  = d.baseline.otd + '%';
+    document.getElementById('sim-otd-opt').textContent   = d.optimized.otd + '%';
+    document.getElementById('sim-fill-base').textContent = d.baseline.fill + '%';
+    document.getElementById('sim-fill-opt').textContent  = d.optimized.fill + '%';
+    document.getElementById('sim-cost-base').textContent = '₹' + d.baseline.cost;
+    document.getElementById('sim-cost-opt').textContent  = '₹' + d.optimized.cost;
+    document.getElementById('sim-util-base').textContent = d.baseline.util + '%';
+    document.getElementById('sim-util-opt').textContent  = d.optimized.util + '%';
+    document.getElementById('sim-recs').innerHTML = d.recommendations.map(r =>
+      '<div class="alert alert-info" style="margin-bottom:6px;padding:8px 12px;font-size:12px"><i class="fas fa-lightbulb"></i><span>'+r+'</span></div>'
+    ).join('');
+    // Week schedule chart
+    const ctx = document.getElementById('sim-chart');
+    if (ctx) {
+      if (ctx._chart) ctx._chart.destroy();
+      ctx._chart = new Chart(ctx, {
+        type:'bar',
+        data:{
+          labels: d.week_schedule.map(w=>w.week),
+          datasets:[
+            { label:'Output (cases)', data:d.week_schedule.map(w=>w.output), backgroundColor:'rgba(37,99,235,0.7)', borderRadius:4, yAxisID:'y' },
+            { label:'Utilization %',  data:d.week_schedule.map(w=>w.util),   type:'line', borderColor:'#DC2626', fill:false, tension:0.4, yAxisID:'y2' },
+          ]
+        },
+        options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ font:{size:11} }}},
+          scales:{ y:{ position:'left', ticks:{ font:{size:10} }, grid:{ color:'#F1F5F9' }}, y2:{ position:'right', min:60, max:100, ticks:{ font:{size:10} }, grid:{ display:false }}, x:{ ticks:{ font:{size:10} }, grid:{ display:false }}}}
+      });
+    }
+  } catch(e) {
+    alert('Simulation error: '+e.message);
+  } finally {
+    btn.textContent = 'Run Simulation';
+    btn.disabled = false;
+  }
+}
+
+function openScenario(id) {
+  document.getElementById('scn-name').value = 'Scenario ' + id;
+  document.getElementById('run-btn').click();
+}
+function compareScenario(id) {
+  alert('Compare mode: Select a second scenario to compare KPI impact side-by-side. Comparison chart will appear below the grid.');
+}
+function approveScenario(id, name) {
+  if(confirm('Approve scenario "'+name+'" and push to production plan?')) {
+    alert('✓ Scenario "'+name+'" approved and pushed to active production plan.\\nAll downstream modules (MRP, Procurement, Deployment) will be notified.');
+  }
+}
+document.addEventListener('DOMContentLoaded', initScenarioLab);
+  `.trim()
+  return c.html(<Layout user={_u} title="Scenario Simulation Lab" activeModule="home" scripts={scripts}>
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-flask"></i></div>
+        <div>
+          <div class="page-title">Scenario Simulation Lab</div>
+          <div class="page-subtitle">What-if analysis · Demand surges · Disruption planning · Promotion simulation · Multi-scenario comparison</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <a href="/control-tower" class="btn btn-secondary"><i class="fas fa-satellite-dish"></i> Control Tower</a>
+        <a href="/sop/scenarios" class="btn btn-secondary"><i class="fas fa-sitemap"></i> S&OP Scenarios</a>
+      </div>
+    </div>
+
+    {/* New Scenario Builder */}
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-header"><span class="card-title"><i class="fas fa-plus-circle"></i> New Scenario Simulation</span><span style="font-size:12px;color:#64748B">Configure and run a what-if simulation</span></div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:16px;align-items:flex-end">
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Scenario Name</label>
+            <input id="scn-name" class="form-input" placeholder="e.g. Summer Demand Surge 2026" />
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Type</label>
+            <select id="scn-type" class="form-input form-select">
+              <option value="demand">Demand Surge</option>
+              <option value="disruption">Plant Disruption</option>
+              <option value="promotion">Promotion Spike</option>
+              <option value="new_sku">New SKU Launch</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Magnitude (%)</label>
+            <input id="scn-magnitude" type="number" class="form-input" value="15" min="1" max="100" />
+          </div>
+          <button id="run-btn" class="btn btn-primary" onclick="runNewScenario()"><i class="fas fa-play"></i> Run Simulation</button>
+        </div>
+      </div>
+    </div>
+
+    {/* Simulation Result */}
+    <div id="sim-result" style="display:none;margin-bottom:20px;border-left:4px solid #7C3AED" class="card">
+      <div class="card-header">
+        <span class="card-title"><i class="fas fa-chart-bar"></i> Simulation Result: <span id="sim-name"></span></span>
+        <span style="font-size:11px;color:#64748B" id="sim-solver"></span>
+      </div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px">
+          {[['OTD','sim-otd-base','sim-otd-opt'],['Fill Rate','sim-fill-base','sim-fill-opt'],['Cost/Case','sim-cost-base','sim-cost-opt'],['Utilization','sim-util-base','sim-util-opt']].map(([label,baseId,optId]) => (
+            <div style="background:#F8FAFC;padding:12px;border-radius:8px">
+              <div style="font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;margin-bottom:6px">{label}</div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:14px;color:#94A3B8" id={baseId}>—</span>
+                <span style="color:#CBD5E1">→</span>
+                <span style="font-size:18px;font-weight:800;color:#1E293B" id={optId}>—</span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div style="height:200px;margin-bottom:16px"><canvas id="sim-chart"></canvas></div>
+        <div id="sim-recs"></div>
+      </div>
+    </div>
+
+    {/* Saved Scenarios */}
+    <div style="font-size:15px;font-weight:700;color:#1E293B;margin-bottom:12px"><i class="fas fa-layer-group" style="color:#7C3AED"></i> Saved Scenarios</div>
+    <div id="scenario-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
+      <div style="text-align:center;padding:40px;color:#64748B"><div class="spinner"></div></div>
+    </div>
+  </Layout>)
+})
+
+// ── Demand Intelligence Dashboard ────────────────────────────
+app.get('/demand-intelligence', async (c) => {
+  const _u = getUser(c)
+  const scripts = `
+async function initDemandIntelligence() {
+  const res = await axios.get('/api/demand/intelligence').catch(() => ({ data:{} }));
+  const d = res.data;
+  if (!d.summary) return;
+
+  document.getElementById('di-accuracy').textContent = d.summary.forecast_accuracy + '%';
+  document.getElementById('di-mape').textContent     = d.summary.mape + '%';
+  document.getElementById('di-bias').textContent     = d.summary.bias + '%';
+  document.getElementById('di-sensing').textContent  = '+' + d.summary.demand_sensing_lift + '%';
+  document.getElementById('di-total').textContent    = (d.summary.total_demand/1000000).toFixed(2) + 'M cs';
+
+  // SKU table
+  const skuTbl = document.getElementById('di-sku-table');
+  if (skuTbl && d.by_sku) {
+    skuTbl.innerHTML = d.by_sku.map(s => {
+      const trend = s.trend==='up'?'↗ <span style=\\'color:#DC2626\\'>Rising</span>':s.trend==='down'?'↘ <span style=\\'color:#059669\\'>Falling</span>':'→ Stable';
+      const sc = s.accuracy>=95?'healthy':s.accuracy>=85?'warning':'critical';
+      return '<tr><td><strong>'+s.sku+'</strong></td>' +
+        '<td>'+s.p10.toLocaleString()+'</td>' +
+        '<td style="font-weight:700">'+s.p50.toLocaleString()+'</td>' +
+        '<td>'+s.p90.toLocaleString()+'</td>' +
+        '<td>'+(s.actual?s.actual.toLocaleString():'<span style=\\'color:#94A3B8\\'>Pending</span>')+'</td>' +
+        '<td><span class="badge badge-'+sc+'">'+s.accuracy+'%</span></td>' +
+        '<td>'+trend+'</td>' +
+        '<td><span class="badge badge-neutral" style="font-size:10px">'+s.seasonality.replace(/_/g,' ')+'</span></td></tr>';
+    }).join('');
+  }
+
+  // Forecast fan chart
+  const ctx = document.getElementById('di-fan-chart');
+  if (ctx && d.weekly_forecast) {
+    new Chart(ctx, {
+      type:'line',
+      data:{
+        labels: d.weekly_forecast.map(w=>w.week),
+        datasets:[
+          { label:'P90 Band', data:d.weekly_forecast.map(w=>w.p90), borderColor:'rgba(37,99,235,0.2)', backgroundColor:'rgba(37,99,235,0.08)', fill:'+1', tension:0.4, borderDash:[3,3], pointRadius:0 },
+          { label:'P50 (Forecast)', data:d.weekly_forecast.map(w=>w.p50), borderColor:'#2563EB', backgroundColor:'rgba(37,99,235,0.1)', fill:false, tension:0.4, borderWidth:2.5 },
+          { label:'P10 Band', data:d.weekly_forecast.map(w=>w.p10), borderColor:'rgba(37,99,235,0.2)', fill:false, tension:0.4, borderDash:[3,3], pointRadius:0 },
+          { label:'Actual', data:d.weekly_forecast.map(w=>w.actual), borderColor:'#059669', fill:false, tension:0.3, borderWidth:2.5, pointRadius:4, spanGaps:false },
+        ]
+      },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ font:{size:11} }}}, scales:{ y:{ ticks:{ font:{size:10}, callback:v=>v.toLocaleString() }, grid:{ color:'#F1F5F9' }}, x:{ ticks:{ font:{size:10} }, grid:{ display:false }}}}
+    });
+  }
+
+  // Demand drivers
+  const ctx2 = document.getElementById('di-drivers-chart');
+  if (ctx2 && d.drivers) {
+    new Chart(ctx2, {
+      type:'bar',
+      data:{
+        labels: d.drivers.map(dr=>dr.driver),
+        datasets:[{ label:'Demand Impact %', data:d.drivers.map(dr=>dr.impact_pct), backgroundColor:d.drivers.map(dr=>dr.impact_pct>0?'rgba(5,150,105,0.8)':'rgba(220,38,38,0.8)'), borderRadius:4 }]
+      },
+      options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false }}, scales:{ x:{ ticks:{ font:{size:10} }, grid:{ color:'#F1F5F9' }}, y:{ ticks:{ font:{size:10} }, grid:{ display:false }}}}
+    });
+  }
+}
+document.addEventListener('DOMContentLoaded', initDemandIntelligence);
+  `.trim()
+  return c.html(<Layout user={_u} title="Demand Intelligence" activeModule="sop-demand" scripts={scripts}>
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#2563EB,#60A5FA)"><i class="fas fa-brain"></i></div>
+        <div>
+          <div class="page-title">Demand Intelligence Dashboard</div>
+          <div class="page-subtitle">Statistical forecasting · Demand sensing · P10/P50/P90 bands · Driver analysis · Accuracy tracking</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <a href="/sop/demand-review" class="btn btn-secondary"><i class="fas fa-chart-line"></i> Demand Review</a>
+        <a href="/scenario-lab" class="btn btn-secondary"><i class="fas fa-flask"></i> Scenario Lab</a>
+        <button class="btn btn-primary" onclick="location.href='/api/export/demand'"><i class="fas fa-download"></i> Export</button>
+      </div>
+    </div>
+
+    <div class="kpi-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:20px">
+      <div class="kpi-card healthy"><div class="kpi-label"><i class="fas fa-bullseye"></i> Forecast Accuracy</div><div class="kpi-value healthy" id="di-accuracy">—</div><div class="kpi-meta"><span class="kpi-target">Target 90%</span><span class="kpi-trend up">▲ 1.2%</span></div></div>
+      <div class="kpi-card warning"><div class="kpi-label"><i class="fas fa-percentage"></i> MAPE</div><div class="kpi-value warning" id="di-mape">—</div><div class="kpi-meta"><span class="kpi-target">Target &lt;5%</span><span class="kpi-trend down">▼ 0.3%</span></div></div>
+      <div class="kpi-card info"><div class="kpi-label"><i class="fas fa-balance-scale"></i> Forecast Bias</div><div class="kpi-value" id="di-bias">—</div><div class="kpi-meta"><span class="kpi-target">Target ±2%</span></div></div>
+      <div class="kpi-card healthy"><div class="kpi-label"><i class="fas fa-bolt"></i> Sensing Lift</div><div class="kpi-value healthy" id="di-sensing">—</div><div class="kpi-meta"><span class="kpi-target">vs statistical</span></div></div>
+      <div class="kpi-card info"><div class="kpi-label"><i class="fas fa-chart-line"></i> Total Demand (12W)</div><div class="kpi-value" id="di-total">—</div><div class="kpi-meta"><span class="kpi-target">Mar–Jun 2026</span></div></div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-area"></i> Demand Forecast Fan Chart — P10/P50/P90</span></div>
+        <div class="card-body" style="height:260px"><canvas id="di-fan-chart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-filter"></i> Key Demand Drivers</span></div>
+        <div class="card-body" style="height:260px"><canvas id="di-drivers-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><i class="fas fa-table"></i> SKU-Level Forecast Intelligence</span>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-sm btn-secondary" onclick="location.href='/api/export/demand'"><i class="fas fa-download"></i> Export</button>
+          <a href="/sop/demand-review" class="btn btn-sm btn-primary"><i class="fas fa-external-link-alt"></i> Full Review</a>
+        </div>
+      </div>
+      <div class="card-body compact">
+        <table class="data-table">
+          <thead><tr><th>SKU</th><th>P10</th><th>P50 (Plan)</th><th>P90</th><th>Actual</th><th>Accuracy</th><th>Trend</th><th>Seasonality</th></tr></thead>
+          <tbody id="di-sku-table"><tr><td colspan={8} style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </Layout>)
+})
+
+// ── Planner Workbench (unified) ───────────────────────────────
+app.get('/planner-workbench', async (c) => {
+  const _u = getUser(c)
+  const scripts = `
+async function initPlannerWorkbench() {
+  // Load multiple data sources in parallel
+  const [prodKpis, depKpis, invKpis, exceptions] = await Promise.allSettled([
+    axios.get('/api/production/kpis'),
+    axios.get('/api/deployment/kpis'),
+    axios.get('/api/inventory/kpis'),
+    axios.get('/api/control-tower/exceptions'),
+  ]);
+
+  const prod = prodKpis.status==='fulfilled' ? prodKpis.value.data : [];
+  const dep  = depKpis.status==='fulfilled'  ? depKpis.value.data : [];
+  const inv  = invKpis.status==='fulfilled'  ? invKpis.value.data : [];
+  const exc  = exceptions.status==='fulfilled' ? exceptions.value.data : [];
+
+  // Production mini-KPIs
+  const prodGrid = document.getElementById('pw-prod-kpis');
+  if (prodGrid && prod.length) {
+    prodGrid.innerHTML = prod.slice(0,3).map(k => {
+      const sc = k.status==='critical'?'#DC2626':k.status==='warning'?'#D97706':'#059669';
+      return '<div style="text-align:center;padding:10px;background:#F8FAFC;border-radius:8px">' +
+        '<div style="font-size:16px;font-weight:800;color:'+sc+'">'+k.value+'</div>' +
+        '<div style="font-size:10px;color:#64748B;margin-top:2px">'+k.metric+'</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  // Deployment mini-KPIs
+  const depGrid = document.getElementById('pw-dep-kpis');
+  if (depGrid && dep.length) {
+    depGrid.innerHTML = dep.slice(0,3).map(k => {
+      const sc = k.status==='critical'?'#DC2626':k.status==='warning'?'#D97706':'#059669';
+      return '<div style="text-align:center;padding:10px;background:#F8FAFC;border-radius:8px">' +
+        '<div style="font-size:16px;font-weight:800;color:'+sc+'">'+k.value+'</div>' +
+        '<div style="font-size:10px;color:#64748B;margin-top:2px">'+k.metric+'</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  // Priority action items
+  const actionList = document.getElementById('pw-actions');
+  if (actionList) {
+    const actions = [
+      { priority:'P1', title:'Approve Mumbai Overtime — W1-W2', module:'Production', href:'/production/workbench', deadline:'Today' },
+      { priority:'P1', title:'Resolve Delhi DC Over-Fill', module:'Inventory', href:'/inventory/operations', deadline:'Today' },
+      { priority:'P2', title:'Approve PO-2024-0892 (Orange Conc.)', module:'MRP', href:'/mrp/purchase-orders', deadline:'Mar 18' },
+      { priority:'P2', title:'Switch Delhi→Lucknow Carrier', module:'Deployment', href:'/deployment/carriers', deadline:'Mar 18' },
+      { priority:'P3', title:'Review Mango 200ml Forecast Spike', module:'S&OP', href:'/demand-intelligence', deadline:'Mar 20' },
+    ];
+    actionList.innerHTML = actions.map(a => {
+      const pc = a.priority==='P1'?'#DC2626':a.priority==='P2'?'#D97706':'#2563EB';
+      return '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F1F5F9">' +
+        '<span style="background:'+pc+';color:white;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;white-space:nowrap">'+a.priority+'</span>' +
+        '<div style="flex:1"><div style="font-size:13px;font-weight:600">'+a.title+'</div>' +
+        '<div style="font-size:11px;color:#64748B">'+a.module+' · Due: '+a.deadline+'</div></div>' +
+        '<a href="'+a.href+'" class="btn btn-sm btn-primary"><i class="fas fa-arrow-right"></i></a>' +
+        '</div>';
+    }).join('');
+  }
+
+  // Decision summary chart
+  const ctx = document.getElementById('pw-summary-chart');
+  if (ctx) {
+    new Chart(ctx, {
+      type:'radar',
+      data:{
+        labels:['Production','Deployment','Inventory','Procurement','S&OP','Capacity'],
+        datasets:[
+          { label:'Current', data:[88,78,74,71,87,72], borderColor:'#2563EB', backgroundColor:'rgba(37,99,235,0.1)', pointBackgroundColor:'#2563EB', borderWidth:2 },
+          { label:'Target',  data:[95,95,90,85,92,88], borderColor:'#059669', backgroundColor:'rgba(5,150,105,0.05)', borderDash:[4,4], borderWidth:1.5 },
+        ]
+      },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ font:{size:11} }}}, scales:{ r:{ min:50, max:100, ticks:{ font:{size:9}, stepSize:10 }, grid:{ color:'#E2E8F0' }, pointLabels:{ font:{size:11} }}}}
+    });
+  }
+}
+document.addEventListener('DOMContentLoaded', initPlannerWorkbench);
+  `.trim()
+  return c.html(<Layout user={_u} title="Planner Workbench" activeModule="home" scripts={scripts}>
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#0F172A,#334155)"><i class="fas fa-drafting-compass"></i></div>
+        <div>
+          <div class="page-title">Integrated Planner Workbench</div>
+          <div class="page-subtitle">Cross-module decision hub · Priority actions · Real-time KPIs · Plan approvals</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <a href="/control-tower" class="btn btn-secondary"><i class="fas fa-satellite-dish"></i> Control Tower</a>
+        <a href="/approvals" class="btn btn-primary"><i class="fas fa-check-double"></i> Approvals</a>
+      </div>
+    </div>
+
+    <div class="grid-2-1" style="margin-bottom:20px">
+      <div>
+        {/* Priority Actions */}
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-header">
+            <span class="card-title"><i class="fas fa-tasks"></i> Priority Actions — Requires Planner Decision</span>
+            <a href="/action-items" class="btn btn-sm btn-secondary">View All</a>
+          </div>
+          <div class="card-body" id="pw-actions" style="padding:16px 20px">
+            <div class="spinner"></div>
+          </div>
+        </div>
+
+        {/* Production + Deployment Mini Panels */}
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><span class="card-title"><i class="fas fa-cogs"></i> Production</span><a href="/production" class="btn btn-sm btn-secondary">Open →</a></div>
+            <div class="card-body compact" id="pw-prod-kpis" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:12px"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title"><i class="fas fa-truck"></i> Deployment</span><a href="/deployment" class="btn btn-sm btn-secondary">Open →</a></div>
+            <div class="card-body compact" id="pw-dep-kpis" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:12px"></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Health Radar */}
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-radar"></i> Module Health Radar</span></div>
+        <div class="card-body" style="height:320px"><canvas id="pw-summary-chart"></canvas></div>
+      </div>
+    </div>
+
+    {/* Module Quick Navigation */}
+    <div class="card">
+      <div class="card-header"><span class="card-title"><i class="fas fa-th"></i> Module Navigation</span></div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px">
+          {[
+            { url:'/sop', icon:'fa-balance-scale', label:'S&OP', color:'#2563EB' },
+            { url:'/mrp', icon:'fa-boxes', label:'MRP', color:'#0891B2' },
+            { url:'/procurement', icon:'fa-handshake', label:'Procurement', color:'#D97706' },
+            { url:'/production', icon:'fa-cogs', label:'Production', color:'#7C3AED' },
+            { url:'/capacity', icon:'fa-industry', label:'Capacity', color:'#1E3A8A' },
+            { url:'/sequencing', icon:'fa-calendar-alt', label:'Sequencing', color:'#6D28D9' },
+            { url:'/resource', icon:'fa-users', label:'Resource', color:'#DC2626' },
+            { url:'/inventory', icon:'fa-warehouse', label:'Inventory', color:'#059669' },
+            { url:'/deployment', icon:'fa-truck', label:'Deployment', color:'#0891B2' },
+            { url:'/control-tower', icon:'fa-satellite-dish', label:'Control Tower', color:'#0F172A' },
+          ].map(m => (
+            <a href={m.url} style="text-decoration:none;text-align:center;padding:16px 8px;border-radius:10px;border:1px solid #E2E8F0;transition:all 0.15s;display:block" onmouseover="this.style.background='#F8FAFC';this.style.borderColor='#CBD5E1'" onmouseout="this.style.background='';this.style.borderColor='#E2E8F0'">
+              <i class={`fas ${m.icon}`} style={`font-size:22px;color:${m.color};display:block;margin-bottom:8px`}></i>
+              <div style="font-size:12px;font-weight:600;color:#1E293B">{m.label}</div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </Layout>)
+})
+
+// ── S&OP Intelligence Board ───────────────────────────────────
+app.get('/sop/intelligence', async (c) => {
+  const _u = getUser(c)
+  const scripts = `
+async function initSopIntelligence() {
+  const res = await axios.get('/api/sop/intelligence').catch(() => ({ data:{} }));
+  const d = res.data;
+  if (!d.cycle) return;
+
+  document.getElementById('si-gap').textContent = Math.abs(d.gap/1000).toFixed(0)+'K cs';
+  document.getElementById('si-gap-pct').textContent = d.gap_pct+'%';
+  document.getElementById('si-demand').textContent = (d.demand_plan/1000000).toFixed(2)+'M cs';
+  document.getElementById('si-supply').textContent = (d.supply_plan/1000000).toFixed(2)+'M cs';
+  document.getElementById('si-score').textContent  = d.consensus_score+'/100';
+
+  const optGrid = document.getElementById('si-options');
+  if (optGrid) {
+    optGrid.innerHTML = d.gap_resolution.map((opt,i) => {
+      const sc = opt.risk==='high'?'critical':opt.risk==='medium'?'warning':'success';
+      return '<div class="card" style="padding:14px;border-left:3px solid '+(opt.risk==='high'?'#DC2626':opt.risk==='medium'?'#D97706':'#059669')+'">' +
+        '<div style="font-weight:700;font-size:13px;margin-bottom:8px">Option '+(i+1)+': '+opt.option+'</div>' +
+        '<div style="display:flex;gap:10px;font-size:12px;margin-bottom:10px">' +
+        '<span style="color:#059669"><i class="fas fa-boxes"></i> +'+opt.impact_cases.toLocaleString()+' cs</span>' +
+        '<span style="color:#D97706"><i class="fas fa-rupee-sign"></i> ₹'+opt.cost_inr_lakh+'L</span>' +
+        '<span class="badge badge-'+sc+'">'+opt.risk+' risk</span>' +
+        '</div>' +
+        '<div style="display:flex;gap:8px">' +
+        '<button class="btn btn-sm btn-primary" onclick="approveSopOption(\''+opt.option+'\')"><i class="fas fa-check"></i> Approve</button>' +
+        '<button class="btn btn-sm btn-secondary" onclick="simulateSopOption(\''+opt.option+'\')"><i class="fas fa-flask"></i> Simulate</button>' +
+        '</div></div>';
+    }).join('');
+  }
+
+  // Consensus chart
+  const ctx = document.getElementById('si-consensus-chart');
+  if (ctx) {
+    new Chart(ctx, {
+      type:'bar',
+      data:{
+        labels:['Demand Plan','Supply Plan','Gap'],
+        datasets:[{ data:[d.demand_plan/1000,d.supply_plan/1000,Math.abs(d.gap)/1000], backgroundColor:['#2563EB','#059669','#DC2626'], borderRadius:6 }]
+      },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false }}, scales:{ y:{ ticks:{ font:{size:10}, callback:v=>v.toLocaleString()+'K' }, grid:{ color:'#F1F5F9' }}, x:{ ticks:{ font:{size:11} }, grid:{ display:false }}}}
+    });
+  }
+}
+
+function approveSopOption(opt) {
+  if(confirm('Approve: "'+opt+'"?\\nThis will push changes to Production Planning and Capacity modules.')) {
+    alert('✓ Approved. Production plan updated. MRP and Capacity notified. Next review: Mar 28.');
+  }
+}
+function simulateSopOption(opt) {
+  alert('Launching Scenario Lab with pre-configured option: '+opt+'\\n\\nRedirecting to Scenario Lab...');
+  location.href = '/scenario-lab';
+}
+document.addEventListener('DOMContentLoaded', initSopIntelligence);
+  `.trim()
+  return c.html(<Layout user={_u} title="S&OP Intelligence Board" activeModule="sop" scripts={scripts}>
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#2563EB,#1D4ED8)"><i class="fas fa-chess"></i></div>
+        <div>
+          <div class="page-title">S&OP Intelligence Board</div>
+          <div class="page-subtitle">Demand vs Supply gap analysis · Consensus resolution options · Board-ready decision support</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <a href="/sop/consensus" class="btn btn-secondary"><i class="fas fa-users"></i> Consensus Meeting</a>
+        <a href="/scenario-lab" class="btn btn-secondary"><i class="fas fa-flask"></i> Scenario Lab</a>
+        <a href="/demand-intelligence" class="btn btn-primary"><i class="fas fa-brain"></i> Demand Intelligence</a>
+      </div>
+    </div>
+
+    <div class="kpi-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:20px">
+      <div class="kpi-card critical"><div class="kpi-label"><i class="fas fa-exclamation-triangle"></i> Supply-Demand Gap</div><div class="kpi-value critical" id="si-gap">—</div><div class="kpi-meta"><span id="si-gap-pct" style="color:#DC2626;font-weight:700"></span><span class="kpi-target">gap %</span></div></div>
+      <div class="kpi-card info"><div class="kpi-label"><i class="fas fa-chart-line"></i> Demand Plan (Mar)</div><div class="kpi-value" id="si-demand">—</div><div class="kpi-meta"><span class="kpi-target">P50 consensus</span></div></div>
+      <div class="kpi-card warning"><div class="kpi-label"><i class="fas fa-industry"></i> Supply Plan (Mar)</div><div class="kpi-value warning" id="si-supply">—</div><div class="kpi-meta"><span class="kpi-target">Constrained</span></div></div>
+      <div class="kpi-card warning"><div class="kpi-label"><i class="fas fa-users"></i> Consensus Score</div><div class="kpi-value warning" id="si-score">—</div><div class="kpi-meta"><span class="kpi-target">Target 85/100</span></div></div>
+      <div class="kpi-card info"><div class="kpi-label"><i class="fas fa-calendar"></i> Next Review</div><div class="kpi-value" style="font-size:18px">Mar 28</div><div class="kpi-meta"><span class="kpi-target">2026</span></div></div>
+    </div>
+
+    <div class="grid-2-1" style="margin-bottom:20px">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-list-check"></i> Gap Resolution Options — Planner Decision Required</span></div>
+        <div class="card-body" id="si-options" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px"><div class="spinner"></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> D vs S Summary</span></div>
+        <div class="card-body" style="height:260px"><canvas id="si-consensus-chart"></canvas></div>
+      </div>
+    </div>
+  </Layout>)
+})
+
+// ── KPI Benchmarking Dashboard ────────────────────────────────
+app.get('/benchmarking', async (c) => {
+  const _u = getUser(c)
+  const scripts = `
+function initBenchmarking() {
+  // OTIF Benchmark chart
+  const ctx1 = document.getElementById('bm-otif-chart');
+  if (ctx1) {
+    new Chart(ctx1, {
+      type:'bar',
+      data:{
+        labels:['Industry P25','Industry P50','Industry P75 (Best-in-class)','Your Score','Target'],
+        datasets:[{ data:[85,91,96,92.1,95], backgroundColor:['#94A3B8','#64748B','#059669','#2563EB','rgba(5,150,105,0.3)'], borderRadius:5 }]
+      },
+      options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false }}, scales:{ x:{ min:75, max:100, ticks:{ font:{size:10} }, grid:{ color:'#F1F5F9' }}, y:{ ticks:{ font:{size:10} }, grid:{ display:false }}}}
+    });
+  }
+  // Cost/Case benchmark
+  const ctx2 = document.getElementById('bm-cost-chart');
+  if (ctx2) {
+    new Chart(ctx2, {
+      type:'bar',
+      data:{
+        labels:['Best-in-class','Industry P50','Industry P25','Your Score','Target'],
+        datasets:[{ data:[14.2,16.8,19.4,18.4,17.0], backgroundColor:['#059669','#64748B','#94A3B8','#DC2626','rgba(5,150,105,0.3)'], borderRadius:5 }]
+      },
+      options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false }}, scales:{ x:{ ticks:{ font:{size:10}, callback:v=>'₹'+v }, grid:{ color:'#F1F5F9' }}, y:{ ticks:{ font:{size:10} }, grid:{ display:false }}}}
+    });
+  }
+  // Trend vs industry
+  const ctx3 = document.getElementById('bm-trend-chart');
+  if (ctx3) {
+    new Chart(ctx3, {
+      type:'line',
+      data:{
+        labels:['Q2-25','Q3-25','Q4-25','Q1-26'],
+        datasets:[
+          { label:'Your OTIF', data:[89.4,90.8,91.6,92.1], borderColor:'#2563EB', fill:false, tension:0.4, borderWidth:2.5 },
+          { label:'Industry P50', data:[90.2,90.8,91.0,91.2], borderColor:'#64748B', fill:false, tension:0.3, borderDash:[5,5], borderWidth:1.5 },
+          { label:'Best-in-class', data:[95.1,95.4,95.6,96.0], borderColor:'#059669', fill:false, tension:0.3, borderDash:[3,3], borderWidth:1.5 },
+        ]
+      },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ font:{size:11} }}}, scales:{ y:{ min:85, max:100, ticks:{ font:{size:10} }, grid:{ color:'#F1F5F9' }}, x:{ ticks:{ font:{size:11} }, grid:{ display:false }}}}
+    });
+  }
+}
+document.addEventListener('DOMContentLoaded', initBenchmarking);
+  `.trim()
+  return c.html(<Layout user={_u} title="KPI Benchmarking" activeModule="home" scripts={scripts}>
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#059669,#10B981)"><i class="fas fa-trophy"></i></div>
+        <div>
+          <div class="page-title">KPI Benchmarking Dashboard</div>
+          <div class="page-subtitle">Industry comparison · Best-in-class targets · Beverage sector benchmarks · Improvement gaps</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <button class="btn btn-primary" onclick="window.print()"><i class="fas fa-print"></i> Export Report</button>
+      </div>
+    </div>
+
+    {/* Benchmark KPI Cards */}
+    <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+      <div class="kpi-card warning">
+        <div class="kpi-label"><i class="fas fa-star"></i> OTIF vs Best-in-Class</div>
+        <div class="kpi-value warning">92.1%</div>
+        <div class="kpi-meta"><span class="kpi-target">Best-in-class: 96%</span><span class="kpi-trend down">Gap: -3.9%</span></div>
+      </div>
+      <div class="kpi-card critical">
+        <div class="kpi-label"><i class="fas fa-rupee-sign"></i> Cost/Case vs Target</div>
+        <div class="kpi-value critical">₹18.4</div>
+        <div class="kpi-meta"><span class="kpi-target">Best-in-class: ₹14.2</span><span class="kpi-trend down">Gap: ₹4.2</span></div>
+      </div>
+      <div class="kpi-card healthy">
+        <div class="kpi-label"><i class="fas fa-bullseye"></i> Forecast Accuracy</div>
+        <div class="kpi-value healthy">87.3%</div>
+        <div class="kpi-meta"><span class="kpi-target">Best-in-class: 91%</span><span class="kpi-trend down">Gap: -3.7%</span></div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label"><i class="fas fa-recycle"></i> Inventory Turns</div>
+        <div class="kpi-value warning">18.2×</div>
+        <div class="kpi-meta"><span class="kpi-target">Best-in-class: 24×</span><span class="kpi-trend down">Gap: -5.8×</span></div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> OTIF — Industry Benchmark</span></div>
+        <div class="card-body" style="height:220px"><canvas id="bm-otif-chart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> Cost/Case — Industry Benchmark</span></div>
+        <div class="card-body" style="height:220px"><canvas id="bm-cost-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-title"><i class="fas fa-chart-line"></i> OTIF Trend vs Industry (Quarterly)</span></div>
+      <div class="card-body" style="height:240px"><canvas id="bm-trend-chart"></canvas></div>
+    </div>
+  </Layout>)
+})
+
+// ── Additional API endpoints ──────────────────────────────────
+app.post('/api/control-tower/exceptions/:id/resolve', async (c) => {
+  const id = c.req.param('id')
+  return c.json({ success:true, id, status:'resolving', message:'Exception queued for resolution. Planner notified.' })
+})
+
+app.get('/api/demo/summer-surge', async (c) => {
+  return c.json({
+    scenario: 'Summer Demand Surge — April 2026',
+    trigger: 'Temperature forecast +4°C above seasonal average across West & South India',
+    demand_uplift: { pct:25, cases:118000, peak_week:'W2-Apr', skus:['PET 500ml','Mango 200ml','SportZ Energy'] },
+    supply_gaps: [
+      { plant:'MUM', current_util:97, headroom_cases:2700, gap:115300 },
+      { plant:'DEL', current_util:74, headroom_cases:13800, action:'Activate overtime — cover 8K cases' },
+      { plant:'CHN', current_util:82, headroom_cases:6930,  action:'3rd shift for Mango — cover 6K cases' },
+    ],
+    recommendation: 'Activate 3 mitigation levers: MUM overtime, DEL capacity pull, CHN 3rd shift. Residual gap: 100,300 cases — defer Glass 500ml to Q3.',
+    financial_impact: { revenue_at_risk_cr:4.2, mitigation_cost_lakh:18.4, net_benefit_cr:2.8 }
+  })
+})
+
+app.get('/api/demo/plant-shutdown', async (c) => {
+  return c.json({
+    scenario: 'Mumbai Plant Partial Shutdown — Maintenance W1-W2 April',
+    trigger: 'Boiler inspection + line overhaul — L2 offline 10 days',
+    production_loss: 22400,
+    reallocation: [
+      { to:'DEL', cases:9600, sku_mix:'PET 500ml, PET 1L', lead_time_days:2 },
+      { to:'CHN', cases:7200, sku_mix:'Mango 200ml', lead_time_days:3 },
+      { to:'BAN', cases:5600, sku_mix:'Glass 500ml', lead_time_days:4 },
+    ],
+    inventory_buffer: { wh_mum_cover_days:8.4, recommendation:'Pre-build 18K cases in W4-Mar' },
+    recommendation: 'Pre-build + reallocation covers 99.6% of demand. Cost: ₹6.8L incremental transport. Customer impact: 0 stockouts if plan approved by Mar 20.'
+  })
 })
 
 // Pack-Size Master
