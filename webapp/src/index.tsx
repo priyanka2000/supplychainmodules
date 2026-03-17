@@ -1,10 +1,109 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
 
 type Bindings = { DB: D1Database }
 const app = new Hono<{ Bindings: Bindings }>()
 
 app.use('/api/*', cors())
+
+// ============================================================
+// AUTH
+// ============================================================
+const USERS: Record<string, { name: string; initials: string; role: string; password: string }> = {
+  'sankar': { name: 'Sankar Mamidela', initials: 'SM', role: 'Supply Chain Director', password: 'password' },
+  'vikrant': { name: 'Vikrant Hole', initials: 'VH', role: 'SC Technology Consultant', password: 'password' },
+}
+
+function getUser(c: any) {
+  try { const s = getCookie(c, 'sc_session'); if (!s) return null; const u = JSON.parse(atob(s)); return USERS[u.id] ? { ...USERS[u.id], id: u.id } : null } catch { return null }
+}
+
+// Auth middleware for all non-login/api routes
+app.use('*', async (c, next) => {
+  const path = new URL(c.req.url).pathname
+  if (path.startsWith('/api/') || path === '/login' || path === '/logout' || path.includes('favicon')) return next()
+  const user = getUser(c)
+  if (!user) return c.redirect('/login')
+  return next()
+})
+
+app.get('/login', (c) => {
+  const err = c.req.query('error')
+  return c.html(`<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Login — SYDIAI Supply Chain Suite</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#0F172A 0%,#1E3A8A 50%,#0F172A 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+body::before{content:'';position:absolute;width:600px;height:600px;border-radius:50%;background:rgba(37,99,235,0.08);top:-200px;right:-200px;pointer-events:none}
+body::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:rgba(124,58,237,0.06);bottom:-100px;left:-100px;pointer-events:none}
+.login-card{background:rgba(255,255,255,0.97);border-radius:20px;padding:48px 44px;width:100%;max-width:440px;box-shadow:0 25px 50px rgba(0,0,0,0.4);position:relative;z-index:1}
+.login-logo{display:flex;align-items:center;gap:14px;margin-bottom:32px}
+.logo-box{width:52px;height:52px;background:linear-gradient(135deg,#1E3A8A,#2563EB);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;letter-spacing:-1px;flex-shrink:0}
+.login-title{font-size:22px;font-weight:800;color:#0F172A;line-height:1.1}
+.login-title span{display:block;font-size:12px;font-weight:500;color:#64748B;margin-top:2px;letter-spacing:0.03em}
+.login-subtitle{font-size:13.5px;color:#475569;margin-bottom:28px;line-height:1.5}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:11.5px;font-weight:700;color:#374151;margin-bottom:7px;text-transform:uppercase;letter-spacing:0.06em}
+.field-wrap{position:relative}
+.field-wrap i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#94A3B8;font-size:14px}
+.field input{width:100%;padding:11px 12px 11px 38px;border:1.5px solid #E2E8F0;border-radius:10px;font-size:14px;color:#1E293B;font-family:'Inter',sans-serif;transition:all 0.2s;background:#F8FAFC}
+.field input:focus{outline:none;border-color:#2563EB;background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,0.12)}
+.login-btn{width:100%;padding:13px;background:linear-gradient(135deg,#1E3A8A,#2563EB);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;letter-spacing:0.02em;margin-top:4px;font-family:'Inter',sans-serif}
+.login-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,99,235,0.4)}
+.login-btn:active{transform:translateY(0)}
+.error-box{background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:11px 14px;font-size:13px;color:#DC2626;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.users-hint{margin-top:22px;padding-top:18px;border-top:1px solid #F1F5F9}
+.users-hint p{font-size:11px;color:#94A3B8;text-align:center;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em}
+.user-chip{display:inline-flex;align-items:center;gap:7px;background:#F0F4FA;border:1px solid #E2E8F0;border-radius:20px;padding:5px 12px 5px 6px;cursor:pointer;transition:all 0.15s;margin:3px}
+.user-chip:hover{background:#DBEAFE;border-color:#93C5FD}
+.avatar{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff}
+.user-chip span{font-size:12px;font-weight:600;color:#374151}
+</style></head><body>
+<div class="login-card">
+  <div class="login-logo">
+    <div class="logo-box">SI</div>
+    <div class="login-title">SYDIAI<span>Supply Chain Intelligence Suite</span></div>
+  </div>
+  <p class="login-subtitle">Sign in to access your supply chain planning workspace. All modules, real-time data and AI insights in one place.</p>
+  ${err ? `<div class="error-box"><i class="fas fa-exclamation-circle"></i> Invalid username or password. Please try again.</div>` : ''}
+  <form method="POST" action="/login">
+    <div class="field"><label>Username</label><div class="field-wrap"><i class="fas fa-user"></i><input type="text" name="username" placeholder="Enter your username" autocomplete="username" required/></div></div>
+    <div class="field"><label>Password</label><div class="field-wrap"><i class="fas fa-lock"></i><input type="password" name="password" placeholder="Enter your password" autocomplete="current-password" required/></div></div>
+    <button type="submit" class="login-btn"><i class="fas fa-sign-in-alt" style="margin-right:8px"></i>Sign In to Dashboard</button>
+  </form>
+  <div class="users-hint">
+    <p>Quick Access</p>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center">
+      <div class="user-chip" onclick="fillLogin('sankar')"><div class="avatar" style="background:linear-gradient(135deg,#1E3A8A,#3B82F6)">SM</div><span>Sankar Mamidela</span></div>
+      <div class="user-chip" onclick="fillLogin('vikrant')"><div class="avatar" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)">VH</div><span>Vikrant Hole</span></div>
+    </div>
+  </div>
+</div>
+<script>
+function fillLogin(u){document.querySelector('input[name=username]').value=u;document.querySelector('input[name=password]').value='password';document.querySelector('input[name=username]').focus()}
+</script>
+</body></html>`)
+})
+
+app.post('/login', async (c) => {
+  const body = await c.req.parseBody()
+  const username = (body.username as string || '').toLowerCase().trim()
+  const password = body.password as string || ''
+  const user = USERS[username]
+  if (!user || user.password !== password) return c.redirect('/login?error=1')
+  const session = btoa(JSON.stringify({ id: username, ts: Date.now() }))
+  setCookie(c, 'sc_session', session, { path: '/', maxAge: 86400 * 7, httpOnly: true, sameSite: 'Lax' })
+  return c.redirect('/')
+})
+
+app.get('/logout', (c) => {
+  deleteCookie(c, 'sc_session', { path: '/' })
+  return c.redirect('/login')
+})
 
 app.get('/favicon.ico', (c) => {
   c.header('Content-Type', 'image/svg+xml')
@@ -14,7 +113,49 @@ app.get('/favicon.ico', (c) => {
 // ============================================================
 // SHARED LAYOUT
 // ============================================================
+// Supply chain flow order: S&OP → Demand → MRP → Procurement → Production → Capacity → Sequencing → Resource → Inventory → Deployment
 const NAV_MODULES = [
+  { id: 'sop', label: 'S&OP Planning', icon: 'fa-balance-scale', path: '/sop',
+    subs: [
+      { id: 'sop-executive', label: 'Executive Dashboard', icon: 'fa-chart-pie', path: '/sop/executive' },
+      { id: 'sop-demand', label: 'Demand Review', icon: 'fa-chart-line', path: '/sop/demand-review' },
+      { id: 'sop-supply', label: 'Supply Review', icon: 'fa-industry', path: '/sop/supply-review' },
+      { id: 'sop-scenarios', label: 'Scenarios', icon: 'fa-sitemap', path: '/sop/scenarios' },
+      { id: 'sop-consensus', label: 'Consensus Meeting', icon: 'fa-users', path: '/sop/consensus' },
+      { id: 'sop-analytics', label: 'Analytics', icon: 'fa-chart-bar', path: '/sop/analytics' },
+    ]
+  },
+  { id: 'mrp', label: 'Material Req. Planning', icon: 'fa-boxes', path: '/mrp',
+    subs: [
+      { id: 'mrp-dashboard', label: 'MRP Dashboard', icon: 'fa-th-large', path: '/mrp/dashboard' },
+      { id: 'mrp-explosion', label: 'MRP Explosion', icon: 'fa-project-diagram', path: '/mrp/explosion' },
+      { id: 'mrp-bom', label: 'Bill of Materials', icon: 'fa-sitemap', path: '/mrp/bom' },
+      { id: 'mrp-po', label: 'Purchase Orders', icon: 'fa-file-invoice', path: '/mrp/purchase-orders' },
+      { id: 'mrp-alerts', label: 'Shortage Alerts', icon: 'fa-bell', path: '/mrp/shortage-alerts' },
+      { id: 'mrp-analytics', label: 'MRP Analytics', icon: 'fa-chart-line', path: '/mrp/analytics' },
+    ]
+  },
+  { id: 'procurement', label: 'Procurement Planning', icon: 'fa-handshake', path: '/procurement',
+    subs: [
+      { id: 'proc-workbench', label: 'PO Workbench', icon: 'fa-clipboard-list', path: '/procurement/operational' },
+      { id: 'proc-suppliers', label: 'Supplier Scorecard', icon: 'fa-star', path: '/procurement/suppliers' },
+      { id: 'proc-contracts', label: 'Contracts', icon: 'fa-file-contract', path: '/procurement/contracts' },
+      { id: 'proc-optimization', label: 'Optimization', icon: 'fa-sliders-h', path: '/procurement/optimization' },
+      { id: 'proc-analytics', label: 'Spend Analytics', icon: 'fa-chart-bar', path: '/procurement/analytics' },
+    ]
+  },
+  { id: 'production', label: 'Production Planning', icon: 'fa-cogs', path: '/production',
+    subs: [
+      { id: 'prod-mps', label: 'Master Production Schedule', icon: 'fa-calendar-check', path: '/production/mps' },
+      { id: 'prod-atp', label: 'Available-to-Promise', icon: 'fa-check-double', path: '/production/atp' },
+      { id: 'prod-rccp', label: 'Rough-Cut Capacity', icon: 'fa-ruler-combined', path: '/production/rccp' },
+      { id: 'prod-workbench', label: 'Planner Workbench', icon: 'fa-drafting-compass', path: '/production/workbench' },
+      { id: 'prod-scenarios', label: 'Scenario Manager', icon: 'fa-layer-group', path: '/production/scenarios' },
+      { id: 'prod-mlmodels', label: 'ML Models', icon: 'fa-brain', path: '/production/ml-models' },
+      { id: 'prod-analytics', label: 'Analytics', icon: 'fa-chart-bar', path: '/production/analytics' },
+      { id: 'prod-copilot', label: 'AI Copilot', icon: 'fa-robot', path: '/production/copilot' },
+    ]
+  },
   { id: 'capacity', label: 'Capacity Planning', icon: 'fa-industry', path: '/capacity',
     subs: [
       { id: 'capacity-executive', label: 'Executive Dashboard', icon: 'fa-chart-pie', path: '/capacity/executive' },
@@ -37,14 +178,13 @@ const NAV_MODULES = [
       { id: 'seq-copilot', label: 'AI Copilot', icon: 'fa-robot', path: '/sequencing/copilot' },
     ]
   },
-  { id: 'mrp', label: 'Material Req. Planning', icon: 'fa-boxes', path: '/mrp',
+  { id: 'resource', label: 'Resource Planning', icon: 'fa-users', path: '/resource',
     subs: [
-      { id: 'mrp-dashboard', label: 'MRP Dashboard', icon: 'fa-th-large', path: '/mrp/dashboard' },
-      { id: 'mrp-explosion', label: 'MRP Explosion', icon: 'fa-project-diagram', path: '/mrp/explosion' },
-      { id: 'mrp-bom', label: 'Bill of Materials', icon: 'fa-sitemap', path: '/mrp/bom' },
-      { id: 'mrp-po', label: 'Purchase Orders', icon: 'fa-file-invoice', path: '/mrp/purchase-orders' },
-      { id: 'mrp-alerts', label: 'Shortage Alerts', icon: 'fa-bell', path: '/mrp/shortage-alerts' },
-      { id: 'mrp-analytics', label: 'MRP Analytics', icon: 'fa-chart-line', path: '/mrp/analytics' },
+      { id: 'res-executive', label: 'Executive View', icon: 'fa-chart-pie', path: '/resource/executive' },
+      { id: 'res-operations', label: 'Operations Center', icon: 'fa-tachometer-alt', path: '/resource/operations' },
+      { id: 'res-skills', label: 'Skills & Roster', icon: 'fa-id-badge', path: '/resource/skills' },
+      { id: 'res-optimization', label: 'Optimization', icon: 'fa-sliders-h', path: '/resource/optimization' },
+      { id: 'res-analytics', label: 'Analytics', icon: 'fa-chart-bar', path: '/resource/analytics' },
     ]
   },
   { id: 'inventory', label: 'Inventory Planning', icon: 'fa-warehouse', path: '/inventory',
@@ -57,32 +197,16 @@ const NAV_MODULES = [
       { id: 'inv-master', label: 'Master Data', icon: 'fa-database', path: '/inventory/master' },
     ]
   },
-  { id: 'procurement', label: 'Procurement Planning', icon: 'fa-handshake', path: '/procurement',
+  { id: 'deployment', label: 'Deployment Planning', icon: 'fa-truck', path: '/deployment',
     subs: [
-      { id: 'proc-workbench', label: 'PO Workbench', icon: 'fa-clipboard-list', path: '/procurement/operational' },
-      { id: 'proc-suppliers', label: 'Supplier Scorecard', icon: 'fa-star', path: '/procurement/suppliers' },
-      { id: 'proc-contracts', label: 'Contracts', icon: 'fa-file-contract', path: '/procurement/contracts' },
-      { id: 'proc-optimization', label: 'Optimization', icon: 'fa-sliders-h', path: '/procurement/optimization' },
-      { id: 'proc-analytics', label: 'Spend Analytics', icon: 'fa-chart-bar', path: '/procurement/analytics' },
-    ]
-  },
-  { id: 'resource', label: 'Resource Planning', icon: 'fa-users', path: '/resource',
-    subs: [
-      { id: 'res-executive', label: 'Executive View', icon: 'fa-chart-pie', path: '/resource/executive' },
-      { id: 'res-operations', label: 'Operations Center', icon: 'fa-tachometer-alt', path: '/resource/operations' },
-      { id: 'res-skills', label: 'Skills & Roster', icon: 'fa-id-badge', path: '/resource/skills' },
-      { id: 'res-optimization', label: 'Optimization', icon: 'fa-sliders-h', path: '/resource/optimization' },
-      { id: 'res-analytics', label: 'Analytics', icon: 'fa-chart-bar', path: '/resource/analytics' },
-    ]
-  },
-  { id: 'sop', label: 'S&OP Planning', icon: 'fa-balance-scale', path: '/sop',
-    subs: [
-      { id: 'sop-executive', label: 'Executive Dashboard', icon: 'fa-chart-pie', path: '/sop/executive' },
-      { id: 'sop-demand', label: 'Demand Review', icon: 'fa-chart-line', path: '/sop/demand-review' },
-      { id: 'sop-supply', label: 'Supply Review', icon: 'fa-industry', path: '/sop/supply-review' },
-      { id: 'sop-scenarios', label: 'Scenarios', icon: 'fa-sitemap', path: '/sop/scenarios' },
-      { id: 'sop-consensus', label: 'Consensus Meeting', icon: 'fa-users', path: '/sop/consensus' },
-      { id: 'sop-analytics', label: 'Analytics', icon: 'fa-chart-bar', path: '/sop/analytics' },
+      { id: 'dep-network', label: 'Distribution Network', icon: 'fa-project-diagram', path: '/deployment/network' },
+      { id: 'dep-workbench', label: 'Planner Workbench', icon: 'fa-drafting-compass', path: '/deployment/workbench' },
+      { id: 'dep-route', label: 'Route Optimization', icon: 'fa-route', path: '/deployment/routes' },
+      { id: 'dep-load', label: 'Load Planning', icon: 'fa-boxes', path: '/deployment/load-planning' },
+      { id: 'dep-carrier', label: 'Carrier Selection', icon: 'fa-shipping-fast', path: '/deployment/carriers' },
+      { id: 'dep-scenarios', label: 'Scenario Manager', icon: 'fa-layer-group', path: '/deployment/scenarios' },
+      { id: 'dep-mlmodels', label: 'ML Models', icon: 'fa-brain', path: '/deployment/ml-models' },
+      { id: 'dep-analytics', label: 'Analytics', icon: 'fa-chart-bar', path: '/deployment/analytics' },
     ]
   },
 ]
@@ -4132,6 +4256,1435 @@ document.addEventListener('DOMContentLoaded', init);
         <tbody id="audit-table"><tr><td colspan={7} style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
       </table>
     </div></div>
+  </Layout>)
+})
+
+// ============================================================
+// PRODUCTION PLANNING MODULE
+// ============================================================
+
+// Production Planning APIs
+app.get('/api/production/kpis', async (c) => {
+  try {
+    const db = c.env.DB
+    const util = await db.prepare(`SELECT AVG(utilization_pct) as avg_util FROM capacity_utilization WHERE date >= date('now','-7 days')`).first<{avg_util:number}>()
+    const jobs = await db.prepare(`SELECT COUNT(*) as cnt FROM jobs WHERE status IN ('in_progress','scheduled')`).first<{cnt:number}>()
+    return c.json([
+      { metric_name: 'MPS Adherence', metric_value: '94.2', metric_unit: '%', metric_status: 'healthy', target_value: '95', icon: 'fa-calendar-check', trend: '↑ +1.2%', trend_dir: 'up' },
+      { metric_name: 'Line Utilization', metric_value: (util?.avg_util||82.4).toFixed(1), metric_unit: '%', metric_status: (util?.avg_util||82.4) > 90 ? 'critical' : (util?.avg_util||82.4) > 80 ? 'warning' : 'healthy', target_value: '85', icon: 'fa-industry', trend: '↑ +0.8%', trend_dir: 'up' },
+      { metric_name: 'Active Jobs', metric_value: String(jobs?.cnt||8), metric_unit: '', metric_status: 'info', target_value: '10', icon: 'fa-cogs', trend: '', trend_dir: 'up' },
+      { metric_name: 'ATP Available', metric_value: '32.4', metric_unit: 'K cases', metric_status: 'healthy', target_value: '25K', icon: 'fa-check-double', trend: '↑ +2.1K', trend_dir: 'up' },
+      { metric_name: 'RCCP Overloads', metric_value: '2', metric_unit: ' lines', metric_status: 'warning', target_value: '0', icon: 'fa-ruler-combined', trend: '↓ –1', trend_dir: 'up' },
+      { metric_name: 'Schedule Adherence', metric_value: '91.8', metric_unit: '%', metric_status: 'warning', target_value: '95', icon: 'fa-tasks', trend: '↑ +0.6%', trend_dir: 'up' },
+    ])
+  } catch { return c.json([
+    { metric_name: 'MPS Adherence', metric_value: '94.2', metric_unit: '%', metric_status: 'healthy', target_value: '95', icon: 'fa-calendar-check', trend: '↑ +1.2%', trend_dir: 'up' },
+    { metric_name: 'Line Utilization', metric_value: '82.4', metric_unit: '%', metric_status: 'warning', target_value: '85', icon: 'fa-industry', trend: '↑ +0.8%', trend_dir: 'up' },
+    { metric_name: 'Active Jobs', metric_value: '8', metric_unit: '', metric_status: 'info', target_value: '10', icon: 'fa-cogs', trend: '', trend_dir: 'up' },
+    { metric_name: 'ATP Available', metric_value: '32.4', metric_unit: 'K cases', metric_status: 'healthy', target_value: '25K', icon: 'fa-check-double', trend: '↑ +2.1K', trend_dir: 'up' },
+    { metric_name: 'RCCP Overloads', metric_value: '2', metric_unit: ' lines', metric_status: 'warning', target_value: '0', icon: 'fa-ruler-combined', trend: '↓ –1', trend_dir: 'up' },
+    { metric_name: 'Schedule Adherence', metric_value: '91.8', metric_unit: '%', metric_status: 'warning', target_value: '95', icon: 'fa-tasks', trend: '↑ +0.6%', trend_dir: 'up' },
+  ]) }
+})
+
+app.get('/api/production/mps-summary', async (c) => {
+  return c.json([
+    { week: 'W1 Mar', planned_qty: 42000, confirmed_qty: 40000, capacity: 50000 },
+    { week: 'W2 Mar', planned_qty: 45000, confirmed_qty: 43000, capacity: 50000 },
+    { week: 'W3 Mar', planned_qty: 41000, confirmed_qty: 39000, capacity: 50000 },
+    { week: 'W4 Mar', planned_qty: 48000, confirmed_qty: 46000, capacity: 50000 },
+    { week: 'W1 Apr', planned_qty: 46000, confirmed_qty: 0, capacity: 50000 },
+    { week: 'W2 Apr', planned_qty: 43000, confirmed_qty: 0, capacity: 50000 },
+    { week: 'W3 Apr', planned_qty: 47000, confirmed_qty: 0, capacity: 50000 },
+    { week: 'W4 Apr', planned_qty: 44000, confirmed_qty: 0, capacity: 50000 },
+  ])
+})
+
+app.get('/api/production/mps', async (c) => {
+  return c.json([
+    { sku_code: 'SKU-500-PET', sku_name: 'PET 500ml Regular', week: 'W1 Mar', planned_qty: 18000, confirmed_qty: 17200, available_qty: 800, status: 'firm', line_name: 'MUM-L1' },
+    { sku_code: 'SKU-1L-PET', sku_name: 'PET 1L Regular', week: 'W1 Mar', planned_qty: 12000, confirmed_qty: 11400, available_qty: 600, status: 'firm', line_name: 'MUM-L2' },
+    { sku_code: 'SKU-200-MANGO', sku_name: 'Mango 200ml Can', week: 'W1 Mar', planned_qty: 8000, confirmed_qty: 7600, available_qty: 400, status: 'firm', line_name: 'DEL-L1' },
+    { sku_code: 'SKU-500-PET', sku_name: 'PET 500ml Regular', week: 'W2 Mar', planned_qty: 19000, confirmed_qty: 18000, available_qty: 1000, status: 'firm', line_name: 'MUM-L1' },
+    { sku_code: 'SKU-1L-PET', sku_name: 'PET 1L Regular', week: 'W2 Mar', planned_qty: 13000, confirmed_qty: 12400, available_qty: 600, status: 'firm', line_name: 'MUM-L2' },
+    { sku_code: 'SKU-200-MANGO', sku_name: 'Mango 200ml Can', week: 'W2 Mar', planned_qty: 9000, confirmed_qty: 8500, available_qty: 500, status: 'firm', line_name: 'DEL-L1' },
+    { sku_code: 'SKU-500-PET', sku_name: 'PET 500ml Regular', week: 'W3 Mar', planned_qty: 17500, confirmed_qty: 0, available_qty: 0, status: 'planned', line_name: 'MUM-L1' },
+    { sku_code: 'SKU-1L-PET', sku_name: 'PET 1L Regular', week: 'W3 Mar', planned_qty: 11500, confirmed_qty: 0, available_qty: 0, status: 'planned', line_name: 'MUM-L2' },
+    { sku_code: 'SKU-250-CAN', sku_name: 'Sparkling 250ml Can', week: 'W3 Mar', planned_qty: 6500, confirmed_qty: 0, available_qty: 0, status: 'planned', line_name: 'DEL-L2' },
+    { sku_code: 'SKU-500-PET', sku_name: 'PET 500ml Regular', week: 'W4 Mar', planned_qty: 20000, confirmed_qty: 0, available_qty: 0, status: 'planned', line_name: 'MUM-L1' },
+  ])
+})
+
+app.get('/api/production/atp', async (c) => {
+  return c.json([
+    { sku: 'SKU-500-PET', sku_name: 'PET 500ml Regular', oh_stock: 12400, scheduled_receipts: 38000, customer_orders: 35200, atp: 15200, commit_date: 'W1 Mar' },
+    { sku: 'SKU-1L-PET', sku_name: 'PET 1L Regular', oh_stock: 8600, scheduled_receipts: 29000, customer_orders: 31400, atp: -2800, commit_date: 'W3 Mar' },
+    { sku: 'SKU-200-MANGO', sku_name: 'Mango 200ml Can', oh_stock: 5200, scheduled_receipts: 18000, customer_orders: 16800, atp: 6400, commit_date: 'W1 Mar' },
+    { sku: 'SKU-250-CAN', sku_name: 'Sparkling 250ml Can', oh_stock: 3400, scheduled_receipts: 12000, customer_orders: 11200, atp: 4200, commit_date: 'W2 Mar' },
+    { sku: 'SKU-500-GLASS', sku_name: 'Glass 500ml Premium', oh_stock: 1800, scheduled_receipts: 6000, customer_orders: 7100, atp: 700, commit_date: 'W2 Mar' },
+  ])
+})
+
+// Deployment APIs
+app.get('/api/deployment/kpis', async (c) => {
+  return c.json([
+    { name: 'On-Time Delivery', value: '91.4%', target: '95%', status: 'warning', icon: 'fa-clock', trend: '↑ +0.7%', trend_dir: 'up' },
+    { name: 'Truck Utilization', value: '84.2%', target: '88%', status: 'warning', icon: 'fa-truck', trend: '↑ +1.2%', trend_dir: 'up' },
+    { name: 'Cost per Case', value: '₹18.4', target: '₹17.0', status: 'critical', icon: 'fa-rupee-sign', trend: '↓ –₹0.3', trend_dir: 'up' },
+    { name: 'Routes Optimized', value: '124/150', target: '150', status: 'warning', icon: 'fa-route', trend: '↑ +12', trend_dir: 'up' },
+    { name: 'Avg Lead Time', value: '2.8 days', target: '2.5 days', status: 'warning', icon: 'fa-hourglass-half', trend: '↓ –0.2d', trend_dir: 'up' },
+    { name: 'Fill Rate', value: '96.8%', target: '98%', status: 'warning', icon: 'fa-boxes', trend: '↑ +0.4%', trend_dir: 'up' },
+  ])
+})
+
+app.get('/api/deployment/shipments', async (c) => {
+  return c.json([
+    { id: 'SHP-0317-001', origin: 'Mumbai', destination: 'Pune', volume: 1240, truck_type: '32ft Container', utilization: 92, etd: 'Mar 17, 06:00', eta: 'Mar 17, 10:00', status: 'in_transit' },
+    { id: 'SHP-0317-002', origin: 'Delhi', destination: 'Jaipur', volume: 820, truck_type: '22ft Container', utilization: 78, etd: 'Mar 17, 08:00', eta: 'Mar 17, 13:00', status: 'planned' },
+    { id: 'SHP-0317-003', origin: 'Chennai', destination: 'Coimbatore', volume: 960, truck_type: '22ft Container', utilization: 88, etd: 'Mar 17, 07:00', eta: 'Mar 17, 15:00', status: 'loading' },
+    { id: 'SHP-0317-004', origin: 'Bangalore', destination: 'Hyderabad', volume: 1380, truck_type: '32ft Container', utilization: 95, etd: 'Mar 18, 06:00', eta: 'Mar 18, 15:00', status: 'planned' },
+    { id: 'SHP-0317-005', origin: 'Mumbai', destination: 'Nashik', volume: 680, truck_type: '22ft Container', utilization: 65, etd: 'Mar 17, 10:00', eta: 'Mar 17, 14:30', status: 'planned' },
+    { id: 'SHP-0317-006', origin: 'Delhi', destination: 'Lucknow', volume: 1120, truck_type: '32ft Container', utilization: 89, etd: 'Mar 17, 09:00', eta: 'Mar 17, 21:00', status: 'delayed' },
+  ])
+})
+
+app.get('/api/deployment/routes', async (c) => {
+  return c.json([
+    { route_id: 'RT-001', origin: 'Mumbai', destination: 'Pune', distance_km: 148, transit_time: '4 hrs', cost_per_case: 14.2, carrier: 'BlueDart Logistics', optimization_score: 94 },
+    { route_id: 'RT-002', origin: 'Mumbai', destination: 'Surat', distance_km: 284, transit_time: '6 hrs', cost_per_case: 16.8, carrier: 'DHL Supply Chain', optimization_score: 88 },
+    { route_id: 'RT-003', origin: 'Delhi', destination: 'Jaipur', distance_km: 281, transit_time: '5 hrs', cost_per_case: 15.4, carrier: 'Mahindra Logistics', optimization_score: 91 },
+    { route_id: 'RT-004', origin: 'Delhi', destination: 'Lucknow', distance_km: 555, transit_time: '9 hrs', cost_per_case: 18.6, carrier: 'Gati-KWE', optimization_score: 76 },
+    { route_id: 'RT-005', origin: 'Chennai', destination: 'Bangalore', distance_km: 346, transit_time: '6 hrs', cost_per_case: 15.8, carrier: 'BlueDart Logistics', optimization_score: 89 },
+    { route_id: 'RT-006', origin: 'Bangalore', destination: 'Hyderabad', distance_km: 568, transit_time: '9 hrs', cost_per_case: 19.2, carrier: 'VRL Logistics', optimization_score: 72 },
+  ])
+})
+
+// ── Production Planning Pages ─────────────────────────────────────────
+
+app.get('/production', (c) => {
+  return c.html(<Layout title="Production Planning" activeModule="production">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-cogs"></i></div>
+        <div>
+          <div class="page-title">Production Planning</div>
+          <div class="page-subtitle">MPS · ATP · RCCP · Planner Workbench · Scenario Manager · AI Copilot</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <span class="badge badge-live">Live</span>
+        <a href="/production/mps" class="btn btn-primary"><i class="fas fa-calendar-check"></i> Open MPS</a>
+        <a href="/production/workbench" class="btn btn-secondary"><i class="fas fa-drafting-compass"></i> Workbench</a>
+      </div>
+    </div>
+    <div class="kpi-grid" id="prod-kpi-grid"><div class="kpi-card"><div class="spinner"></div></div></div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="fas fa-calendar-check"></i> MPS – 8 Week Horizon</span>
+          <a href="/production/mps" class="btn btn-sm btn-secondary">Full MPS</a>
+        </div>
+        <div class="card-body" style="height:240px"><canvas id="prod-mps-horizon-chart"></canvas></div>
+      </div>
+      <div class="grid-1" style="display:grid;grid-template-rows:1fr 1fr;gap:20px">
+        <div class="card">
+          <div class="card-header"><span class="card-title"><i class="fas fa-check-double"></i> ATP Snapshot</span><a href="/production/atp" class="btn btn-sm btn-secondary">Details</a></div>
+          <div class="card-body" style="height:100px"><canvas id="prod-atp-chart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title"><i class="fas fa-ruler-combined"></i> RCCP – Capacity Load</span><a href="/production/rccp" class="btn btn-sm btn-secondary">Details</a></div>
+          <div class="card-body" style="height:100px"><canvas id="prod-rccp-chart"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-exclamation-triangle"></i> Alerts</span></div>
+        <div class="card-body">
+          <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>MUM-L2 Overloaded W2</strong><br/>98% capacity – approve overtime</div></div>
+          <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>SKU-1L-PET ATP Negative W3</strong><br/>–2,800 cases shortfall detected</div></div>
+          <div class="alert alert-info"><i class="fas fa-info-circle"></i><div><strong>New Scenario Available</strong><br/>"Demand Upside +15%" ready to review</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-brain"></i> ML Recommendations</span></div>
+        <div class="card-body">
+          <div style="margin-bottom:12px;padding:10px;background:#F0F4FA;border-radius:8px">
+            <div style="font-size:12px;font-weight:600;color:#1E3A8A">⚡ Shift 8K cases DEL-L1</div>
+            <div style="font-size:11px;color:#64748B;margin-top:3px">Resolve MUM-L2 overload by moving load to 75%-utilized Delhi line</div>
+          </div>
+          <div style="margin-bottom:12px;padding:10px;background:#F0FDF4;border-radius:8px">
+            <div style="font-size:12px;font-weight:600;color:#059669">✓ Expedite SKU-1L-PET W3</div>
+            <div style="font-size:11px;color:#64748B;margin-top:3px">Run extra 4-hour shift to cover 2,800 case ATP deficit</div>
+          </div>
+          <div style="padding:10px;background:#FFFBEB;border-radius:8px">
+            <div style="font-size:12px;font-weight:600;color:#D97706">⚠ Review Glass 500ml W4</div>
+            <div style="font-size:11px;color:#64748B;margin-top:3px">Low ATP buffer; consider expediting changeover from PET line</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-layer-group"></i> Active Scenarios</span><a href="/production/scenarios" class="btn btn-sm btn-secondary">Manage</a></div>
+        <div class="card-body compact">
+          {[
+            { name: 'Base Plan Mar 2026', status: 'active', type: 'Baseline' },
+            { name: 'Demand Upside +15%', status: 'draft', type: 'Demand Spike' },
+            { name: 'Line Breakdown Contingency', status: 'draft', type: 'Risk' },
+            { name: 'New SKU Launch', status: 'review', type: 'New Product' },
+          ].map(s => (
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #F1F5F9">
+              <div>
+                <div style="font-size:13px;font-weight:500">{s.name}</div>
+                <div style="font-size:11px;color:#64748B">{s.type}</div>
+              </div>
+              <span class={`badge badge-${s.status === 'active' ? 'success' : s.status === 'draft' ? 'neutral' : 'info'}`}>{s.status}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+    <script src="/static/production-module.js"></script>
+    <script>document.body.dataset.page='production-home';</script>
+  </Layout>)
+})
+
+app.get('/production/mps', (c) => {
+  return c.html(<Layout title="Master Production Schedule" activeModule="prod-mps">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-calendar-check"></i></div>
+        <div>
+          <div class="page-title">Master Production Schedule</div>
+          <div class="page-subtitle">Firm orders, planned orders, capacity alignment · Horizon: 12 weeks</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <span class="badge badge-live">Live</span>
+        <button class="btn btn-primary"><i class="fas fa-plus"></i> New Order</button>
+        <button class="btn btn-secondary"><i class="fas fa-download"></i> Export</button>
+        <a href="/production/rccp" class="btn btn-secondary"><i class="fas fa-ruler-combined"></i> RCCP Check</a>
+      </div>
+    </div>
+
+    <div class="grid-3 mb-4">
+      <div class="kpi-card healthy">
+        <div class="kpi-label"><i class="fas fa-calendar-check" style="margin-right:5px"></i>Firm Orders</div>
+        <div class="kpi-value healthy">6</div>
+        <div class="kpi-meta"><span class="kpi-target">Next 2 weeks</span><span class="kpi-trend up">↑ On track</span></div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label"><i class="fas fa-clock" style="margin-right:5px"></i>Planned Orders</div>
+        <div class="kpi-value warning">14</div>
+        <div class="kpi-meta"><span class="kpi-target">W3–W12</span><span class="kpi-trend up">Review needed</span></div>
+      </div>
+      <div class="kpi-card critical">
+        <div class="kpi-label"><i class="fas fa-exclamation-triangle" style="margin-right:5px"></i>ATP Issues</div>
+        <div class="kpi-value critical">2</div>
+        <div class="kpi-meta"><span class="kpi-target">Target: 0</span><span class="kpi-trend down">Action required</span></div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header">
+        <span class="card-title"><i class="fas fa-chart-bar"></i> MPS 12-Week Capacity vs. Planned</span>
+        <div style="display:flex;gap:8px">
+          <select class="form-input form-select" style="width:auto;font-size:12px">
+            <option>All SKUs</option><option>PET 500ml</option><option>PET 1L</option><option>Mango 200ml</option>
+          </select>
+          <select class="form-input form-select" style="width:auto;font-size:12px">
+            <option>All Lines</option><option>MUM-L1</option><option>MUM-L2</option><option>DEL-L1</option>
+          </select>
+        </div>
+      </div>
+      <div class="card-body" style="height:240px"><canvas id="mps-chart"></canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><i class="fas fa-table"></i> MPS Detail</span>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-sm btn-secondary"><i class="fas fa-filter"></i> Filter</button>
+          <button class="btn btn-sm btn-primary"><i class="fas fa-bolt"></i> Firm All W1</button>
+        </div>
+      </div>
+      <div class="card-body compact">
+        <table class="data-table">
+          <thead><tr><th>SKU</th><th>Week</th><th>Planned</th><th>Confirmed</th><th>Available</th><th>Status</th><th>Line</th><th>Action</th></tr></thead>
+          <tbody id="mps-table-body"><tr><td colspan={8} style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <script src="/static/production-module.js"></script>
+    <script>document.body.dataset.page='production-mps';</script>
+  </Layout>)
+})
+
+app.get('/production/atp', (c) => {
+  return c.html(<Layout title="Available-to-Promise" activeModule="prod-atp">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#059669,#10B981)"><i class="fas fa-check-double"></i></div>
+        <div>
+          <div class="page-title">Available-to-Promise</div>
+          <div class="page-subtitle">Real-time ATP by SKU · Commit dates · Order promising engine</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <span class="badge badge-live">Live</span>
+        <button class="btn btn-primary"><i class="fas fa-search"></i> Check ATP</button>
+        <button class="btn btn-secondary"><i class="fas fa-download"></i> Export</button>
+      </div>
+    </div>
+
+    <div class="grid-3 mb-4">
+      <div class="kpi-card healthy">
+        <div class="kpi-label"><i class="fas fa-check-circle" style="margin-right:5px"></i>SKUs Available</div>
+        <div class="kpi-value healthy">4</div>
+        <div class="kpi-meta"><span class="kpi-target">of 5 SKUs</span><span class="kpi-trend up">↑ Good</span></div>
+      </div>
+      <div class="kpi-card critical">
+        <div class="kpi-label"><i class="fas fa-times-circle" style="margin-right:5px"></i>Constrained</div>
+        <div class="kpi-value critical">1</div>
+        <div class="kpi-meta"><span class="kpi-target">SKU-1L-PET W3</span><span class="kpi-trend down">↓ –2800 cases</span></div>
+      </div>
+      <div class="kpi-card healthy">
+        <div class="kpi-label"><i class="fas fa-boxes" style="margin-right:5px"></i>Total ATP Pool</div>
+        <div class="kpi-value healthy">32.4K</div>
+        <div class="kpi-meta"><span class="kpi-target">Target: 25K</span><span class="kpi-trend up">↑ +7.4K</span></div>
+      </div>
+    </div>
+
+    <div class="grid-2 mb-4">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> ATP by Week (8W)</span></div>
+        <div class="card-body" style="height:220px"><canvas id="atp-chart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-exclamation-circle"></i> ATP Exceptions</span></div>
+        <div class="card-body">
+          <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>SKU-1L-PET – W3 Mar</strong><br/>ATP: –2,800 cases. Customer orders exceed supply. Options: expedite MUM-L2 run or defer low-priority orders.</div></div>
+          <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>SKU-500-GLASS – W2 Mar</strong><br/>ATP buffer only 700 cases. Buffer thin; one large order could create constraint.</div></div>
+          <div class="alert alert-success"><i class="fas fa-check-circle"></i><div><strong>SKU-500-PET – All Weeks OK</strong><br/>ATP: 15,200 cases W1. Full commitment possible.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><i class="fas fa-table"></i> ATP by SKU</span>
+        <div style="display:flex;gap:8px">
+          <input class="form-input" style="width:200px;font-size:12px" placeholder="Search SKU..." />
+          <button class="btn btn-sm btn-primary"><i class="fas fa-bolt"></i> Batch Commit</button>
+        </div>
+      </div>
+      <div class="card-body compact">
+        <table class="data-table">
+          <thead><tr><th>SKU</th><th>On-Hand Stock</th><th>Scheduled Receipts</th><th>Customer Orders</th><th>ATP</th><th>Commit Date</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="atp-table-body"><tr><td colspan={8} style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <script src="/static/production-module.js"></script>
+    <script>document.body.dataset.page='production-atp';</script>
+  </Layout>)
+})
+
+app.get('/production/rccp', (c) => {
+  return c.html(<Layout title="Rough-Cut Capacity Planning" activeModule="prod-rccp">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#D97706,#F59E0B)"><i class="fas fa-ruler-combined"></i></div>
+        <div>
+          <div class="page-title">Rough-Cut Capacity Planning</div>
+          <div class="page-subtitle">High-level capacity feasibility check for MPS · 8-week horizon · Line-by-line load analysis</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <span class="badge badge-warning">2 Lines Overloaded</span>
+        <button class="btn btn-primary"><i class="fas fa-sync"></i> Recalculate</button>
+        <a href="/production/mps" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to MPS</a>
+      </div>
+    </div>
+
+    <div class="grid-3 mb-4">
+      <div class="kpi-card critical">
+        <div class="kpi-label"><i class="fas fa-exclamation-circle" style="margin-right:5px"></i>Overloaded Lines</div>
+        <div class="kpi-value critical">2</div>
+        <div class="kpi-meta"><span class="kpi-target">MUM-L2 (98%), MUM-L1 (91%)</span></div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label"><i class="fas fa-tachometer-alt" style="margin-right:5px"></i>Avg Load</div>
+        <div class="kpi-value warning">82%</div>
+        <div class="kpi-meta"><span class="kpi-target">Target: &lt;85%</span><span class="kpi-trend up">↑ W1 peak</span></div>
+      </div>
+      <div class="kpi-card healthy">
+        <div class="kpi-label"><i class="fas fa-check-circle" style="margin-right:5px"></i>Lines Feasible</div>
+        <div class="kpi-value healthy">4 / 6</div>
+        <div class="kpi-meta"><span class="kpi-target">Target: 6/6</span></div>
+      </div>
+    </div>
+
+    <div class="grid-2 mb-4">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> Required vs Available Capacity</span></div>
+        <div class="card-body" style="height:240px"><canvas id="rccp-chart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> 8-Week Capacity Load by Line</span></div>
+        <div class="card-body" style="height:240px"><canvas id="rccp-horizon-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><i class="fas fa-table"></i> RCCP Load Table – 8 Week Horizon</span>
+        <div style="display:flex;gap:8px;align-items:center;font-size:12px;color:#64748B">
+          <span style="color:#DC2626">■</span> &gt;90% Critical
+          <span style="color:#D97706">■</span> 80–90% Warning
+          <span style="color:#059669">■</span> &lt;80% OK
+        </div>
+      </div>
+      <div class="card-body compact">
+        <table class="data-table">
+          <thead><tr><th>Resource</th><th>W1</th><th>W2</th><th>W3</th><th>W4</th><th>W5</th><th>W6</th><th>W7</th><th>W8</th><th>Verdict</th></tr></thead>
+          <tbody id="rccp-table-body"><tr><td colspan={10} style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px">
+      <div class="card-header"><span class="card-title"><i class="fas fa-lightbulb"></i> RCCP Recommendations</span></div>
+      <div class="card-body">
+        <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>MUM-L2 Overloaded W1–W2 (95–98%)</strong><br/>Action: Authorize 2-shift weekend overtime OR shift 8,000 cases to DEL-L1 (currently 75% loaded). Expected impact: MUM-L2 drops to 84%.</div></div>
+        <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>MUM-L1 Tight W4 (91%)</strong><br/>Action: Review new SKU launch timing. Delay Glass 500ml W4 by 1 week to reduce load to 82%.</div></div>
+        <div class="alert alert-success"><i class="fas fa-check-circle"></i><div><strong>Delhi Lines Underutilized (68–75%)</strong><br/>Opportunity: Pull forward W5–W6 production to build inventory buffer.</div></div>
+      </div>
+    </div>
+    <script src="/static/production-module.js"></script>
+    <script>document.body.dataset.page='production-rccp';</script>
+  </Layout>)
+})
+
+app.get('/production/workbench', (c) => {
+  return c.html(<Layout title="Production Planner Workbench" activeModule="prod-workbench">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-drafting-compass"></i></div>
+        <div>
+          <div class="page-title">Planner Workbench</div>
+          <div class="page-subtitle">Interactive job management · Sequence, firm, and monitor production orders</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <span class="badge badge-live">Live</span>
+        <button class="btn btn-primary"><i class="fas fa-plus"></i> New Job</button>
+        <a href="/sequencing/gantt" class="btn btn-secondary"><i class="fas fa-bars-staggered"></i> Gantt View</a>
+      </div>
+    </div>
+
+    <div class="grid-3 mb-4">
+      <div class="kpi-card healthy">
+        <div class="kpi-label"><i class="fas fa-play-circle" style="margin-right:5px"></i>In Progress</div>
+        <div class="kpi-value healthy">3</div>
+        <div class="kpi-meta"><span class="kpi-target">Jobs running now</span></div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label"><i class="fas fa-clock" style="margin-right:5px"></i>Scheduled</div>
+        <div class="kpi-value warning">5</div>
+        <div class="kpi-meta"><span class="kpi-target">Next 24 hrs</span></div>
+      </div>
+      <div class="kpi-card info">
+        <div class="kpi-label"><i class="fas fa-list" style="margin-right:5px"></i>Planned</div>
+        <div class="kpi-value">4</div>
+        <div class="kpi-meta"><span class="kpi-target">Awaiting firm</span></div>
+      </div>
+    </div>
+
+    <div class="grid-2-1 mb-4">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="fas fa-list-ol"></i> Production Job Queue</span>
+          <div style="display:flex;gap:8px">
+            <select class="form-input form-select" style="width:auto;font-size:12px">
+              <option>All Lines</option><option>MUM-L1</option><option>MUM-L2</option><option>DEL-L1</option>
+            </select>
+            <button class="btn btn-sm btn-primary"><i class="fas fa-robot"></i> AI Sequence</button>
+          </div>
+        </div>
+        <div class="card-body" id="workbench-jobs"><div class="spinner"></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-clock"></i> Changeover Matrix</span></div>
+        <div class="card-body compact">
+          <table class="data-table" style="font-size:11px">
+            <thead><tr><th>From → To</th><th>500ml</th><th>1L</th><th>Mango</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">500ml PET</td><td style="color:#059669">—</td><td style="color:#D97706">2.5h</td><td style="color:#DC2626">4.0h</td></tr>
+              <tr><td style="font-weight:600">1L PET</td><td style="color:#D97706">2.5h</td><td style="color:#059669">—</td><td style="color:#DC2626">4.5h</td></tr>
+              <tr><td style="font-weight:600">Mango Can</td><td style="color:#DC2626">4.0h</td><td style="color:#DC2626">4.5h</td><td style="color:#059669">—</td></tr>
+            </tbody>
+          </table>
+          <div class="alert alert-info" style="margin-top:12px"><i class="fas fa-info-circle"></i><div>AI recommends sequencing 500ml → 1L → Mango to minimize total changeover to 6.5h vs. current 11h</div></div>
+        </div>
+      </div>
+    </div>
+    <script src="/static/production-module.js"></script>
+    <script>document.body.dataset.page='production-workbench';</script>
+  </Layout>)
+})
+
+app.get('/production/scenarios', (c) => {
+  return c.html(<Layout title="Production – Scenario Manager" activeModule="prod-scenarios">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#38BDF8)"><i class="fas fa-layer-group"></i></div>
+        <div>
+          <div class="page-title">Production Scenario Manager</div>
+          <div class="page-subtitle">Model what-if production plans · Compare, run, and activate scenarios</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <button class="btn btn-primary" onclick="document.getElementById('new-prod-sc').style.display='block'"><i class="fas fa-plus"></i> New Scenario</button>
+        <button class="btn btn-secondary"><i class="fas fa-upload"></i> Import</button>
+      </div>
+    </div>
+
+    <div class="card mb-4" id="new-prod-sc" style="display:none">
+      <div class="card-header"><span class="card-title">Create New Scenario</span></div>
+      <div class="card-body">
+        <div class="grid-3">
+          <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="prod-sc-name" placeholder="e.g., Demand Upside +20%" /></div>
+          <div class="form-group"><label class="form-label">Driver</label>
+            <select class="form-input form-select" id="prod-sc-driver">
+              <option>Demand</option><option>Capacity</option><option>New Product</option><option>Cost</option><option>Risk</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Description</label><input class="form-input" id="prod-sc-desc" placeholder="Brief description" /></div>
+        </div>
+        <button class="btn btn-primary" onclick="createProdScenario()"><i class="fas fa-save"></i> Create Scenario</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('new-prod-sc').style.display='none'">Cancel</button>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> Scenario Comparison</span></div>
+      <div class="card-body" style="height:220px"><canvas id="prod-scenario-compare-chart"></canvas></div>
+    </div>
+
+    <div id="prod-scenarios-list"><div class="spinner"></div></div>
+
+    <script src="/static/production-module.js"></script>
+    <script dangerouslySetInnerHTML={{ __html: `
+document.body.dataset.page='production-scenarios';
+document.addEventListener('DOMContentLoaded', function() {
+  var ctx = document.getElementById('prod-scenario-compare-chart');
+  if (ctx) {
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Base Plan', 'Demand +15%', 'Line Breakdown', 'New SKU Launch', 'Energy Saving'],
+        datasets: [
+          { label: 'Output (K cases)', data: [310, 356, 285, 325, 291], backgroundColor: 'rgba(37,99,235,0.75)', borderRadius: 4 },
+          { label: 'Cost Index', data: [100, 108, 92, 104, 88], backgroundColor: 'rgba(217,119,6,0.75)', borderRadius: 4 },
+          { label: 'Service Level %', data: [94.2, 91.8, 88.4, 93.1, 93.8], backgroundColor: 'rgba(5,150,105,0.75)', borderRadius: 4 }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } }
+    });
+  }
+});
+async function createProdScenario() {
+  var name = document.getElementById('prod-sc-name').value;
+  if (!name) return;
+  await axios.post('/api/scenarios', { module:'production', name, description: document.getElementById('prod-sc-desc').value, driver: document.getElementById('prod-sc-driver').value });
+  location.reload();
+}
+    ` }}></script>
+  </Layout>)
+})
+
+app.get('/production/ml-models', (c) => {
+  return c.html(<Layout title="Production – ML Models" activeModule="prod-mlmodels">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)"><i class="fas fa-brain"></i></div>
+        <div>
+          <div class="page-title">ML Models – Production Planning</div>
+          <div class="page-subtitle">Demand forecasting · ATP prediction · RCCP optimization · Model drift monitoring</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <span class="badge badge-success">3 Models Active</span>
+        <button class="btn btn-primary"><i class="fas fa-sync"></i> Retrain</button>
+        <button class="btn btn-secondary"><i class="fas fa-history"></i> Run History</button>
+      </div>
+    </div>
+
+    <div class="grid-3 mb-4">
+      {[
+        { name: 'Demand Forecaster', type: 'LSTM + XGBoost Ensemble', accuracy: '92.1%', mape: '4.6%', status: 'healthy', last_run: 'Mar 17, 06:00', features: 24, icon: 'fa-chart-line' },
+        { name: 'ATP Predictor', type: 'Random Forest + LightGBM', accuracy: '88.4%', mape: '6.0%', status: 'healthy', last_run: 'Mar 17, 06:30', features: 18, icon: 'fa-check-double' },
+        { name: 'RCCP Optimizer', type: 'Constraint Programming + ML', accuracy: '85.8%', mape: '7.2%', status: 'warning', last_run: 'Mar 17, 07:00', features: 32, icon: 'fa-ruler-combined' },
+      ].map(m => (
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title"><i class={`fas ${m.icon}`}></i> {m.name}</span>
+            <span class={`badge badge-${m.status}`}>{m.status}</span>
+          </div>
+          <div class="card-body">
+            <div style="font-size:11px;color:#64748B;margin-bottom:8px">{m.type}</div>
+            <div class="grid-2" style="gap:8px;margin-bottom:12px">
+              <div style="background:#F0F4FA;padding:8px;border-radius:8px;text-align:center">
+                <div style="font-size:20px;font-weight:700;color:#1E3A8A">{m.accuracy}</div>
+                <div style="font-size:10px;color:#64748B">Accuracy</div>
+              </div>
+              <div style="background:#F0FDF4;padding:8px;border-radius:8px;text-align:center">
+                <div style="font-size:20px;font-weight:700;color:#059669">{m.mape}</div>
+                <div style="font-size:10px;color:#64748B">MAPE</div>
+              </div>
+            </div>
+            <div style="font-size:11px;color:#64748B">{m.features} features · Last run: {m.last_run}</div>
+            <div style="margin-top:12px;display:flex;gap:6px">
+              <button class="btn btn-sm btn-primary"><i class="fas fa-play"></i> Run</button>
+              <button class="btn btn-sm btn-secondary"><i class="fas fa-history"></i> Logs</button>
+              <button class="btn btn-sm btn-secondary"><i class="fas fa-sliders-h"></i> Config</button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-radar-chart"></i> Model Performance Radar</span></div>
+        <div class="card-body" style="height:280px"><canvas id="ml-perf-chart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-line"></i> Model Accuracy Trend (6M)</span></div>
+        <div class="card-body" style="height:280px"><canvas id="ml-drift-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px">
+      <div class="card-header"><span class="card-title"><i class="fas fa-list"></i> Feature Importance – Demand Forecaster</span></div>
+      <div class="card-body compact">
+        <table class="data-table">
+          <thead><tr><th>Feature</th><th>Type</th><th>Importance</th><th>Stability</th></tr></thead>
+          <tbody>
+            {[
+              { feature: 'Historical Sales (lag 1–4 wk)', type: 'Time-series', imp: 31.2, stability: 'High' },
+              { feature: 'Seasonality Index', type: 'Calendar', imp: 18.6, stability: 'High' },
+              { feature: 'Promotional Events', type: 'External', imp: 14.3, stability: 'Medium' },
+              { feature: 'Distribution Reach', type: 'Operational', imp: 11.8, stability: 'High' },
+              { feature: 'Competitor Price Index', type: 'Market', imp: 8.4, stability: 'Low' },
+              { feature: 'Weather Index', type: 'External', imp: 7.2, stability: 'Medium' },
+              { feature: 'Plant Capacity Available', type: 'Operational', imp: 5.9, stability: 'High' },
+              { feature: 'Raw Material Availability', type: 'Supply', imp: 2.6, stability: 'Medium' },
+            ].map(f => (
+              <tr>
+                <td><strong>{f.feature}</strong></td>
+                <td><span class="badge badge-neutral">{f.type}</span></td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <div class="progress-bar" style="width:100px"><div class="progress-fill healthy" style={`width:${f.imp * 3}%`}></div></div>
+                    <span style="font-weight:600">{f.imp}%</span>
+                  </div>
+                </td>
+                <td><span class={`badge badge-${f.stability === 'High' ? 'success' : f.stability === 'Medium' ? 'warning' : 'critical'}`}>{f.stability}</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <script src="/static/production-module.js"></script>
+    <script>document.body.dataset.page='production-mlmodels';</script>
+  </Layout>)
+})
+
+app.get('/production/analytics', (c) => {
+  return c.html(<Layout title="Production Analytics" activeModule="prod-analytics">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-chart-bar"></i></div>
+        <div>
+          <div class="page-title">Production Analytics</div>
+          <div class="page-subtitle">Output vs plan · Efficiency by line · Loss analysis · Schedule adherence</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <select class="form-input form-select" style="width:auto;font-size:13px">
+          <option>Last 14 Days</option><option>Last 30 Days</option><option>This Month</option>
+        </select>
+        <button class="btn btn-secondary"><i class="fas fa-download"></i> Export</button>
+      </div>
+    </div>
+
+    <div class="grid-3 mb-4">
+      <div class="kpi-card warning">
+        <div class="kpi-label"><i class="fas fa-industry" style="margin-right:5px"></i>Output vs Plan</div>
+        <div class="kpi-value warning">91.8%</div>
+        <div class="kpi-meta"><span class="kpi-target">Target: 95%</span><span class="kpi-trend up">↑ +1.2%</span></div>
+      </div>
+      <div class="kpi-card healthy">
+        <div class="kpi-label"><i class="fas fa-tachometer-alt" style="margin-right:5px"></i>Avg Line Efficiency</div>
+        <div class="kpi-value healthy">88.4%</div>
+        <div class="kpi-meta"><span class="kpi-target">Target: 88%</span><span class="kpi-trend up">↑ On target</span></div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label"><i class="fas fa-exchange-alt" style="margin-right:5px"></i>Changeover Loss</div>
+        <div class="kpi-value warning">4.6 hrs/day</div>
+        <div class="kpi-meta"><span class="kpi-target">Target: 3.5 hrs</span><span class="kpi-trend down">↓ –0.3</span></div>
+      </div>
+    </div>
+
+    <div class="grid-2 mb-4">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-line"></i> Planned vs Actual Output (14 Days)</span></div>
+        <div class="card-body" style="height:240px"><canvas id="prod-output-chart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> Line Efficiency by Production Line</span></div>
+        <div class="card-body" style="height:240px"><canvas id="prod-efficiency-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-title"><i class="fas fa-table"></i> Production Performance Summary</span></div>
+      <div class="card-body compact">
+        <table class="data-table">
+          <thead><tr><th>Line</th><th>Plant</th><th>Planned (cases)</th><th>Actual (cases)</th><th>Attainment %</th><th>OEE</th><th>Changeover (hrs)</th><th>Downtime</th><th>Trend</th></tr></thead>
+          <tbody>
+            {[
+              { line: 'MUM-L1', plant: 'Mumbai', planned: 42000, actual: 39600, att: 94.3, oee: 77.1, co: 3.2, dt: 1.8 },
+              { line: 'MUM-L2', plant: 'Mumbai', planned: 45000, actual: 40050, att: 89.0, oee: 85.4, co: 2.8, dt: 0.6 },
+              { line: 'DEL-L1', plant: 'Delhi', planned: 36000, actual: 33840, att: 94.0, oee: 79.2, co: 4.1, dt: 2.1 },
+              { line: 'DEL-L2', plant: 'Delhi', planned: 28000, actual: 26320, att: 94.0, oee: 76.8, co: 5.2, dt: 2.8 },
+              { line: 'CHN-L1', plant: 'Chennai', planned: 32000, actual: 29120, att: 91.0, oee: 81.4, co: 3.8, dt: 1.4 },
+              { line: 'BAN-L1', plant: 'Bangalore', planned: 26000, actual: 24700, att: 95.0, oee: 78.6, co: 2.6, dt: 1.2 },
+            ].map(r => (
+              <tr>
+                <td><strong>{r.line}</strong></td>
+                <td>{r.plant}</td>
+                <td>{r.planned.toLocaleString()}</td>
+                <td>{r.actual.toLocaleString()}</td>
+                <td style={`font-weight:600;color:${r.att >= 93 ? '#059669' : r.att >= 88 ? '#D97706' : '#DC2626'}`}>{r.att}%</td>
+                <td>{r.oee}%</td>
+                <td style={`color:${r.co > 4 ? '#DC2626' : r.co > 3 ? '#D97706' : '#059669'}`}>{r.co}h</td>
+                <td style={`color:${r.dt > 2 ? '#DC2626' : '#D97706'}`}>{r.dt}h</td>
+                <td><span style="font-size:18px">{r.att >= 93 ? '↗' : r.att >= 88 ? '→' : '↘'}</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <script src="/static/production-module.js"></script>
+    <script>document.body.dataset.page='production-analytics';</script>
+  </Layout>)
+})
+
+app.get('/production/copilot', (c) => {
+  return c.html(<Layout title="Production AI Copilot" activeModule="prod-copilot">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)"><i class="fas fa-robot"></i></div>
+        <div>
+          <div class="page-title">Production AI Copilot</div>
+          <div class="page-subtitle">Natural language interface · MPS queries · ATP checks · RCCP analysis · Schedule optimization</div>
+        </div>
+      </div>
+      <div class="page-header-right"><span class="badge badge-live">AI Live</span></div>
+    </div>
+
+    <div class="grid-2-1">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-comments"></i> AI Production Assistant</span></div>
+        <div id="copilot-messages" class="chat-messages" style="min-height:360px">
+          <div class="chat-msg assistant"><i class="fas fa-robot" style="margin-right:8px;color:#7C3AED"></i>Hello! I'm your Production Planning AI Copilot. I can help you with MPS analysis, ATP checks, RCCP capacity planning, and production optimization. What would you like to explore?</div>
+        </div>
+        <div class="chat-input-area">
+          <input class="form-input flex-1" id="copilot-input" placeholder="Ask about MPS, ATP, RCCP, capacity..." onkeydown="if(event.key==='Enter'){sendCopilot(this.value);this.value=''}"/>
+          <button class="btn btn-primary" onclick="const i=document.getElementById('copilot-input');sendCopilot(i.value);i.value=''"><i class="fas fa-paper-plane"></i></button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-bolt"></i> Suggested Queries</span></div>
+        <div class="card-body" id="copilot-suggestions"></div>
+        <div class="card-header" style="margin-top:12px"><span class="card-title"><i class="fas fa-chart-pie"></i> AI Insights</span></div>
+        <div class="card-body compact">
+          <div style="margin-bottom:10px;padding:10px;background:#EFF6FF;border-radius:8px">
+            <div style="font-size:12px;font-weight:600;color:#1D4ED8">📊 MPS Health: 94.2% adherence</div>
+            <div style="font-size:11px;color:#64748B;margin-top:2px">2 ATP constraints detected in W3. Recommend expediting.</div>
+          </div>
+          <div style="margin-bottom:10px;padding:10px;background:#FEF3C7;border-radius:8px">
+            <div style="font-size:12px;font-weight:600;color:#D97706">⚠ RCCP Alert: MUM-L2</div>
+            <div style="font-size:11px;color:#64748B;margin-top:2px">98% load W2. Suggest shifting 8K cases to DEL-L1.</div>
+          </div>
+          <div style="padding:10px;background:#F0FDF4;border-radius:8px">
+            <div style="font-size:12px;font-weight:600;color:#059669">✓ Changeover Optimization</div>
+            <div style="font-size:11px;color:#64748B;margin-top:2px">Optimal sequence saves 4.5 hrs changeover this week.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="/static/production-module.js"></script>
+    <script>document.body.dataset.page='production-copilot';</script>
+  </Layout>)
+})
+
+// ============================================================
+// DEPLOYMENT PLANNING MODULE
+// ============================================================
+
+app.get('/deployment', (c) => {
+  return c.html(<Layout title="Deployment Planning" activeModule="deployment">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#38BDF8)"><i class="fas fa-truck"></i></div>
+        <div>
+          <div class="page-title">Deployment Planning</div>
+          <div class="page-subtitle">Distribution network · Route optimization · Load planning · Carrier management</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <span class="badge badge-live">Live</span>
+        <a href="/deployment/workbench" class="btn btn-primary"><i class="fas fa-drafting-compass"></i> Workbench</a>
+        <a href="/deployment/routes" class="btn btn-secondary"><i class="fas fa-route"></i> Route Optimizer</a>
+      </div>
+    </div>
+    <div class="kpi-grid" id="dep-kpi-grid"><div class="kpi-card"><div class="spinner"></div></div></div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-truck"></i> Fleet Utilization by Hub</span><a href="/deployment/load-planning" class="btn btn-sm btn-secondary">Load Planning</a></div>
+        <div class="card-body" style="height:220px"><canvas id="dep-fleet-chart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-clock"></i> On-Time Delivery Trend (8W)</span></div>
+        <div class="card-body" style="height:220px"><canvas id="dep-otd-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-rupee-sign"></i> Logistics Cost Breakdown</span></div>
+        <div class="card-body" style="height:220px"><canvas id="dep-cost-chart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-exclamation-triangle"></i> Active Alerts</span></div>
+        <div class="card-body">
+          <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>OTD Gap: 3.6pp below target</strong><br/>Actual 91.4% vs target 95%. Delhi → Lucknow route delayed 14 hrs.</div></div>
+          <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>Mumbai Hub at 87% capacity</strong><br/>Peak season ahead. Review load diversion to Pune cross-dock.</div></div>
+          <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>Carrier VRL Logistics OTD: 85.6%</strong><br/>Below 88% SLA threshold. Consider contract review.</div></div>
+          <div class="alert alert-info"><i class="fas fa-info-circle"></i><div><strong>24 routes ready for AI optimization</strong><br/>ML optimizer identified ₹4.2L/month savings opportunity.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-title"><i class="fas fa-table"></i> Today's Shipment Summary</span><a href="/deployment/workbench" class="btn btn-sm btn-secondary">Full Workbench</a></div>
+      <div class="card-body compact">
+        <table class="data-table">
+          <thead><tr><th>Shipment ID</th><th>Route</th><th>Volume</th><th>Truck</th><th>Util %</th><th>ETD</th><th>ETA</th><th>Status</th></tr></thead>
+          <tbody>
+            {[
+              { id: 'SHP-0317-001', route: 'Mumbai → Pune', vol: '1,240 cases', truck: '32ft', util: 92, etd: 'Mar 17 06:00', eta: 'Mar 17 10:00', status: 'in_transit' },
+              { id: 'SHP-0317-002', route: 'Delhi → Jaipur', vol: '820 cases', truck: '22ft', util: 78, etd: 'Mar 17 08:00', eta: 'Mar 17 13:00', status: 'planned' },
+              { id: 'SHP-0317-003', route: 'Chennai → Coimbatore', vol: '960 cases', truck: '22ft', util: 88, etd: 'Mar 17 07:00', eta: 'Mar 17 15:00', status: 'loading' },
+              { id: 'SHP-0317-006', route: 'Delhi → Lucknow', vol: '1,120 cases', truck: '32ft', util: 89, etd: 'Mar 17 09:00', eta: 'Mar 17 21:00', status: 'delayed' },
+            ].map(s => (
+              <tr>
+                <td><strong>{s.id}</strong></td>
+                <td>{s.route}</td>
+                <td>{s.vol}</td>
+                <td>{s.truck}</td>
+                <td style={`font-weight:600;color:${s.util >= 90 ? '#1D4ED8' : '#059669'}`}>{s.util}%</td>
+                <td>{s.etd}</td>
+                <td>{s.eta}</td>
+                <td><span class={`badge badge-${s.status === 'in_transit' ? 'success' : s.status === 'delayed' ? 'critical' : s.status === 'loading' ? 'warning' : 'info'}`}>{s.status}</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <script src="/static/deployment-module.js"></script>
+    <script>document.body.dataset.page='deployment-home';</script>
+  </Layout>)
+})
+
+app.get('/deployment/network', (c) => {
+  return c.html(<Layout title="Distribution Network" activeModule="dep-network">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#38BDF8)"><i class="fas fa-project-diagram"></i></div>
+        <div>
+          <div class="page-title">Distribution Network</div>
+          <div class="page-subtitle">Hub & spoke design · DC utilization · Flow analysis · Coverage by channel</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <span class="badge badge-info">6 Hubs Active</span>
+        <button class="btn btn-primary"><i class="fas fa-sitemap"></i> Redesign Network</button>
+        <button class="btn btn-secondary"><i class="fas fa-download"></i> Export</button>
+      </div>
+    </div>
+
+    <div class="grid-3 mb-4">
+      <div class="kpi-card healthy">
+        <div class="kpi-label"><i class="fas fa-warehouse" style="margin-right:5px"></i>Active DCs</div>
+        <div class="kpi-value healthy">6</div>
+        <div class="kpi-meta"><span class="kpi-target">5 owned, 1 leased</span></div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label"><i class="fas fa-route" style="margin-right:5px"></i>Active Lanes</div>
+        <div class="kpi-value warning">124</div>
+        <div class="kpi-meta"><span class="kpi-target">Target: 150</span><span class="kpi-trend up">↑ +8 new</span></div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label"><i class="fas fa-tachometer-alt" style="margin-right:5px"></i>Network Utilization</div>
+        <div class="kpi-value warning">81%</div>
+        <div class="kpi-meta"><span class="kpi-target">Target: 85%</span></div>
+      </div>
+    </div>
+
+    <div class="grid-2 mb-4">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> Hub Outbound / Inbound Flow (K cases/wk)</span></div>
+        <div class="card-body" style="height:240px"><canvas id="network-flow-chart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-radar-chart"></i> Channel Coverage %</span></div>
+        <div class="card-body" style="height:240px"><canvas id="network-coverage-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-title"><i class="fas fa-table"></i> Network Nodes</span></div>
+      <div class="card-body compact">
+        <table class="data-table">
+          <thead><tr><th>Hub / DC</th><th>Type</th><th>Capacity</th><th>Utilization</th><th>Active Lanes</th><th>OTD</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="network-nodes-table"><tr><td colspan={8} style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <script src="/static/deployment-module.js"></script>
+    <script>document.body.dataset.page='deployment-network';</script>
+  </Layout>)
+})
+
+app.get('/deployment/workbench', (c) => {
+  return c.html(<Layout title="Deployment Planner Workbench" activeModule="dep-workbench">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#38BDF8)"><i class="fas fa-drafting-compass"></i></div>
+        <div>
+          <div class="page-title">Deployment Planner Workbench</div>
+          <div class="page-subtitle">Manage shipments, optimize loads, and track dispatches in real-time</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <span class="badge badge-live">Live</span>
+        <button class="btn btn-primary"><i class="fas fa-plus"></i> Create Shipment</button>
+        <button class="btn btn-secondary"><i class="fas fa-download"></i> Export</button>
+      </div>
+    </div>
+
+    <div class="grid-3 mb-4">
+      <div class="kpi-card healthy">
+        <div class="kpi-label"><i class="fas fa-truck-loading" style="margin-right:5px"></i>In Transit</div>
+        <div class="kpi-value healthy">18</div>
+        <div class="kpi-meta"><span class="kpi-target">Shipments today</span></div>
+      </div>
+      <div class="kpi-card critical">
+        <div class="kpi-label"><i class="fas fa-exclamation-triangle" style="margin-right:5px"></i>Delayed</div>
+        <div class="kpi-value critical">2</div>
+        <div class="kpi-meta"><span class="kpi-target">Need attention</span></div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label"><i class="fas fa-tachometer-alt" style="margin-right:5px"></i>Avg Load Util</div>
+        <div class="kpi-value warning">84%</div>
+        <div class="kpi-meta"><span class="kpi-target">Target: 88%</span></div>
+      </div>
+    </div>
+
+    <div class="grid-2-1 mb-4">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="fas fa-truck"></i> Shipment Queue</span>
+          <div style="display:flex;gap:8px">
+            <select class="form-input form-select" style="width:auto;font-size:12px">
+              <option>All Hubs</option><option>Mumbai</option><option>Delhi</option><option>Chennai</option>
+            </select>
+            <select class="form-input form-select" style="width:auto;font-size:12px">
+              <option>All Status</option><option>In Transit</option><option>Planned</option><option>Delayed</option>
+            </select>
+          </div>
+        </div>
+        <div class="card-body compact">
+          <table class="data-table">
+            <thead><tr><th>ID</th><th>Origin</th><th>Destination</th><th>Volume</th><th>Truck</th><th>Util%</th><th>ETD</th><th>ETA</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="dep-shipments-table"><tr><td colspan={10} style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-gauge"></i> Avg Load Utilization</span></div>
+        <div class="card-body" style="position:relative;height:160px">
+          <canvas id="dep-load-gauge-chart"></canvas>
+          <div id="dep-load-gauge-value" style="position:absolute;top:50%;left:50%;transform:translate(-50%,0);font-size:28px;font-weight:800;color:#1E3A8A"></div>
+        </div>
+        <div class="card-header" style="margin-top:0"><span class="card-title"><i class="fas fa-exclamation-triangle"></i> Exceptions</span></div>
+        <div class="card-body compact">
+          <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>SHP-0317-006 Delayed</strong><br/>Delhi → Lucknow, 14 hrs late. Driver rest stop required.</div></div>
+          <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>SHP-0317-005 Low Util 65%</strong><br/>Consider consolidating with SHP-0317-009 (same lane).</div></div>
+        </div>
+      </div>
+    </div>
+    <script src="/static/deployment-module.js"></script>
+    <script>document.body.dataset.page='deployment-workbench';</script>
+  </Layout>)
+})
+
+app.get('/deployment/routes', (c) => {
+  return c.html(<Layout title="Route Optimization" activeModule="dep-route">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#059669,#34D399)"><i class="fas fa-route"></i></div>
+        <div>
+          <div class="page-title">Route Optimization</div>
+          <div class="page-subtitle">AI-powered route planning · Cost minimization · Transit time optimization · Mode selection</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <span class="badge badge-info">124 Active Routes</span>
+        <button class="btn btn-primary"><i class="fas fa-robot"></i> AI Optimize All</button>
+        <button class="btn btn-secondary"><i class="fas fa-plus"></i> New Route</button>
+      </div>
+    </div>
+
+    <div class="grid-3 mb-4">
+      <div class="kpi-card warning">
+        <div class="kpi-label"><i class="fas fa-rupee-sign" style="margin-right:5px"></i>Avg Cost/Case</div>
+        <div class="kpi-value warning">₹18.4</div>
+        <div class="kpi-meta"><span class="kpi-target">Target: ₹17.0</span><span class="kpi-trend up">↓ –₹0.3 WoW</span></div>
+      </div>
+      <div class="kpi-card healthy">
+        <div class="kpi-label"><i class="fas fa-clock" style="margin-right:5px"></i>Avg Transit</div>
+        <div class="kpi-value healthy">2.8d</div>
+        <div class="kpi-meta"><span class="kpi-target">Target: 2.5d</span></div>
+      </div>
+      <div class="kpi-card info">
+        <div class="kpi-label"><i class="fas fa-magic" style="margin-right:5px"></i>Optimization Potential</div>
+        <div class="kpi-value">₹4.2L</div>
+        <div class="kpi-meta"><span class="kpi-target">/month savings</span></div>
+      </div>
+    </div>
+
+    <div class="grid-2 mb-4">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> Cost by Transport Mode</span></div>
+        <div class="card-body" style="height:220px"><canvas id="routes-cost-chart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> Transit Time Distribution</span></div>
+        <div class="card-body" style="height:220px"><canvas id="routes-transit-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><i class="fas fa-table"></i> Route Library</span>
+        <div style="display:flex;gap:8px">
+          <input class="form-input" style="width:180px;font-size:12px" placeholder="Search routes..." />
+          <select class="form-input form-select" style="width:auto;font-size:12px"><option>All Carriers</option></select>
+        </div>
+      </div>
+      <div class="card-body compact">
+        <table class="data-table">
+          <thead><tr><th>Route ID</th><th>Lane</th><th>Distance</th><th>Transit</th><th>Cost/Case</th><th>Carrier</th><th>Opt. Score</th><th>Action</th></tr></thead>
+          <tbody id="routes-table-body"><tr><td colspan={8} style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <script src="/static/deployment-module.js"></script>
+    <script>document.body.dataset.page='deployment-routes';</script>
+  </Layout>)
+})
+
+app.get('/deployment/load-planning', (c) => {
+  return c.html(<Layout title="Load Planning" activeModule="dep-load">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#D97706,#F59E0B)"><i class="fas fa-boxes"></i></div>
+        <div>
+          <div class="page-title">Load Planning</div>
+          <div class="page-subtitle">Truck utilization · SKU mix optimization · Weight & cube utilization · 3D load planner</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <span class="badge badge-warning">Avg Util: 84%</span>
+        <button class="btn btn-primary"><i class="fas fa-magic"></i> Auto-Optimize All</button>
+        <button class="btn btn-secondary"><i class="fas fa-plus"></i> New Load Plan</button>
+      </div>
+    </div>
+
+    <div class="grid-3 mb-4">
+      <div class="kpi-card warning">
+        <div class="kpi-label"><i class="fas fa-truck" style="margin-right:5px"></i>Space Utilization</div>
+        <div class="kpi-value warning">84%</div>
+        <div class="kpi-meta"><span class="kpi-target">Target: 88%</span><span class="kpi-trend up">↑ +2%</span></div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label"><i class="fas fa-weight" style="margin-right:5px"></i>Weight Utilization</div>
+        <div class="kpi-value warning">79%</div>
+        <div class="kpi-meta"><span class="kpi-target">Target: 85%</span></div>
+      </div>
+      <div class="kpi-card info">
+        <div class="kpi-label"><i class="fas fa-boxes" style="margin-right:5px"></i>Trucks Today</div>
+        <div class="kpi-value">23</div>
+        <div class="kpi-meta"><span class="kpi-target">5 pending dispatch</span></div>
+      </div>
+    </div>
+
+    <div class="grid-2 mb-4">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> Truck Utilization by Vehicle</span></div>
+        <div class="card-body" style="height:220px"><canvas id="load-utilization-chart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-pie"></i> SKU Mix in Load Plans</span></div>
+        <div class="card-body" style="height:220px"><canvas id="load-sku-mix-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-title"><i class="fas fa-table"></i> Load Plans</span></div>
+      <div class="card-body compact">
+        <table class="data-table">
+          <thead><tr><th>Plan ID</th><th>Vehicle</th><th>Type</th><th>Lane</th><th>Contents</th><th>Weight</th><th>Space Util</th><th>Depart</th><th>Action</th></tr></thead>
+          <tbody id="load-plans-table"><tr><td colspan={9} style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <script src="/static/deployment-module.js"></script>
+    <script>document.body.dataset.page='deployment-load';</script>
+  </Layout>)
+})
+
+app.get('/deployment/carriers', (c) => {
+  return c.html(<Layout title="Carrier Selection" activeModule="dep-carrier">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)"><i class="fas fa-shipping-fast"></i></div>
+        <div>
+          <div class="page-title">Carrier Selection</div>
+          <div class="page-subtitle">Carrier performance · Contract management · Rate benchmarking · Risk scoring</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <span class="badge badge-info">5 Carriers</span>
+        <button class="btn btn-primary"><i class="fas fa-gavel"></i> Run RFQ</button>
+        <button class="btn btn-secondary"><i class="fas fa-plus"></i> Add Carrier</button>
+      </div>
+    </div>
+
+    <div class="grid-3 mb-4">
+      <div class="kpi-card healthy">
+        <div class="kpi-label"><i class="fas fa-star" style="margin-right:5px"></i>Preferred Carriers</div>
+        <div class="kpi-value healthy">2</div>
+        <div class="kpi-meta"><span class="kpi-target">BlueDart, DHL</span></div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label"><i class="fas fa-exclamation-triangle" style="margin-right:5px"></i>Below SLA</div>
+        <div class="kpi-value warning">1</div>
+        <div class="kpi-meta"><span class="kpi-target">VRL &lt;88% OTD</span></div>
+      </div>
+      <div class="kpi-card info">
+        <div class="kpi-label"><i class="fas fa-rupee-sign" style="margin-right:5px"></i>Avg Rate vs Market</div>
+        <div class="kpi-value">–8.2%</div>
+        <div class="kpi-meta"><span class="kpi-target">Favorable vs benchmark</span></div>
+      </div>
+    </div>
+
+    <div class="grid-2 mb-4">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-radar-chart"></i> Carrier Performance Radar</span></div>
+        <div class="card-body" style="height:280px"><canvas id="carrier-perf-chart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-exclamation-triangle"></i> Carrier Alerts</span></div>
+        <div class="card-body">
+          <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>VRL Logistics – OTD 85.6%</strong><br/>Below contractual SLA of 88%. Escalation required. Consider shifting 30% volume to Gati-KWE as backup.</div></div>
+          <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>Gati-KWE – Damage Rate 0.21%</strong><br/>Above 0.15% threshold. Request root cause investigation.</div></div>
+          <div class="alert alert-success"><i class="fas fa-check-circle"></i><div><strong>BlueDart – SLA All Green</strong><br/>94.2% OTD, 0.12% damage, GPS tracking 96% uptime.</div></div>
+          <div class="alert alert-info"><i class="fas fa-info-circle"></i><div><strong>DHL Contract Renewal – 45 days</strong><br/>Current rates expire May 1, 2026. Benchmark report ready.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-title"><i class="fas fa-table"></i> Carrier Scorecard</span></div>
+      <div class="card-body compact">
+        <table class="data-table">
+          <thead><tr><th>Carrier</th><th>Lanes</th><th>OTD %</th><th>Damage Rate</th><th>Cost/Case</th><th>Tracking</th><th>Rating</th><th>Spend Share</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="carrier-table-body"><tr><td colspan={10} style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <script src="/static/deployment-module.js"></script>
+    <script>document.body.dataset.page='deployment-carriers';</script>
+  </Layout>)
+})
+
+app.get('/deployment/scenarios', (c) => {
+  return c.html(<Layout title="Deployment Scenario Manager" activeModule="dep-scenarios">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#38BDF8)"><i class="fas fa-layer-group"></i></div>
+        <div>
+          <div class="page-title">Deployment Scenario Manager</div>
+          <div class="page-subtitle">Model distribution what-ifs · Network redesign · Carrier swap · Cost vs. service tradeoffs</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <button class="btn btn-primary" onclick="document.getElementById('new-dep-sc').style.display='block'"><i class="fas fa-plus"></i> New Scenario</button>
+        <button class="btn btn-secondary"><i class="fas fa-upload"></i> Import</button>
+      </div>
+    </div>
+
+    <div class="card mb-4" id="new-dep-sc" style="display:none">
+      <div class="card-header"><span class="card-title">Create New Deployment Scenario</span></div>
+      <div class="card-body">
+        <div class="grid-3">
+          <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="dep-sc-name" placeholder="e.g., Hub Consolidation Q3" /></div>
+          <div class="form-group"><label class="form-label">Driver</label>
+            <select class="form-input form-select" id="dep-sc-driver">
+              <option>Cost</option><option>Service</option><option>Risk</option><option>Network</option><option>Carrier</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Description</label><input class="form-input" id="dep-sc-desc" placeholder="Brief description" /></div>
+        </div>
+        <button class="btn btn-primary" onclick="createDepScenario()"><i class="fas fa-save"></i> Create Scenario</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('new-dep-sc').style.display='none'">Cancel</button>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> Scenario Impact Comparison</span></div>
+      <div class="card-body" style="height:220px"><canvas id="dep-scenario-compare-chart"></canvas></div>
+    </div>
+
+    <div id="dep-scenarios-list"><div class="spinner"></div></div>
+
+    <script src="/static/deployment-module.js"></script>
+    <script dangerouslySetInnerHTML={{ __html: `
+document.body.dataset.page='deployment-scenarios';
+document.addEventListener('DOMContentLoaded', function() {
+  var ctx = document.getElementById('dep-scenario-compare-chart');
+  if (ctx) {
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Base Plan', 'Hub Consolidation', 'Direct-to-Retail', 'Rail Expansion', 'Flood Contingency'],
+        datasets: [
+          { label: 'Cost Index', data: [100, 86, 108, 79, 102], backgroundColor: 'rgba(37,99,235,0.75)', borderRadius: 4 },
+          { label: 'OTD %', data: [91.4, 90.2, 97.0, 89.8, 88.0], backgroundColor: 'rgba(5,150,105,0.75)', borderRadius: 4 },
+          { label: 'Transit Days', data: [2.8, 3.1, 1.8, 3.4, 3.2], backgroundColor: 'rgba(217,119,6,0.75)', borderRadius: 4 }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } }
+    });
+  }
+});
+async function createDepScenario() {
+  var name = document.getElementById('dep-sc-name').value;
+  if (!name) return;
+  await axios.post('/api/scenarios', { module:'deployment', name, description: document.getElementById('dep-sc-desc').value, driver: document.getElementById('dep-sc-driver').value });
+  location.reload();
+}
+    ` }}></script>
+  </Layout>)
+})
+
+app.get('/deployment/ml-models', (c) => {
+  return c.html(<Layout title="Deployment ML Models" activeModule="dep-mlmodels">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)"><i class="fas fa-brain"></i></div>
+        <div>
+          <div class="page-title">ML Models – Deployment Planning</div>
+          <div class="page-subtitle">Route optimizer · OTD predictor · Load optimizer · Carrier risk scoring · Demand sensing</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <span class="badge badge-success">3 Models Active</span>
+        <button class="btn btn-primary"><i class="fas fa-sync"></i> Retrain All</button>
+      </div>
+    </div>
+
+    <div class="grid-3 mb-4">
+      {[
+        { name: 'Route Optimizer', type: 'Reinforcement Learning + VRP Solver', accuracy: '91.2%', savings: '₹4.2L/mo', status: 'healthy', last_run: 'Mar 17, 05:00', icon: 'fa-route', features: 38 },
+        { name: 'OTD Predictor', type: 'Gradient Boosting + SHAP', accuracy: '87.4%', savings: '+3.2% OTD', status: 'healthy', last_run: 'Mar 17, 05:30', icon: 'fa-clock', features: 28 },
+        { name: 'Load Optimizer', type: '3D Bin Packing + ML', accuracy: '94.1%', savings: '+4.8% util', status: 'healthy', last_run: 'Mar 17, 05:00', icon: 'fa-boxes', features: 22 },
+      ].map(m => (
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title"><i class={`fas ${m.icon}`}></i> {m.name}</span>
+            <span class={`badge badge-${m.status}`}>{m.status}</span>
+          </div>
+          <div class="card-body">
+            <div style="font-size:11px;color:#64748B;margin-bottom:8px">{m.type}</div>
+            <div class="grid-2" style="gap:8px;margin-bottom:12px">
+              <div style="background:#F0F4FA;padding:8px;border-radius:8px;text-align:center">
+                <div style="font-size:20px;font-weight:700;color:#1E3A8A">{m.accuracy}</div>
+                <div style="font-size:10px;color:#64748B">Accuracy</div>
+              </div>
+              <div style="background:#F0FDF4;padding:8px;border-radius:8px;text-align:center">
+                <div style="font-size:16px;font-weight:700;color:#059669">{m.savings}</div>
+                <div style="font-size:10px;color:#64748B">Impact</div>
+              </div>
+            </div>
+            <div style="font-size:11px;color:#64748B">{m.features} features · Last: {m.last_run}</div>
+            <div style="margin-top:12px;display:flex;gap:6px">
+              <button class="btn btn-sm btn-primary"><i class="fas fa-play"></i> Run</button>
+              <button class="btn btn-sm btn-secondary"><i class="fas fa-history"></i> Logs</button>
+              <button class="btn btn-sm btn-secondary"><i class="fas fa-sliders-h"></i> Config</button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-radar-chart"></i> Model Performance Radar</span></div>
+        <div class="card-body" style="height:280px"><canvas id="dep-ml-perf-chart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-line"></i> Model Score Trend (6M)</span></div>
+        <div class="card-body" style="height:280px"><canvas id="dep-ml-trend-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px">
+      <div class="card-header"><span class="card-title"><i class="fas fa-list"></i> Feature Importance – Route Optimizer</span></div>
+      <div class="card-body compact">
+        <table class="data-table">
+          <thead><tr><th>Feature</th><th>Category</th><th>Importance</th><th>Stability</th></tr></thead>
+          <tbody>
+            {[
+              { f: 'Historical OTD by Lane', cat: 'Performance', imp: 28.4, s: 'High' },
+              { f: 'Real-time Traffic Index', cat: 'External', imp: 19.2, s: 'Medium' },
+              { f: 'Distance & Road Type', cat: 'Network', imp: 16.8, s: 'High' },
+              { f: 'Carrier OTD Score', cat: 'Carrier', imp: 12.4, s: 'High' },
+              { f: 'Weather Forecast', cat: 'External', imp: 9.6, s: 'Low' },
+              { f: 'Vehicle Capacity', cat: 'Fleet', imp: 7.8, s: 'High' },
+              { f: 'Time Window Constraints', cat: 'Customer', imp: 5.8, s: 'Medium' },
+            ].map(f => (
+              <tr>
+                <td><strong>{f.f}</strong></td>
+                <td><span class="badge badge-neutral">{f.cat}</span></td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <div class="progress-bar" style="width:100px"><div class="progress-fill healthy" style={`width:${f.imp * 3}%`}></div></div>
+                    <span style="font-weight:600">{f.imp}%</span>
+                  </div>
+                </td>
+                <td><span class={`badge badge-${f.s === 'High' ? 'success' : f.s === 'Medium' ? 'warning' : 'critical'}`}>{f.s}</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <script src="/static/deployment-module.js"></script>
+    <script>document.body.dataset.page='deployment-mlmodels';</script>
+  </Layout>)
+})
+
+app.get('/deployment/analytics', (c) => {
+  return c.html(<Layout title="Deployment Analytics" activeModule="dep-analytics">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#38BDF8)"><i class="fas fa-chart-bar"></i></div>
+        <div>
+          <div class="page-title">Deployment Analytics</div>
+          <div class="page-subtitle">OTD trends · Cost analysis · Carrier performance · Route efficiency · Exception analytics</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <select class="form-input form-select" style="width:auto;font-size:13px">
+          <option>Last 12 Weeks</option><option>Last 6 Months</option><option>This Year</option>
+        </select>
+        <button class="btn btn-secondary"><i class="fas fa-download"></i> Export</button>
+      </div>
+    </div>
+
+    <div class="grid-3 mb-4">
+      <div class="kpi-card warning">
+        <div class="kpi-label"><i class="fas fa-clock" style="margin-right:5px"></i>OTD (12W Avg)</div>
+        <div class="kpi-value warning">90.8%</div>
+        <div class="kpi-meta"><span class="kpi-target">Target: 95%</span><span class="kpi-trend up">↑ Trending up</span></div>
+      </div>
+      <div class="kpi-card critical">
+        <div class="kpi-label"><i class="fas fa-rupee-sign" style="margin-right:5px"></i>Logistics Cost</div>
+        <div class="kpi-value critical">₹288L</div>
+        <div class="kpi-meta"><span class="kpi-target">Last 6 months</span><span class="kpi-trend down">↑ +4.2%</span></div>
+      </div>
+      <div class="kpi-card healthy">
+        <div class="kpi-label"><i class="fas fa-truck" style="margin-right:5px"></i>Trips Completed</div>
+        <div class="kpi-value healthy">1,842</div>
+        <div class="kpi-meta"><span class="kpi-target">Last 12 weeks</span><span class="kpi-trend up">↑ +12%</span></div>
+      </div>
+    </div>
+
+    <div class="grid-2 mb-4">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-line"></i> OTD Trend – 12 Weeks</span></div>
+        <div class="card-body" style="height:240px"><canvas id="dep-otd-trend-chart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> Logistics Cost by Category (6M)</span></div>
+        <div class="card-body" style="height:240px"><canvas id="dep-cost-trend-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-title"><i class="fas fa-table"></i> Lane Performance Summary</span></div>
+      <div class="card-body compact">
+        <table class="data-table">
+          <thead><tr><th>Lane</th><th>Volume/Wk</th><th>OTD %</th><th>Cost/Case</th><th>Carrier</th><th>Issues</th><th>Trend</th><th>Action</th></tr></thead>
+          <tbody>
+            {[
+              { lane: 'Mumbai → Pune', vol: 4200, otd: 96.2, cost: 14.2, carrier: 'BlueDart', issues: 0, trend: '↗' },
+              { lane: 'Mumbai → Surat', vol: 2800, otd: 93.8, cost: 16.8, carrier: 'DHL', issues: 1, trend: '→' },
+              { lane: 'Delhi → Jaipur', vol: 2100, otd: 94.1, cost: 15.4, carrier: 'Mahindra', issues: 0, trend: '↗' },
+              { lane: 'Delhi → Lucknow', vol: 1800, otd: 82.4, cost: 18.6, carrier: 'Gati-KWE', issues: 3, trend: '↘' },
+              { lane: 'Chennai → Bangalore', vol: 2400, otd: 91.2, cost: 15.8, carrier: 'BlueDart', issues: 1, trend: '→' },
+              { lane: 'Bangalore → Hyderabad', vol: 1600, otd: 88.6, cost: 19.2, carrier: 'VRL', issues: 2, trend: '↘' },
+            ].map(r => (
+              <tr>
+                <td><strong>{r.lane}</strong></td>
+                <td>{r.vol.toLocaleString()}</td>
+                <td style={`font-weight:600;color:${r.otd >= 93 ? '#059669' : r.otd >= 88 ? '#D97706' : '#DC2626'}`}>{r.otd}%</td>
+                <td>₹{r.cost}</td>
+                <td>{r.carrier}</td>
+                <td><span class={`badge badge-${r.issues === 0 ? 'success' : r.issues <= 1 ? 'warning' : 'critical'}`}>{r.issues}</span></td>
+                <td style="font-size:18px">{r.trend}</td>
+                <td><button class="btn btn-sm btn-secondary"><i class="fas fa-route"></i> Optimize</button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <script src="/static/deployment-module.js"></script>
+    <script>document.body.dataset.page='deployment-analytics';</script>
   </Layout>)
 })
 
