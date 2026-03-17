@@ -211,14 +211,36 @@ const NAV_MODULES = [
   },
 ]
 
-function isModuleActive(activeModule: string, moduleId: string): boolean {
-  return activeModule === moduleId || activeModule.startsWith(moduleId + '-') || activeModule.startsWith(moduleId.replace('-',''))
+// Map sub-page prefixes to their parent module id
+const SUB_PREFIX_MAP: Record<string, string> = {
+  'prod': 'production',
+  'dep': 'deployment',
+  'seq': 'sequencing',
+  'inv': 'inventory',
+  'proc': 'procurement',
+  'res': 'resource',
+  'capacity': 'capacity',
+  'sop': 'sop',
+  'mrp': 'mrp',
 }
 
-const Layout = ({ title, activeModule = 'home', scripts = '', children }: {
-  title: string, activeModule?: string, scripts?: string, children: any
+function isModuleActive(activeModule: string, moduleId: string): boolean {
+  if (activeModule === moduleId) return true
+  if (activeModule.startsWith(moduleId + '-')) return true
+  // Check prefix map: e.g. 'prod-mps' -> 'production'
+  const prefix = activeModule.split('-')[0]
+  if (SUB_PREFIX_MAP[prefix] === moduleId) return true
+  return false
+}
+
+const Layout = ({ title, activeModule = 'home', scripts = '', user = null as any, children }: {
+  title: string, activeModule?: string, scripts?: string, user?: any, children: any
 }) => {
   const activeTopModule = NAV_MODULES.find(m => isModuleActive(activeModule, m.id))
+  const isOnModulePage = activeModule !== 'home' && activeModule !== 'actions' && activeModule !== 'audit'
+  const displayName = user ? user.name.split(' ')[0] : 'User'
+  const displayInitials = user ? user.initials : 'U'
+  const displayRole = user ? user.role : ''
   return (
     <html lang="en">
       <head>
@@ -420,48 +442,59 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
               </a>
             </div>
             <div class="app-header-right">
-              <span class="header-greeting">Welcome, <strong>Sankar &amp; Vikrant</strong></span>
+              <span class="header-greeting">Welcome, <strong>{displayName}</strong></span>
               <button class="header-btn" title="Notifications" id="notifBtn">
                 <i class="fas fa-bell"></i>
                 <span class="notif-badge" id="notifCount">5</span>
               </button>
               <button class="header-btn" title="Settings"><i class="fas fa-cog"></i></button>
-              <div class="header-avatar" title="Sankar Iyer">SI</div>
+              <a href="/logout" class="header-btn" title="Logout ({displayRole})"><i class="fas fa-sign-out-alt"></i></a>
+              <div class="header-avatar" title={displayName + ' — ' + displayRole}>{displayInitials}</div>
             </div>
           </header>
 
           <aside class="app-sidebar">
-            <div class="sidebar-section">Navigation</div>
-            <a href="/" class={`nav-item ${activeModule === 'home' ? 'active' : ''}`}>
-              <i class="fas fa-home"></i> Home Dashboard
-            </a>
-            <div class="sidebar-section">Planning Modules</div>
-            {NAV_MODULES.map(mod => {
-              const topActive = isModuleActive(activeModule, mod.id)
-              return (
-                <div key={mod.id}>
-                  <a href={mod.path} class={`nav-item ${topActive ? 'active' : ''}`}>
+            {isOnModulePage && activeTopModule ? (
+              // MODULE VIEW: back button + only this module's sub-pages
+              <div>
+                <a href="/" class="nav-item" style="border-left-color:#3B82F6;color:#93C5FD;background:rgba(37,99,235,0.1)">
+                  <i class="fas fa-arrow-left"></i> Back to Home
+                </a>
+                <div class="sidebar-section" style="padding-top:16px">
+                  <i class={`fas ${activeTopModule.icon}`} style="margin-right:6px"></i>
+                  {activeTopModule.label}
+                </div>
+                {activeTopModule.subs.map(sub => (
+                  <a key={sub.id} href={sub.path} class={`nav-item ${activeModule === sub.id ? 'active' : ''}`} style="font-size:13px">
+                    <i class={`fas ${sub.icon}`}></i> {sub.label}
+                  </a>
+                ))}
+                <div class="sidebar-section" style="margin-top:16px">Quick Links</div>
+                <a href="/action-items" class="nav-item"><i class="fas fa-tasks"></i> Action Items</a>
+                <a href="/audit-log" class="nav-item"><i class="fas fa-history"></i> Audit Log</a>
+              </div>
+            ) : (
+              // HOME VIEW: all modules listed, collapsed
+              <div>
+                <div class="sidebar-section">Navigation</div>
+                <a href="/" class={`nav-item ${activeModule === 'home' ? 'active' : ''}`}>
+                  <i class="fas fa-home"></i> Home Dashboard
+                </a>
+                <div class="sidebar-section">Planning Modules</div>
+                {NAV_MODULES.map(mod => (
+                  <a key={mod.id} href={mod.path} class="nav-item">
                     <i class={`fas ${mod.icon}`}></i> {mod.label}
                   </a>
-                  {topActive && (
-                    <div class="nav-submenu">
-                      {mod.subs.map(sub => (
-                        <a key={sub.id} href={sub.path} class={`nav-sub-item ${activeModule === sub.id ? 'active' : ''}`}>
-                          <i class={`fas ${sub.icon}`}></i> {sub.label}
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )
-            })}
-            <div class="sidebar-section" style="margin-top:16px">Quick Links</div>
-            <a href="/action-items" class={`nav-item ${activeModule === 'actions' ? 'active' : ''}`}>
-              <i class="fas fa-tasks"></i> Action Items
-            </a>
-            <a href="/audit-log" class={`nav-item ${activeModule === 'audit' ? 'active' : ''}`}>
-              <i class="fas fa-history"></i> Audit Log
-            </a>
+                ))}
+                <div class="sidebar-section" style="margin-top:16px">Quick Links</div>
+                <a href="/action-items" class={`nav-item ${activeModule === 'actions' ? 'active' : ''}`}>
+                  <i class="fas fa-tasks"></i> Action Items
+                </a>
+                <a href="/audit-log" class={`nav-item ${activeModule === 'audit' ? 'active' : ''}`}>
+                  <i class="fas fa-history"></i> Audit Log
+                </a>
+              </div>
+            )}
           </aside>
 
           <main class="app-main">
@@ -500,29 +533,30 @@ app.get('/api/dashboard/summary', async (c) => {
 
 // Health scores per module
 app.get('/api/dashboard/health', async (c) => {
+  const fallback = {
+    sop:        { score: 88, status: 'healthy', issues: 1 },
+    mrp:        { score: 65, status: 'warning', issues: 4 },
+    procurement:{ score: 71, status: 'warning', issues: 3 },
+    production: { score: 88, status: 'healthy', issues: 1 },
+    capacity:   { score: 72, status: 'warning', issues: 2 },
+    sequencing: { score: 78, status: 'warning', issues: 3 },
+    resource:   { score: 76, status: 'warning', issues: 2 },
+    inventory:  { score: 82, status: 'warning', issues: 2 },
+    deployment: { score: 84, status: 'warning', issues: 2 },
+  }
   try {
     const db = c.env.DB
     const util = await db.prepare('SELECT AVG(utilization_pct) as avg FROM capacity_utilization WHERE date >= date("now","-7 days")').first<{avg:number}>()
-    const kpi = await db.prepare('SELECT AVG(metric_value) as avg FROM cap_kpi_metrics WHERE metric_category="utilization"').first<{avg:number}>()
     const alerts = await db.prepare('SELECT COUNT(*) as cnt FROM mrp_alerts WHERE status="open" AND severity IN ("critical","high")').first<{cnt:number}>()
     const bns = await db.prepare('SELECT COUNT(*) as cnt FROM bottlenecks WHERE resolved_at IS NULL AND severity="critical"').first<{cnt:number}>()
     const capScore = Math.min(100, Math.max(0, Math.round((util?.avg || 72))))
     return c.json({
-      capacity: { score: capScore, status: capScore > 85 ? 'critical' : capScore > 70 ? 'warning' : 'healthy', issues: bns?.cnt || 2 },
-      sequencing: { score: 78, status: 'warning', issues: 3 },
-      mrp: { score: 65, status: 'warning', issues: alerts?.cnt || 4 },
-      inventory: { score: 82, status: 'warning', issues: 2 },
-      procurement: { score: 71, status: 'warning', issues: 3 },
-      resource: { score: 76, status: 'warning', issues: 2 },
-      sop: { score: 88, status: 'healthy', issues: 1 },
+      ...fallback,
+      capacity:   { score: capScore, status: capScore > 85 ? 'critical' : capScore > 70 ? 'warning' : 'healthy', issues: bns?.cnt || 2 },
+      mrp:        { score: 65, status: 'warning', issues: alerts?.cnt || 4 },
     })
   } catch {
-    return c.json({
-      capacity: { score: 72, status: 'warning', issues: 2 }, sequencing: { score: 78, status: 'warning', issues: 3 },
-      mrp: { score: 65, status: 'warning', issues: 4 }, inventory: { score: 82, status: 'warning', issues: 2 },
-      procurement: { score: 71, status: 'warning', issues: 3 }, resource: { score: 76, status: 'warning', issues: 2 },
-      sop: { score: 88, status: 'healthy', issues: 1 },
-    })
+    return c.json(fallback)
   }
 })
 
@@ -1022,22 +1056,26 @@ app.get('/api/audit-log', async (c) => {
 app.get('/', async (c) => {
   const scripts = `
 const MODULE_CONFIG = {
-  capacity: { label:'Capacity Planning', icon:'fa-industry', color:'#1E3A8A', kpi1:'Line Utilization', kpi2:'Peak Util', url:'/capacity' },
-  sequencing: { label:'Sequencing & Scheduling', icon:'fa-calendar-alt', color:'#7C3AED', kpi1:'OTD Performance', kpi2:'Changeover Loss', url:'/sequencing' },
-  mrp: { label:'Material Req. Planning', icon:'fa-boxes', color:'#0891B2', kpi1:'Open Alerts', kpi2:'Coverage Days', url:'/mrp' },
-  inventory: { label:'Inventory Planning', icon:'fa-warehouse', color:'#059669', kpi1:'Avg DOI', kpi2:'Stockout Risk', url:'/inventory' },
-  procurement: { label:'Procurement Planning', icon:'fa-handshake', color:'#D97706', kpi1:'Supplier OTIF', kpi2:'High Risk Sup.', url:'/procurement' },
-  resource: { label:'Resource Planning', icon:'fa-users', color:'#DC2626', kpi1:'Resource Util', kpi2:'OT Hours', url:'/resource' },
   sop: { label:'S&OP Planning', icon:'fa-balance-scale', color:'#2563EB', kpi1:'Forecast Accuracy', kpi2:'Supply Fill Rate', url:'/sop' },
+  mrp: { label:'Material Req. Planning', icon:'fa-boxes', color:'#0891B2', kpi1:'Open Alerts', kpi2:'Coverage Days', url:'/mrp' },
+  procurement: { label:'Procurement Planning', icon:'fa-handshake', color:'#D97706', kpi1:'Supplier OTIF', kpi2:'High Risk Sup.', url:'/procurement' },
+  production: { label:'Production Planning', icon:'fa-cogs', color:'#7C3AED', kpi1:'MPS Adherence', kpi2:'ATP Available', url:'/production' },
+  capacity: { label:'Capacity Planning', icon:'fa-industry', color:'#1E3A8A', kpi1:'Line Utilization', kpi2:'Peak Util', url:'/capacity' },
+  sequencing: { label:'Sequencing & Scheduling', icon:'fa-calendar-alt', color:'#6D28D9', kpi1:'OTD Performance', kpi2:'Changeover Loss', url:'/sequencing' },
+  resource: { label:'Resource Planning', icon:'fa-users', color:'#DC2626', kpi1:'Resource Util', kpi2:'OT Hours', url:'/resource' },
+  inventory: { label:'Inventory Planning', icon:'fa-warehouse', color:'#059669', kpi1:'Avg DOI', kpi2:'Stockout Risk', url:'/inventory' },
+  deployment: { label:'Deployment Planning', icon:'fa-truck', color:'#0891B2', kpi1:'On-Time Delivery', kpi2:'Truck Util', url:'/deployment' },
 };
 const KPI_DATA = {
+  sop: { kpi1:'87.3%', kpi2:'94.1%' },
+  mrp: { kpi1:'6 open', kpi2:'21 days' },
+  procurement: { kpi1:'87.4%', kpi2:'2 sup.' },
+  production: { kpi1:'94.2%', kpi2:'32.4K cases' },
   capacity: { kpi1:'72.4%', kpi2:'96.8%' },
   sequencing: { kpi1:'91.2%', kpi2:'18.4 hrs' },
-  mrp: { kpi1:'6 open', kpi2:'21 days' },
-  inventory: { kpi1:'14.8 days', kpi2:'1 SKU' },
-  procurement: { kpi1:'87.4%', kpi2:'2 sup.' },
   resource: { kpi1:'79.8%', kpi2:'142 hrs' },
-  sop: { kpi1:'87.3%', kpi2:'94.1%' },
+  inventory: { kpi1:'14.8 days', kpi2:'1 SKU' },
+  deployment: { kpi1:'91.4%', kpi2:'84.2%' },
 };
 
 async function initHome() {
@@ -1065,7 +1103,7 @@ async function initHome() {
     const grid = document.getElementById('module-grid');
     grid.innerHTML = '';
     Object.entries(MODULE_CONFIG).forEach(([id, cfg]) => {
-      const h = health[id] || { score:75, status:'warning', issues:2 };
+      const h = health[id] || { score: id==='production'?88:id==='deployment'?82:75, status: id==='production'?'healthy':'warning', issues: id==='production'?1:2 };
       const kd = KPI_DATA[id];
       const sc = h.score >= 85 ? 'healthy' : h.score >= 65 ? 'warning' : 'critical';
       const scColor = sc === 'healthy' ? '#059669' : sc === 'warning' ? '#D97706' : '#DC2626';
@@ -1112,10 +1150,10 @@ async function initHome() {
 
     // Supply chain health radar chart
     const healthCtx = document.getElementById('health-radar');
-    if (healthCtx && Object.keys(health).length) {
-      const moduleLabels = ['Capacity','Sequencing','MRP','Inventory','Procurement','Resource','S&OP'];
-      const moduleKeys = ['capacity','sequencing','mrp','inventory','procurement','resource','sop'];
-      const scores = moduleKeys.map(k => health[k]?.score || 70);
+    if (healthCtx) {
+      const moduleLabels = ['S&OP','MRP','Procurement','Production','Capacity','Sequencing','Resource','Inventory','Deployment'];
+      const moduleKeys = ['sop','mrp','procurement','production','capacity','sequencing','resource','inventory','deployment'];
+      const scores = moduleKeys.map(k => health[k]?.score || (k==='production'?88:k==='deployment'?82:72));
       const colors = scores.map(s => s >= 85 ? '#059669' : s >= 65 ? '#D97706' : '#DC2626');
       new Chart(healthCtx, {
         type:'radar',
@@ -1132,7 +1170,7 @@ async function initHome() {
           }]
         },
         options:{responsive:true,maintainAspectRatio:false,
-          scales:{r:{min:0,max:100,ticks:{stepSize:20,font:{size:10}},pointLabels:{font:{size:11}}}},
+          scales:{r:{min:0,max:100,ticks:{stepSize:20,font:{size:10}},pointLabels:{font:{size:10}}}},
           plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}}
         }
       });
@@ -1201,13 +1239,15 @@ document.addEventListener('keydown', e => { if(e.target.id==='copilot-input' && 
 document.addEventListener('DOMContentLoaded', initHome);
   `.trim()
 
-  return c.html(<Layout title="Home Dashboard" activeModule="home" scripts={scripts}>
+  const _u = getUser(c)
+  const _userName = _u ? _u.name : 'Planner'
+  return c.html(<Layout user={_u} title="Home Dashboard" activeModule="home" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#1E3A8A,#3B82F6)"><i class="fas fa-home"></i></div>
         <div>
           <div class="page-title">Supply Chain Intelligence Dashboard</div>
-          <div class="page-subtitle">Real-time visibility across all planning modules · Sankar Iyer & Vikrant Nair</div>
+          <div class="page-subtitle">Welcome, {_userName} · Real-time visibility across all 9 planning modules</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -1268,7 +1308,7 @@ document.addEventListener('DOMContentLoaded', initHome);
       <div class="card-body">
         <style>{`.module-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow);transition:transform 0.15s,box-shadow 0.15s}.module-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}.module-card-top{padding:20px;display:flex;align-items:center;justify-content:space-between;min-height:80px}.module-card-body{padding:14px 16px}.module-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px}.module-kpis{display:grid;grid-template-columns:1fr 1fr;gap:6px}.module-kpi-item{font-size:12px;color:var(--text);background:#F8FAFC;padding:6px 8px;border-radius:6px}#module-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}`}</style>
         <div id="module-grid">
-          {[1,2,3,4,5,6,7].map(i => <div key={i} class="card" style="padding:40px;text-align:center"><div class="spinner"></div></div>)}
+          {[1,2,3,4,5,6,7,8,9].map(i => <div key={i} class="card" style="padding:40px;text-align:center"><div class="spinner"></div></div>)}
         </div>
       </div>
     </div>
@@ -1355,7 +1395,7 @@ app.get('/capacity', async (c) => {
   const scripts = `// capacity-module.js handles this page
   `.trim()
 
-  return c.html(<Layout title="Capacity Planning" activeModule="capacity" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Capacity Planning" activeModule="capacity" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#1E3A8A,#3B82F6)"><i class="fas fa-industry"></i></div>
@@ -1474,7 +1514,7 @@ async function init() {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="Capacity – Executive" activeModule="capacity-executive" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Capacity – Executive" activeModule="capacity-executive" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#1E3A8A,#3B82F6)"><i class="fas fa-chart-pie"></i></div>
@@ -1553,7 +1593,7 @@ async function init() {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="Capacity – Operations" activeModule="capacity-operations" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Capacity – Operations" activeModule="capacity-operations" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#1E3A8A,#3B82F6)"><i class="fas fa-tachometer-alt"></i></div>
@@ -1624,7 +1664,7 @@ async function runOpt() {
 }
 document.addEventListener('DOMContentLoaded', () => switchTab('objectives'));
   `.trim()
-  return c.html(<Layout title="Capacity – Optimization" activeModule="capacity-optimization" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Capacity – Optimization" activeModule="capacity-optimization" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-sliders-h"></i></div>
@@ -1704,7 +1744,7 @@ async function createScenario() {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="Capacity – Scenarios" activeModule="capacity-scenarios" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Capacity – Scenarios" activeModule="capacity-scenarios" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#059669,#34D399)"><i class="fas fa-sitemap"></i></div>
@@ -1763,7 +1803,7 @@ async function init() {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="Capacity – Analytics" activeModule="capacity-analytics" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Capacity – Analytics" activeModule="capacity-analytics" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#22D3EE)"><i class="fas fa-chart-bar"></i></div>
@@ -1827,7 +1867,7 @@ async function init() {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="Capacity – Root Cause" activeModule="capacity-rootcause" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Capacity – Root Cause" activeModule="capacity-rootcause" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#DC2626,#F87171)"><i class="fas fa-search"></i></div>
@@ -1847,7 +1887,7 @@ app.get('/sequencing', async (c) => {
   const scripts = `
 // Sequencing page handled by /static/sequencing-module.js
   `.trim()
-  return c.html(<Layout title="Sequencing & Scheduling" activeModule="sequencing" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing & Scheduling" activeModule="sequencing" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-calendar-alt"></i></div>
@@ -2039,7 +2079,7 @@ async function init() {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="Sequencing – Gantt Planner" activeModule="seq-gantt" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing – Gantt Planner" activeModule="seq-gantt" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-bars-staggered"></i></div>
@@ -2134,7 +2174,7 @@ async function init() {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="Sequencing – Execution" activeModule="seq-execution" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing – Execution" activeModule="seq-execution" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-play-circle"></i></div>
@@ -2176,7 +2216,7 @@ async function init() {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="Sequencing – Bottleneck" activeModule="seq-bottleneck" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing – Bottleneck" activeModule="seq-bottleneck" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#DC2626,#F87171)"><i class="fas fa-exclamation-triangle"></i></div>
@@ -2213,7 +2253,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('kpi-grid').innerHTML = kpis.map(k => \`<div class="kpi-card \${k.status}"><div class="kpi-label">\${k.name}</div><div class="kpi-value \${k.status}">\${k.value}</div></div>\`).join('');
 });
   `.trim()
-  return c.html(<Layout title="Sequencing – AI Copilot" activeModule="seq-copilot" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing – AI Copilot" activeModule="seq-copilot" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#A855F7)"><i class="fas fa-robot"></i></div>
@@ -2244,7 +2284,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Remaining sequencing sub-routes
 app.get('/sequencing/rca', (c) => {
-  return c.html(<Layout title="Sequencing – RCA" activeModule="seq-rca">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing – RCA" activeModule="seq-rca">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-search"></i></div>
@@ -2293,7 +2333,7 @@ async function init() {
 function moveJob(id, dir) { alert('Job ' + id + ' moved ' + dir); }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="Sequencing – Planner" activeModule="seq-planner" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing – Planner" activeModule="seq-planner" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-drafting-compass"></i></div>
@@ -2316,7 +2356,7 @@ document.addEventListener('DOMContentLoaded', init);
 })
 
 app.get('/sequencing/scenarios', (c) => {
-  return c.html(<Layout title="Sequencing – Scenarios" activeModule="seq-scenarios">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing – Scenarios" activeModule="seq-scenarios">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#059669,#34D399)"><i class="fas fa-layer-group"></i></div>
@@ -2366,7 +2406,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
   `.trim()
-  return c.html(<Layout title="Sequencing – Analytics" activeModule="seq-analytics" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing – Analytics" activeModule="seq-analytics" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#22D3EE)"><i class="fas fa-heartbeat"></i></div>
@@ -2397,7 +2437,7 @@ document.addEventListener('DOMContentLoaded', () => {
 app.get('/mrp', async (c) => {
   const scripts = `// mrp-module.js handles this page
   `.trim()
-  return c.html(<Layout title="Material Req. Planning" activeModule="mrp" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Material Req. Planning" activeModule="mrp" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#22D3EE)"><i class="fas fa-boxes"></i></div>
@@ -2507,7 +2547,7 @@ function renderExpl(expl) {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="MRP Explosion" activeModule="mrp-explosion" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="MRP Explosion" activeModule="mrp-explosion" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#22D3EE)"><i class="fas fa-project-diagram"></i></div>
@@ -2560,7 +2600,7 @@ async function filterBOM() {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="MRP – BOM" activeModule="mrp-bom" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="MRP – BOM" activeModule="mrp-bom" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#22D3EE)"><i class="fas fa-sitemap"></i></div>
@@ -2603,7 +2643,7 @@ async function init() {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="MRP – Purchase Orders" activeModule="mrp-po" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="MRP – Purchase Orders" activeModule="mrp-po" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#22D3EE)"><i class="fas fa-file-invoice"></i></div>
@@ -2652,7 +2692,7 @@ async function init() {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="MRP – Shortage Alerts" activeModule="mrp-alerts" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="MRP – Shortage Alerts" activeModule="mrp-alerts" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#DC2626,#F87171)"><i class="fas fa-bell"></i></div>
@@ -2674,7 +2714,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
   `.trim()
-  return c.html(<Layout title="MRP Analytics" activeModule="mrp-analytics" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="MRP Analytics" activeModule="mrp-analytics" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#22D3EE)"><i class="fas fa-chart-line"></i></div>
@@ -2693,7 +2733,7 @@ document.addEventListener('DOMContentLoaded', () => {
 app.get('/inventory', async (c) => {
   const scripts = `// inventory-module.js handles this page
   `.trim()
-  return c.html(<Layout title="Inventory Planning" activeModule="inventory" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Inventory Planning" activeModule="inventory" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#059669,#34D399)"><i class="fas fa-warehouse"></i></div>
@@ -2779,7 +2819,7 @@ async function init() {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="Inventory – Stock Positions" activeModule="inv-operations" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Inventory – Stock Positions" activeModule="inv-operations" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#059669,#34D399)"><i class="fas fa-tachometer-alt"></i></div>
@@ -2796,7 +2836,7 @@ document.addEventListener('DOMContentLoaded', init);
 })
 
 app.get('/inventory/optimization', (c) => {
-  return c.html(<Layout title="Inventory – Replenishment" activeModule="inv-optimization">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Inventory – Replenishment" activeModule="inv-optimization">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#059669,#34D399)"><i class="fas fa-sync-alt"></i></div>
@@ -2875,7 +2915,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
   `.trim()
-  return c.html(<Layout title="Inventory – Scenarios" activeModule="inv-scenarios" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Inventory – Scenarios" activeModule="inv-scenarios" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#059669,#34D399)"><i class="fas fa-sitemap"></i></div>
@@ -2981,7 +3021,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
   `.trim()
-  return c.html(<Layout title="Inventory Analytics" activeModule="inv-analytics" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Inventory Analytics" activeModule="inv-analytics" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#059669,#34D399)"><i class="fas fa-chart-bar"></i></div>
@@ -3017,7 +3057,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
   `.trim()
-  return c.html(<Layout title="Inventory – Master Data" activeModule="inv-master" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Inventory – Master Data" activeModule="inv-master" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#059669,#34D399)"><i class="fas fa-database"></i></div>
@@ -3102,7 +3142,7 @@ document.addEventListener('DOMContentLoaded', () => {
 app.get('/procurement', async (c) => {
   const scripts = `// procurement-module.js handles this page
   `.trim()
-  return c.html(<Layout title="Procurement Planning" activeModule="procurement" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Procurement Planning" activeModule="procurement" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#D97706,#F59E0B)"><i class="fas fa-handshake"></i></div>
@@ -3190,7 +3230,7 @@ async function init() {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="Procurement – PO Workbench" activeModule="proc-workbench" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Procurement – PO Workbench" activeModule="proc-workbench" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#D97706,#F59E0B)"><i class="fas fa-clipboard-list"></i></div>
@@ -3231,7 +3271,7 @@ async function init() {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="Supplier Scorecards" activeModule="proc-suppliers" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Supplier Scorecards" activeModule="proc-suppliers" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#D97706,#F59E0B)"><i class="fas fa-star"></i></div>
@@ -3243,7 +3283,7 @@ document.addEventListener('DOMContentLoaded', init);
 })
 
 app.get('/procurement/contracts', (c) => {
-  return c.html(<Layout title="Procurement – Contracts" activeModule="proc-contracts">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Procurement – Contracts" activeModule="proc-contracts">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#D97706,#F59E0B)"><i class="fas fa-file-contract"></i></div>
@@ -3315,7 +3355,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
   `.trim()
-  return c.html(<Layout title="Procurement Optimization" activeModule="proc-optimization" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Procurement Optimization" activeModule="proc-optimization" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#D97706,#F59E0B)"><i class="fas fa-sliders-h"></i></div>
@@ -3459,7 +3499,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
   `.trim()
-  return c.html(<Layout title="Procurement Analytics" activeModule="proc-analytics" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Procurement Analytics" activeModule="proc-analytics" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#D97706,#F59E0B)"><i class="fas fa-chart-bar"></i></div>
@@ -3545,7 +3585,7 @@ document.addEventListener('DOMContentLoaded', () => {
 app.get('/resource', async (c) => {
   const scripts = `// resource-module.js handles this page
   `.trim()
-  return c.html(<Layout title="Resource Planning" activeModule="resource" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Resource Planning" activeModule="resource" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#DC2626,#F87171)"><i class="fas fa-users"></i></div>
@@ -3652,7 +3692,7 @@ async function init() {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="Resource – Skills & Roster" activeModule="res-skills" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Resource – Skills & Roster" activeModule="res-skills" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#DC2626,#F87171)"><i class="fas fa-id-badge"></i></div>
@@ -3711,7 +3751,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
   `.trim()
-  return c.html(<Layout title="Resource Optimization" activeModule="res-optimization" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Resource Optimization" activeModule="res-optimization" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#DC2626,#F87171)"><i class="fas fa-sliders-h"></i></div>
@@ -3794,7 +3834,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
   `.trim()
-  return c.html(<Layout title="Resource Scenarios" activeModule="res-scenarios" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Resource Scenarios" activeModule="res-scenarios" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#DC2626,#F87171)"><i class="fas fa-sitemap"></i></div>
@@ -3889,7 +3929,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
   `.trim()
-  return c.html(<Layout title="Resource Analytics" activeModule="res-analytics" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Resource Analytics" activeModule="res-analytics" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#DC2626,#F87171)"><i class="fas fa-chart-bar"></i></div>
@@ -3907,7 +3947,7 @@ document.addEventListener('DOMContentLoaded', () => {
 app.get('/sop', async (c) => {
   const scripts = `// sop-module.js handles this page
   `.trim()
-  return c.html(<Layout title="S&OP Planning" activeModule="sop" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="S&OP Planning" activeModule="sop" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#2563EB,#3B82F6)"><i class="fas fa-balance-scale"></i></div>
@@ -4017,7 +4057,7 @@ async function init() {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="S&OP – Demand Review" activeModule="sop-demand" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="S&OP – Demand Review" activeModule="sop-demand" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#2563EB,#3B82F6)"><i class="fas fa-chart-line"></i></div>
@@ -4047,7 +4087,7 @@ async function init() {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="S&OP – Supply Review" activeModule="sop-supply" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="S&OP – Supply Review" activeModule="sop-supply" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#2563EB,#3B82F6)"><i class="fas fa-industry"></i></div>
@@ -4092,7 +4132,7 @@ async function createScenario() {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="S&OP – Scenarios" activeModule="sop-scenarios" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="S&OP – Scenarios" activeModule="sop-scenarios" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#2563EB,#3B82F6)"><i class="fas fa-sitemap"></i></div>
@@ -4138,7 +4178,7 @@ async function completeAction(id) {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="S&OP – Consensus Meeting" activeModule="sop-consensus" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="S&OP – Consensus Meeting" activeModule="sop-consensus" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#2563EB,#3B82F6)"><i class="fas fa-users"></i></div>
@@ -4174,7 +4214,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
   `.trim()
-  return c.html(<Layout title="S&OP Analytics" activeModule="sop-analytics" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="S&OP Analytics" activeModule="sop-analytics" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#2563EB,#3B82F6)"><i class="fas fa-chart-bar"></i></div>
@@ -4210,7 +4250,7 @@ async function complete(id) {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="Action Items" activeModule="actions" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Action Items" activeModule="actions" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-tasks"></i></div>
@@ -4243,7 +4283,7 @@ async function init() {
 }
 document.addEventListener('DOMContentLoaded', init);
   `.trim()
-  return c.html(<Layout title="Audit Log" activeModule="audit" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Audit Log" activeModule="audit" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#475569,#64748B)"><i class="fas fa-history"></i></div>
@@ -4362,7 +4402,7 @@ app.get('/api/deployment/routes', async (c) => {
 // ── Production Planning Pages ─────────────────────────────────────────
 
 app.get('/production', (c) => {
-  return c.html(<Layout title="Production Planning" activeModule="production">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Production Planning" activeModule="production">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-cogs"></i></div>
@@ -4451,7 +4491,7 @@ app.get('/production', (c) => {
 })
 
 app.get('/production/mps', (c) => {
-  return c.html(<Layout title="Master Production Schedule" activeModule="prod-mps">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Master Production Schedule" activeModule="prod-mps">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-calendar-check"></i></div>
@@ -4522,7 +4562,7 @@ app.get('/production/mps', (c) => {
 })
 
 app.get('/production/atp', (c) => {
-  return c.html(<Layout title="Available-to-Promise" activeModule="prod-atp">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Available-to-Promise" activeModule="prod-atp">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#059669,#10B981)"><i class="fas fa-check-double"></i></div>
@@ -4592,7 +4632,7 @@ app.get('/production/atp', (c) => {
 })
 
 app.get('/production/rccp', (c) => {
-  return c.html(<Layout title="Rough-Cut Capacity Planning" activeModule="prod-rccp">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Rough-Cut Capacity Planning" activeModule="prod-rccp">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#D97706,#F59E0B)"><i class="fas fa-ruler-combined"></i></div>
@@ -4668,7 +4708,7 @@ app.get('/production/rccp', (c) => {
 })
 
 app.get('/production/workbench', (c) => {
-  return c.html(<Layout title="Production Planner Workbench" activeModule="prod-workbench">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Production Planner Workbench" activeModule="prod-workbench">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-drafting-compass"></i></div>
@@ -4736,7 +4776,7 @@ app.get('/production/workbench', (c) => {
 })
 
 app.get('/production/scenarios', (c) => {
-  return c.html(<Layout title="Production – Scenario Manager" activeModule="prod-scenarios">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Production – Scenario Manager" activeModule="prod-scenarios">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#38BDF8)"><i class="fas fa-layer-group"></i></div>
@@ -4806,7 +4846,7 @@ async function createProdScenario() {
 })
 
 app.get('/production/ml-models', (c) => {
-  return c.html(<Layout title="Production – ML Models" activeModule="prod-mlmodels">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Production – ML Models" activeModule="prod-mlmodels">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)"><i class="fas fa-brain"></i></div>
@@ -4905,7 +4945,7 @@ app.get('/production/ml-models', (c) => {
 })
 
 app.get('/production/analytics', (c) => {
-  return c.html(<Layout title="Production Analytics" activeModule="prod-analytics">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Production Analytics" activeModule="prod-analytics">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-chart-bar"></i></div>
@@ -4987,7 +5027,7 @@ app.get('/production/analytics', (c) => {
 })
 
 app.get('/production/copilot', (c) => {
-  return c.html(<Layout title="Production AI Copilot" activeModule="prod-copilot">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Production AI Copilot" activeModule="prod-copilot">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)"><i class="fas fa-robot"></i></div>
@@ -5040,7 +5080,7 @@ app.get('/production/copilot', (c) => {
 // ============================================================
 
 app.get('/deployment', (c) => {
-  return c.html(<Layout title="Deployment Planning" activeModule="deployment">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Deployment Planning" activeModule="deployment">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#38BDF8)"><i class="fas fa-truck"></i></div>
@@ -5117,7 +5157,7 @@ app.get('/deployment', (c) => {
 })
 
 app.get('/deployment/network', (c) => {
-  return c.html(<Layout title="Distribution Network" activeModule="dep-network">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Distribution Network" activeModule="dep-network">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#38BDF8)"><i class="fas fa-project-diagram"></i></div>
@@ -5177,7 +5217,7 @@ app.get('/deployment/network', (c) => {
 })
 
 app.get('/deployment/workbench', (c) => {
-  return c.html(<Layout title="Deployment Planner Workbench" activeModule="dep-workbench">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Deployment Planner Workbench" activeModule="dep-workbench">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#38BDF8)"><i class="fas fa-drafting-compass"></i></div>
@@ -5250,7 +5290,7 @@ app.get('/deployment/workbench', (c) => {
 })
 
 app.get('/deployment/routes', (c) => {
-  return c.html(<Layout title="Route Optimization" activeModule="dep-route">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Route Optimization" activeModule="dep-route">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#059669,#34D399)"><i class="fas fa-route"></i></div>
@@ -5316,7 +5356,7 @@ app.get('/deployment/routes', (c) => {
 })
 
 app.get('/deployment/load-planning', (c) => {
-  return c.html(<Layout title="Load Planning" activeModule="dep-load">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Load Planning" activeModule="dep-load">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#D97706,#F59E0B)"><i class="fas fa-boxes"></i></div>
@@ -5376,7 +5416,7 @@ app.get('/deployment/load-planning', (c) => {
 })
 
 app.get('/deployment/carriers', (c) => {
-  return c.html(<Layout title="Carrier Selection" activeModule="dep-carrier">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Carrier Selection" activeModule="dep-carrier">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)"><i class="fas fa-shipping-fast"></i></div>
@@ -5441,7 +5481,7 @@ app.get('/deployment/carriers', (c) => {
 })
 
 app.get('/deployment/scenarios', (c) => {
-  return c.html(<Layout title="Deployment Scenario Manager" activeModule="dep-scenarios">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Deployment Scenario Manager" activeModule="dep-scenarios">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#38BDF8)"><i class="fas fa-layer-group"></i></div>
@@ -5511,7 +5551,7 @@ async function createDepScenario() {
 })
 
 app.get('/deployment/ml-models', (c) => {
-  return c.html(<Layout title="Deployment ML Models" activeModule="dep-mlmodels">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Deployment ML Models" activeModule="dep-mlmodels">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)"><i class="fas fa-brain"></i></div>
@@ -5608,7 +5648,7 @@ app.get('/deployment/ml-models', (c) => {
 })
 
 app.get('/deployment/analytics', (c) => {
-  return c.html(<Layout title="Deployment Analytics" activeModule="dep-analytics">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Deployment Analytics" activeModule="dep-analytics">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#38BDF8)"><i class="fas fa-chart-bar"></i></div>
