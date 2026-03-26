@@ -262,7 +262,7 @@ const Layout = ({ title, activeModule = 'home', scripts = '', user = null as any
   title: string, activeModule?: string, scripts?: string, user?: any, children: any
 }) => {
   const activeTopModule = NAV_MODULES.find(m => isModuleActive(activeModule, m.id))
-  const isOnModulePage = activeModule !== 'home' && activeModule !== 'actions' && activeModule !== 'audit'
+  const isOnModulePage = activeModule !== 'home' && activeModule !== 'actions' && activeModule !== 'audit' && activeModule !== 'admin'
   const displayName = user ? user.name.split(' ')[0] : 'User'
   const displayInitials = user ? user.initials : 'U'
   const displayRole = user ? user.role : ''
@@ -529,6 +529,8 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
                 <a href="/approvals" class="nav-item"><i class="fas fa-clipboard-check"></i> Approvals</a>
                 <a href="/exceptions" class="nav-item"><i class="fas fa-exclamation-triangle"></i> Exceptions</a>
                 <a href="/audit-log" class="nav-item"><i class="fas fa-history"></i> Audit Log</a>
+                <div class="sidebar-section" style="margin-top:8px">Admin</div>
+                <a href="/admin/data-management" class="nav-item"><i class="fas fa-database"></i> Data Management</a>
               </div>
             ) : (
               // HOME VIEW: all modules listed, collapsed
@@ -559,6 +561,10 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
                 <a href="/risk-dashboard" class="nav-item"><i class="fas fa-shield-alt"></i> Risk Dashboard</a>
                 <a href="/audit-log" class={`nav-item ${activeModule === 'audit' ? 'active' : ''}`}>
                   <i class="fas fa-history"></i> Audit Log
+                </a>
+                <div class="sidebar-section" style="margin-top:8px">Admin</div>
+                <a href="/admin/data-management" class={`nav-item ${activeModule === 'admin' ? 'active' : ''}`}>
+                  <i class="fas fa-database"></i> Data Management
                 </a>
               </div>
             )}
@@ -10188,5 +10194,799 @@ document.addEventListener('DOMContentLoaded', () => depWbTab('objectives'));
 // This alias provides a consistent /capacity/optimization-workbench URL
 // that links from the updated NAV_MODULES without touching the existing page.
 app.get('/capacity/optimization-workbench', (c) => c.redirect('/capacity/optimization'))
+
+// ============================================================
+// ADMIN DATA MANAGEMENT
+// ============================================================
+// Dataset catalogue — single source of truth for the UI and validation
+const DATASET_CATALOGUE = [
+  {
+    key: 'demand',
+    label: 'Demand Planning',
+    icon: 'fa-chart-line',
+    color: '#2563EB',
+    description: 'Weekly SKU-level demand forecasts, sales orders and total demand figures used across S&OP, MRP and Production planning.',
+    file_name: 'demand_planning.csv',
+    required_columns: [
+      { name: 'week', type: 'TEXT', example: 'W01-2026' },
+      { name: 'fg_sku', type: 'TEXT', example: 'SKU-500-PET' },
+      { name: 'forecast', type: 'INTEGER', example: '12000' },
+      { name: 'sales_order', type: 'INTEGER', example: '11500' },
+      { name: 'total_demand', type: 'INTEGER', example: '12000' },
+    ],
+    modules: ['S&OP Planning', 'MRP', 'Production Planning', 'Inventory Planning'],
+    sample_rows: [
+      ['W01-2026', 'SKU-500-PET', '12000', '11500', '12000'],
+      ['W01-2026', 'SKU-1L-PET',  '8000',  '7800',  '8000'],
+    ],
+  },
+  {
+    key: 'bom',
+    label: 'Bill of Materials',
+    icon: 'fa-sitemap',
+    color: '#7C3AED',
+    description: 'Multi-level BOM defining finished-goods to raw-material relationships, quantities per unit, lead times and MOQs.',
+    file_name: 'bom_master.csv',
+    required_columns: [
+      { name: 'fg_sku',      type: 'TEXT',    example: 'SKU-500-PET' },
+      { name: 'rm_sku',      type: 'TEXT',    example: 'RM-PET-500' },
+      { name: 'rm_name',     type: 'TEXT',    example: 'PET Bottle 500ml' },
+      { name: 'qty_per_unit',type: 'DECIMAL', example: '1.05' },
+      { name: 'unit',        type: 'TEXT',    example: 'pcs' },
+      { name: 'lead_time_days', type: 'INTEGER', example: '14' },
+      { name: 'moq',         type: 'INTEGER', example: '5000' },
+      { name: 'unit_cost',   type: 'DECIMAL', example: '4.50' },
+      { name: 'supplier',    type: 'TEXT',    example: 'Hindustan Packaging' },
+    ],
+    modules: ['MRP', 'Procurement Planning', 'Production Planning'],
+    sample_rows: [
+      ['SKU-500-PET', 'RM-PET-500',  'PET Bottle 500ml', '1.05', 'pcs', '14', '5000', '4.50', 'Hindustan Packaging'],
+      ['SKU-500-PET', 'RM-CAP-28MM', 'Cap 28mm',         '1.02', 'pcs', '7',  '10000','0.80', 'PolyPack India'],
+    ],
+  },
+  {
+    key: 'inventory',
+    label: 'Inventory Stock',
+    icon: 'fa-warehouse',
+    color: '#059669',
+    description: 'Current on-hand, in-transit and safety-stock positions for all SKUs across plants and distribution centres.',
+    file_name: 'inventory_stock.csv',
+    required_columns: [
+      { name: 'sku',          type: 'TEXT',    example: 'SKU-500-PET' },
+      { name: 'sku_name',     type: 'TEXT',    example: '500ml PET Water' },
+      { name: 'type',         type: 'TEXT',    example: 'FG' },
+      { name: 'on_hand',      type: 'INTEGER', example: '45000' },
+      { name: 'in_transit',   type: 'INTEGER', example: '12000' },
+      { name: 'safety_stock', type: 'INTEGER', example: '8000' },
+      { name: 'unit',         type: 'TEXT',    example: 'cases' },
+      { name: 'location',     type: 'TEXT',    example: 'Mumbai Plant' },
+    ],
+    modules: ['Inventory Planning', 'MRP', 'Deployment Planning'],
+    sample_rows: [
+      ['SKU-500-PET', '500ml PET Water', 'FG', '45000', '12000', '8000',  'cases', 'Mumbai Plant'],
+      ['RM-PET-500',  'PET Bottle 500ml','RM', '280000','60000', '50000', 'pcs',   'Mumbai Plant'],
+    ],
+  },
+  {
+    key: 'capacity',
+    label: 'Capacity Planning',
+    icon: 'fa-industry',
+    color: '#1E3A8A',
+    description: 'Production line capacity data including shift structure, utilisation targets, OEE baselines and maintenance windows.',
+    file_name: 'capacity_planning.csv',
+    required_columns: [
+      { name: 'plant_code',   type: 'TEXT',    example: 'MUM' },
+      { name: 'line_code',    type: 'TEXT',    example: 'MUM-L1' },
+      { name: 'date',         type: 'DATE',    example: '2026-03-17' },
+      { name: 'available_hrs',type: 'DECIMAL', example: '20.0' },
+      { name: 'utilized_hrs', type: 'DECIMAL', example: '15.6' },
+      { name: 'oee_pct',      type: 'DECIMAL', example: '77.1' },
+      { name: 'overtime_hrs', type: 'DECIMAL', example: '2.0' },
+    ],
+    modules: ['Capacity Planning', 'Production Planning', 'Sequencing & Scheduling'],
+    sample_rows: [
+      ['MUM', 'MUM-L1', '2026-03-17', '20.0', '15.6', '77.1', '2.0'],
+      ['MUM', 'MUM-L2', '2026-03-17', '20.0', '17.1', '85.4', '0.0'],
+    ],
+  },
+  {
+    key: 'procurement',
+    label: 'Procurement / Purchase Orders',
+    icon: 'fa-handshake',
+    color: '#D97706',
+    description: 'Open and planned purchase orders with supplier, quantity, lead time and cost details.',
+    file_name: 'procurement_pos.csv',
+    required_columns: [
+      { name: 'po_id',        type: 'TEXT',    example: 'PO-2026-001' },
+      { name: 'rm_sku',       type: 'TEXT',    example: 'RM-PET-500' },
+      { name: 'supplier',     type: 'TEXT',    example: 'Hindustan Packaging' },
+      { name: 'qty',          type: 'INTEGER', example: '50000' },
+      { name: 'order_date',   type: 'DATE',    example: '2026-03-10' },
+      { name: 'expected_delivery', type: 'DATE', example: '2026-03-24' },
+      { name: 'status',       type: 'TEXT',    example: 'open' },
+      { name: 'unit_cost',    type: 'DECIMAL', example: '4.50' },
+    ],
+    modules: ['Procurement Planning', 'MRP', 'Inventory Planning'],
+    sample_rows: [
+      ['PO-2026-001', 'RM-PET-500', 'Hindustan Packaging', '50000', '2026-03-10', '2026-03-24', 'open', '4.50'],
+      ['PO-2026-002', 'RM-CAP-28MM','PolyPack India',       '80000', '2026-03-12', '2026-03-19', 'open', '0.80'],
+    ],
+  },
+  {
+    key: 'resource',
+    label: 'Resource / Workforce',
+    icon: 'fa-users',
+    color: '#DC2626',
+    description: 'Operator headcount, shift assignments, overtime hours, skill levels and training records per plant and line.',
+    file_name: 'resource_planning.csv',
+    required_columns: [
+      { name: 'plant_code',    type: 'TEXT',    example: 'MUM' },
+      { name: 'shift',         type: 'TEXT',    example: 'A' },
+      { name: 'date',          type: 'DATE',    example: '2026-03-17' },
+      { name: 'headcount',     type: 'INTEGER', example: '42' },
+      { name: 'overtime_hrs',  type: 'DECIMAL', example: '18.5' },
+      { name: 'absenteeism_pct',type:'DECIMAL', example: '2.4' },
+      { name: 'efficiency_pct',type: 'DECIMAL', example: '88.0' },
+    ],
+    modules: ['Resource Planning', 'Capacity Planning', 'Production Planning'],
+    sample_rows: [
+      ['MUM', 'A', '2026-03-17', '42', '18.5', '2.4', '88.0'],
+      ['MUM', 'B', '2026-03-17', '40', '12.0', '1.8', '91.0'],
+    ],
+  },
+  {
+    key: 'deployment',
+    label: 'Deployment / Shipments',
+    icon: 'fa-truck',
+    color: '#0891B2',
+    description: 'Planned and in-transit shipment details including origin, destination, volume, load utilisation and OTD status.',
+    file_name: 'deployment_shipments.csv',
+    required_columns: [
+      { name: 'shipment_id',  type: 'TEXT',    example: 'SHP-0317-001' },
+      { name: 'origin',       type: 'TEXT',    example: 'Mumbai' },
+      { name: 'destination',  type: 'TEXT',    example: 'Delhi DC' },
+      { name: 'sku',          type: 'TEXT',    example: 'SKU-500-PET' },
+      { name: 'volume_cases', type: 'INTEGER', example: '1800' },
+      { name: 'truck_util_pct',type:'DECIMAL', example: '87.5' },
+      { name: 'etd',          type: 'DATE',    example: '2026-03-17' },
+      { name: 'eta',          type: 'DATE',    example: '2026-03-19' },
+      { name: 'status',       type: 'TEXT',    example: 'in_transit' },
+    ],
+    modules: ['Deployment Planning', 'Inventory Planning', 'S&OP Planning'],
+    sample_rows: [
+      ['SHP-0317-001', 'Mumbai', 'Delhi DC',   'SKU-500-PET', '1800', '87.5', '2026-03-17', '2026-03-19', 'in_transit'],
+      ['SHP-0317-002', 'Mumbai', 'Chennai DC', 'SKU-1L-PET',  '1200', '82.1', '2026-03-17', '2026-03-20', 'planned'],
+    ],
+  },
+  {
+    key: 'sop_forecast',
+    label: 'S&OP Forecast',
+    icon: 'fa-balance-scale',
+    color: '#2563EB',
+    description: 'S&OP cycle statistical forecast, consensus volumes and supply plan numbers per SKU per month.',
+    file_name: 'sop_forecast.csv',
+    required_columns: [
+      { name: 'month',              type: 'TEXT',    example: '2026-04' },
+      { name: 'sku',                type: 'TEXT',    example: 'SKU-500-PET' },
+      { name: 'statistical_fcst',   type: 'INTEGER', example: '48000' },
+      { name: 'consensus_vol',      type: 'INTEGER', example: '50000' },
+      { name: 'supply_plan',        type: 'INTEGER', example: '49500' },
+      { name: 'bias_pct',           type: 'DECIMAL', example: '-1.2' },
+      { name: 'mape_pct',           type: 'DECIMAL', example: '8.4' },
+    ],
+    modules: ['S&OP Planning', 'Production Planning', 'MRP'],
+    sample_rows: [
+      ['2026-04', 'SKU-500-PET', '48000', '50000', '49500', '-1.2', '8.4'],
+      ['2026-04', 'SKU-1L-PET',  '32000', '33000', '32500', '-0.8', '7.1'],
+    ],
+  },
+  {
+    key: 'sequencing',
+    label: 'Sequencing / Jobs',
+    icon: 'fa-calendar-alt',
+    color: '#6D28D9',
+    description: 'Production job queue with SKU, quantity, line assignment, planned start/end times and priority for Gantt and sequence optimisation.',
+    file_name: 'sequencing_jobs.csv',
+    required_columns: [
+      { name: 'job_id',       type: 'TEXT',    example: 'JOB-001' },
+      { name: 'sku',          type: 'TEXT',    example: 'SKU-500-PET' },
+      { name: 'line_code',    type: 'TEXT',    example: 'MUM-L1' },
+      { name: 'qty_cases',    type: 'INTEGER', example: '5000' },
+      { name: 'planned_start',type: 'DATETIME',example: '2026-03-17 06:00' },
+      { name: 'planned_end',  type: 'DATETIME',example: '2026-03-17 14:00' },
+      { name: 'priority',     type: 'TEXT',    example: 'P1' },
+      { name: 'status',       type: 'TEXT',    example: 'scheduled' },
+    ],
+    modules: ['Sequencing & Scheduling', 'Production Planning', 'Capacity Planning'],
+    sample_rows: [
+      ['JOB-001', 'SKU-500-PET', 'MUM-L1', '5000', '2026-03-17 06:00', '2026-03-17 14:00', 'P1', 'scheduled'],
+      ['JOB-002', 'SKU-1L-PET',  'MUM-L1', '3200', '2026-03-17 14:30', '2026-03-17 22:00', 'P2', 'scheduled'],
+    ],
+  },
+]
+
+// ── API: GET upload status for all datasets ──────────────────────────────────
+app.get('/api/admin/upload-status', async (c) => {
+  try {
+    const db = c.env.DB
+    // Latest record per dataset_key
+    const { results } = await db.prepare(`
+      SELECT dataset_key, file_name, row_count, status, error_message, uploaded_by, uploaded_at, use_default
+      FROM upload_registry
+      WHERE id IN (
+        SELECT MAX(id) FROM upload_registry GROUP BY dataset_key
+      )
+      ORDER BY uploaded_at DESC
+    `).all()
+    return c.json(results || [])
+  } catch {
+    return c.json([])
+  }
+})
+
+// ── API: POST upload a CSV dataset ──────────────────────────────────────────
+app.post('/api/admin/upload', async (c) => {
+  const _u = getUser(c)
+  if (!_u) return c.json({ ok: false, error: 'Unauthorized' }, 401)
+
+  try {
+    const formData = await c.req.formData()
+    const datasetKey  = formData.get('dataset_key')?.toString() || ''
+    const useDefault  = formData.get('use_default') !== 'false'
+    const file        = formData.get('file') as File | null
+
+    // Validate dataset key
+    const catalogue = DATASET_CATALOGUE.find(d => d.key === datasetKey)
+    if (!catalogue) {
+      return c.json({ ok: false, error: `Unknown dataset key: ${datasetKey}` })
+    }
+    if (!file || !(file instanceof File)) {
+      return c.json({ ok: false, error: 'No file provided' })
+    }
+    if (!file.name.toLowerCase().endsWith('.csv')) {
+      return c.json({ ok: false, error: 'Only CSV files are accepted' })
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      return c.json({ ok: false, error: 'File exceeds 10 MB limit' })
+    }
+
+    // Parse CSV text
+    const text = await file.text()
+    const lines = text.trim().split(/\r?\n/).filter(l => l.trim())
+    if (lines.length < 2) {
+      await _recordUpload(c.env.DB, datasetKey, file.name, file.size, 0, 'failed',
+        'File must have a header row and at least one data row', _u.id, useDefault)
+      return c.json({ ok: false, error: 'File must have a header row and at least one data row' })
+    }
+
+    // Validate header columns
+    const headerCols = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/"/g, ''))
+    const requiredCols = catalogue.required_columns.map(c => c.name.toLowerCase())
+    const missing = requiredCols.filter(r => !headerCols.includes(r))
+    if (missing.length > 0) {
+      const msg = `Missing required columns: ${missing.join(', ')}`
+      await _recordUpload(c.env.DB, datasetKey, file.name, file.size, 0, 'failed', msg, _u.id, useDefault)
+      return c.json({ ok: false, error: msg, missing_columns: missing })
+    }
+
+    const rowCount = lines.length - 1
+
+    // Record success in DB
+    await _recordUpload(c.env.DB, datasetKey, file.name, file.size, rowCount, 'uploaded', null, _u.id, useDefault)
+
+    // Audit log entry
+    try {
+      await c.env.DB.prepare(`INSERT INTO audit_log(user_name,module,action,entity_type,entity_id,new_value) VALUES(?,?,?,?,?,?)`)
+        .bind(_u.name, 'admin', 'CSV Upload', 'Dataset', datasetKey, `${rowCount} rows from ${file.name}`).run()
+    } catch { /* audit not critical */ }
+
+    return c.json({ ok: true, dataset: datasetKey, rows: rowCount, file_name: file.name })
+  } catch (err: any) {
+    return c.json({ ok: false, error: err?.message || 'Upload processing failed' }, 500)
+  }
+})
+
+async function _recordUpload(
+  db: D1Database, key: string, fileName: string, size: number,
+  rows: number, status: string, err: string | null, user: string, useDefault: boolean
+) {
+  try {
+    await db.prepare(`
+      INSERT INTO upload_registry(dataset_key,file_name,file_size_bytes,row_count,status,error_message,uploaded_by,use_default,validated_at)
+      VALUES(?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)
+    `).bind(key, fileName, size, rows, status, err, user, useDefault ? 1 : 0).run()
+  } catch { /* DB might not have migration applied yet in local dev */ }
+}
+
+// ── API: DELETE (reset) a dataset to default ────────────────────────────────
+app.post('/api/admin/reset-dataset', async (c) => {
+  const _u = getUser(c)
+  if (!_u) return c.json({ ok: false, error: 'Unauthorized' }, 401)
+  const { dataset_key } = await c.req.json()
+  try {
+    await c.env.DB.prepare(`DELETE FROM upload_registry WHERE dataset_key=?`).bind(dataset_key).run()
+  } catch { /* ok if table not yet created */ }
+  return c.json({ ok: true })
+})
+
+// ── API: GET catalogue metadata ──────────────────────────────────────────────
+app.get('/api/admin/catalogue', (c) => {
+  return c.json(DATASET_CATALOGUE.map(d => ({
+    key: d.key, label: d.label, icon: d.icon, color: d.color,
+    description: d.description, file_name: d.file_name,
+    required_columns: d.required_columns,
+    modules: d.modules,
+  })))
+})
+
+// ── PAGE: /admin/data-management ────────────────────────────────────────────
+app.get('/admin/data-management', (c) => {
+  const _u = getUser(c)
+
+  const scripts = `
+// ── Admin page CSS ──
+(function() {
+  const s = document.createElement('style');
+  s.textContent = \`
+    .adm-tab { transition: color 0.15s, border-color 0.15s; }
+    .adm-tab.active { color: #1E3A8A !important; border-bottom-color: #1E3A8A !important; font-weight: 700 !important; }
+    .adm-tab:hover { color: #2563EB; }
+    details summary::-webkit-details-marker { display: none; }
+    details > summary { user-select: none; }
+    details[open] > summary { color: #7C3AED; }
+    @keyframes admFadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+    .adm-panel { animation: admFadeIn 0.2s ease; }
+  \`;
+  document.head.appendChild(s);
+})();
+// ── State ──
+let catalogue = [];
+let uploadStatus = {};   // key → row from upload_registry
+let useDefaultMap = {};  // key → boolean (local toggle state)
+
+// ── Boot ──
+document.addEventListener('DOMContentLoaded', async () => {
+  await Promise.all([loadCatalogue(), loadStatus()]);
+  renderAll();
+  switchAdminTab('overview');
+});
+
+async function loadCatalogue() {
+  catalogue = await axios.get('/api/admin/catalogue').then(r=>r.data).catch(()=>[]);
+}
+async function loadStatus() {
+  const rows = await axios.get('/api/admin/upload-status').then(r=>r.data).catch(()=>[]);
+  uploadStatus = {};
+  rows.forEach(r => { uploadStatus[r.dataset_key] = r; });
+}
+
+// ── Tab switching ──
+function switchAdminTab(tab) {
+  document.querySelectorAll('.adm-tab').forEach(b => b.classList.toggle('active', b.dataset.tab===tab));
+  document.querySelectorAll('.adm-panel').forEach(p => { p.style.display = p.dataset.panel===tab ? 'block' : 'none'; });
+}
+
+// ── Render entire page ──
+function renderAll() {
+  renderStatusGrid();
+  renderUploadCards();
+  renderMappingTable();
+}
+
+// ── 1. Status summary grid (overview tab) ──
+function renderStatusGrid() {
+  const total    = catalogue.length;
+  const uploaded = catalogue.filter(d => uploadStatus[d.key]?.status === 'uploaded').length;
+  const failed   = catalogue.filter(d => uploadStatus[d.key]?.status === 'failed').length;
+  const missing  = total - uploaded - failed;
+  document.getElementById('stat-total').textContent    = total;
+  document.getElementById('stat-uploaded').textContent = uploaded;
+  document.getElementById('stat-failed').textContent   = failed;
+  document.getElementById('stat-missing').textContent  = missing;
+
+  // Dataset status list
+  const el = document.getElementById('status-list');
+  el.innerHTML = catalogue.map(d => {
+    const s = uploadStatus[d.key];
+    const status   = s ? s.status : 'not_uploaded';
+    const badgeCls = status==='uploaded'?'success':status==='failed'?'critical':'warning';
+    const icon     = status==='uploaded'?'check-circle':status==='failed'?'times-circle':'clock';
+    const label    = status==='uploaded'?'Uploaded':status==='failed'?'Failed – Using Default':'Not Uploaded';
+    const detail   = s ? \`\${s.file_name} · \${s.row_count?.toLocaleString()||0} rows · \${(s.uploaded_at||'').slice(0,16)}\` : 'No file uploaded — using built-in default data';
+    const errHtml  = (status==='failed' && s?.error_message) ? \`<div style="font-size:11px;color:#DC2626;margin-top:4px"><i class="fas fa-exclamation-circle"></i> \${s.error_message}</div>\` : '';
+    return \`<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #F1F5F9">
+      <div style="width:36px;height:36px;border-radius:8px;background:\${d.color}18;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <i class="fas \${d.icon}" style="color:\${d.color};font-size:14px"></i>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;font-size:13px">\${d.label}</div>
+        <div style="font-size:11px;color:#64748B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">\${detail}</div>
+        \${errHtml}
+      </div>
+      <span class="badge badge-\${badgeCls}" style="white-space:nowrap">
+        <i class="fas fa-\${icon}"></i> \${label}
+      </span>
+      <button class="btn btn-sm btn-secondary" onclick="scrollToUpload('\${d.key}')" title="Go to Upload">
+        <i class="fas fa-upload"></i>
+      </button>
+      \${status!=='not_uploaded' ? \`<button class="btn btn-sm btn-secondary" onclick="resetDataset('\${d.key}')" title="Reset to default">
+        <i class="fas fa-undo"></i>
+      </button>\` : ''}
+    </div>\`;
+  }).join('');
+}
+
+// ── 2. Upload cards (upload tab) ──
+function renderUploadCards() {
+  const el = document.getElementById('upload-cards');
+  el.innerHTML = catalogue.map(d => {
+    const s = uploadStatus[d.key];
+    const status = s ? s.status : 'not_uploaded';
+    const badgeCls = status==='uploaded'?'success':status==='failed'?'critical':'warning';
+    const useDefault = useDefaultMap[d.key] !== undefined ? useDefaultMap[d.key] : (s?.use_default !== 0);
+
+    // Column pills
+    const colPills = d.required_columns.map(col =>
+      \`<span style="display:inline-flex;align-items:center;gap:4px;background:#F1F5F9;border:1px solid #E2E8F0;border-radius:6px;padding:3px 8px;font-size:11px;margin:2px">
+        <code style="color:\${d.color};font-weight:600">\${col.name}</code>
+        <span style="color:#94A3B8">\${col.type}</span>
+      </span>\`
+    ).join('');
+
+    // Sample table
+    const sampleHdr = d.required_columns.map(c => \`<th>\${c.name}</th>\`).join('');
+    const sampleRows = d.sample_rows.map(row =>
+      \`<tr>\${row.map(v => \`<td style="font-size:11px">\${v}</td>\`).join('')}</tr>\`
+    ).join('');
+
+    return \`<div class="card" id="upload-card-\${d.key}" style="margin-bottom:16px;scroll-margin-top:80px">
+      <div class="card-header">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:32px;height:32px;border-radius:8px;background:\${d.color}18;display:flex;align-items:center;justify-content:center">
+            <i class="fas \${d.icon}" style="color:\${d.color}"></i>
+          </div>
+          <div>
+            <div style="font-weight:700;font-size:14px">\${d.label}</div>
+            <div style="font-size:11px;color:#64748B">Expected file: <code>\${d.file_name}</code></div>
+          </div>
+        </div>
+        <span class="badge badge-\${badgeCls}">\${status==='uploaded'?'✓ Uploaded':status==='failed'?'✗ Failed':'⏳ Not Uploaded'}</span>
+      </div>
+      <div class="card-body">
+        <p style="font-size:13px;color:#475569;margin-bottom:14px">\${d.description}</p>
+
+        <!-- Required columns -->
+        <div style="margin-bottom:14px">
+          <div style="font-size:11px;font-weight:700;color:#64748B;letter-spacing:0.05em;margin-bottom:6px">REQUIRED COLUMNS</div>
+          <div>\${colPills}</div>
+        </div>
+
+        <!-- Modules -->
+        <div style="margin-bottom:14px">
+          <div style="font-size:11px;font-weight:700;color:#64748B;letter-spacing:0.05em;margin-bottom:6px">CONSUMED BY</div>
+          <div>\${d.modules.map(m => \`<span class="badge badge-info" style="margin:2px">\${m}</span>\`).join('')}</div>
+        </div>
+
+        <!-- Sample format -->
+        <details style="margin-bottom:14px">
+          <summary style="font-size:12px;font-weight:600;color:#2563EB;cursor:pointer;list-style:none">
+            <i class="fas fa-table"></i> Show sample format (first 2 rows)
+          </summary>
+          <div style="overflow-x:auto;margin-top:8px">
+            <table class="data-table" style="font-size:11px;min-width:max-content">
+              <thead><tr>\${sampleHdr}</tr></thead>
+              <tbody>\${sampleRows}</tbody>
+            </table>
+          </div>
+        </details>
+
+        <!-- Error display -->
+        \${(status==='failed' && s?.error_message) ? \`
+          <div class="alert alert-critical" style="margin-bottom:14px">
+            <i class="fas fa-times-circle"></i>
+            <div><strong>Upload Failed:</strong> \${s.error_message}<br/>
+            <span style="font-size:12px">Default data is being used automatically.</span></div>
+          </div>\` : ''}
+
+        <!-- Success display -->
+        \${status==='uploaded' ? \`
+          <div class="alert alert-success" style="margin-bottom:14px">
+            <i class="fas fa-check-circle"></i>
+            <div><strong>\${s.file_name}</strong> — \${(s.row_count||0).toLocaleString()} rows uploaded successfully
+            on \${(s.uploaded_at||'').slice(0,16)} by \${s.uploaded_by}</div>
+          </div>\` : ''}
+
+        <!-- Upload dropzone -->
+        <div id="dz-\${d.key}"
+          style="border:2px dashed #CBD5E1;border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:border 0.2s;background:#FAFBFC"
+          ondragover="event.preventDefault();this.style.borderColor='\${d.color}'"
+          ondragleave="this.style.borderColor='#CBD5E1'"
+          ondrop="handleDrop(event,'\${d.key}')"
+          onclick="document.getElementById('file-\${d.key}').click()">
+          <i class="fas fa-cloud-upload-alt" style="font-size:28px;color:#94A3B8;display:block;margin-bottom:8px"></i>
+          <div style="font-size:13px;font-weight:600;color:#475569">Drop CSV here or click to browse</div>
+          <div style="font-size:11px;color:#94A3B8;margin-top:4px">CSV only · Max 10 MB</div>
+          <input type="file" id="file-\${d.key}" accept=".csv" style="display:none" onchange="handleFile(event,'\${d.key}')">
+        </div>
+
+        <!-- Controls -->
+        <div style="display:flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap">
+          <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#475569;cursor:pointer">
+            <input type="checkbox" id="chk-default-\${d.key}" \${useDefault?'checked':''} onchange="toggleDefault('\${d.key}',this.checked)" style="width:14px;height:14px">
+            Use default data if upload fails
+          </label>
+          \${status!=='not_uploaded' ? \`
+            <button class="btn btn-sm btn-secondary" onclick="resetDataset('\${d.key}')">
+              <i class="fas fa-undo"></i> Reset to Default
+            </button>\` : ''}
+          <div id="prog-\${d.key}" style="display:none;flex:1;min-width:120px">
+            <div style="background:#E2E8F0;border-radius:9px;height:6px;overflow:hidden">
+              <div id="prog-bar-\${d.key}" style="height:100%;background:\${d.color};width:0%;transition:width 0.3s;border-radius:9px"></div>
+            </div>
+            <div id="prog-label-\${d.key}" style="font-size:11px;color:#64748B;margin-top:4px">Validating…</div>
+          </div>
+        </div>
+      </div>
+    </div>\`;
+  }).join('');
+}
+
+// ── 3. Module mapping table ──
+function renderMappingTable() {
+  const allModules = [...new Set(catalogue.flatMap(d => d.modules))].sort();
+  const el = document.getElementById('mapping-table');
+  const hdr = allModules.map(m => \`<th style="font-size:11px;white-space:nowrap">\${m}</th>\`).join('');
+  const rows = catalogue.map(d => {
+    const s = uploadStatus[d.key];
+    const status = s?.status || 'not_uploaded';
+    const dot = status==='uploaded'
+      ? '<i class="fas fa-check-circle" style="color:#059669"></i>'
+      : status==='failed'
+      ? '<i class="fas fa-times-circle" style="color:#DC2626"></i>'
+      : '<i class="fas fa-minus-circle" style="color:#94A3B8"></i>';
+    const cells = allModules.map(m =>
+      d.modules.includes(m)
+        ? \`<td style="text-align:center"><i class="fas fa-check" style="color:\${d.color}"></i></td>\`
+        : \`<td style="text-align:center;color:#E2E8F0"><i class="fas fa-minus"></i></td>\`
+    ).join('');
+    return \`<tr>
+      <td style="white-space:nowrap">
+        <div style="display:flex;align-items:center;gap:8px">
+          \${dot}
+          <i class="fas \${d.icon}" style="color:\${d.color};width:14px;text-align:center"></i>
+          <span style="font-weight:600;font-size:12px">\${d.label}</span>
+        </div>
+      </td>
+      <td style="font-size:11px;color:#64748B"><code>\${d.file_name}</code></td>
+      \${cells}
+    </tr>\`;
+  }).join('');
+  el.innerHTML = \`<table class="data-table" style="font-size:12px;min-width:max-content">
+    <thead><tr>
+      <th>Dataset</th><th>File Name</th>\${hdr}
+    </tr></thead>
+    <tbody>\${rows}</tbody>
+  </table>\`;
+}
+
+// ── File handling ──
+function handleDrop(event, key) {
+  event.preventDefault();
+  document.getElementById('dz-'+key).style.borderColor = '#CBD5E1';
+  const file = event.dataTransfer.files[0];
+  if (file) uploadFile(key, file);
+}
+function handleFile(event, key) {
+  const file = event.target.files[0];
+  if (file) uploadFile(key, file);
+}
+
+async function uploadFile(key, file) {
+  const progDiv  = document.getElementById('prog-'+key);
+  const progBar  = document.getElementById('prog-bar-'+key);
+  const progLbl  = document.getElementById('prog-label-'+key);
+  const dz       = document.getElementById('dz-'+key);
+  const useDefault = document.getElementById('chk-default-'+key)?.checked !== false;
+
+  if (!file.name.toLowerCase().endsWith('.csv')) {
+    showAdminToast('Only CSV files are accepted', 'error'); return;
+  }
+
+  // Show progress
+  if (progDiv) progDiv.style.display = 'block';
+  if (dz) dz.style.borderColor = '#2563EB';
+  animateProgress(progBar, progLbl, 0, 60, 'Validating structure…');
+
+  const fd = new FormData();
+  fd.append('dataset_key', key);
+  fd.append('use_default', useDefault ? 'true' : 'false');
+  fd.append('file', file);
+
+  try {
+    animateProgress(progBar, progLbl, 60, 90, 'Uploading…');
+    const res = await axios.post('/api/admin/upload', fd, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    const d = res.data;
+    animateProgress(progBar, progLbl, 90, 100, 'Done');
+
+    if (d.ok) {
+      showAdminToast(d.dataset.toUpperCase() + ' — ' + d.rows.toLocaleString() + ' rows uploaded ✓', 'success');
+    } else {
+      showAdminToast('Upload failed: ' + d.error, 'error');
+    }
+  } catch(e) {
+    showAdminToast('Network error during upload', 'error');
+  }
+
+  await loadStatus();
+  renderAll();
+  if (progDiv) setTimeout(() => { progDiv.style.display='none'; }, 1200);
+}
+
+function animateProgress(bar, lbl, from, to, text) {
+  if (!bar) return;
+  bar.style.width = to + '%';
+  if (lbl) lbl.textContent = text;
+}
+
+function toggleDefault(key, checked) {
+  useDefaultMap[key] = checked;
+}
+
+async function resetDataset(key) {
+  if (!confirm('Reset "' + key + '" to default data? Upload history will be cleared.')) return;
+  await axios.post('/api/admin/reset-dataset', { dataset_key: key }).catch(()=>{});
+  await loadStatus();
+  renderAll();
+  showAdminToast(key + ' reset to default data', 'success');
+}
+
+function scrollToUpload(key) {
+  switchAdminTab('upload');
+  setTimeout(() => {
+    const el = document.getElementById('upload-card-'+key);
+    if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }, 80);
+}
+
+function showAdminToast(msg, type) {
+  const t = document.getElementById('admin-toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.style.background = type==='error' ? '#DC2626' : '#059669';
+  t.style.display = 'block';
+  t.style.opacity = '1';
+  setTimeout(() => { t.style.opacity='0'; setTimeout(()=>t.style.display='none', 400); }, 3500);
+}
+  `.trim()
+
+  return c.html(<Layout user={_u} title="Admin – Data Management" activeModule="admin" scripts={scripts}>
+    {/* Toast */}
+    <div id="admin-toast" style="display:none;position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 20px;border-radius:10px;color:white;font-size:13px;font-weight:600;max-width:380px;box-shadow:0 4px 20px rgba(0,0,0,0.2);transition:opacity 0.4s"></div>
+
+    {/* Page header */}
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#1E3A8A,#2563EB)"><i class="fas fa-database"></i></div>
+        <div>
+          <div class="page-title">Admin — Data Management</div>
+          <div class="page-subtitle">Upload, validate and manage CSV datasets across all supply-chain modules</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <span class="badge badge-live">Live</span>
+        <button class="btn btn-secondary" onclick="loadStatus().then(renderAll)"><i class="fas fa-sync"></i> Refresh</button>
+      </div>
+    </div>
+
+    {/* Summary KPI row */}
+    <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+      {[
+        ['Total Datasets',    'stat-total',    'info',    'fa-database'],
+        ['Uploaded',          'stat-uploaded', 'healthy', 'fa-check-circle'],
+        ['Failed / Default',  'stat-failed',   'critical','fa-times-circle'],
+        ['Not Uploaded',      'stat-missing',  'warning', 'fa-clock'],
+      ].map(([label, id, cls, icon]) =>
+        <div key={id} class={`kpi-card ${cls}`}>
+          <div class="kpi-label"><i class={`fas ${icon}`} style="margin-right:5px"></i>{label}</div>
+          <div class={`kpi-value ${cls}`} id={id}>—</div>
+        </div>
+      )}
+    </div>
+
+    {/* Tab bar */}
+    <div style="background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:20px;overflow:hidden">
+      <div style="display:flex;border-bottom:1px solid #E2E8F0">
+        {[
+          ['overview', '1. Status Overview',   'fa-tachometer-alt'],
+          ['upload',   '2. Upload Datasets',   'fa-upload'],
+          ['mapping',  '3. Module Mapping',    'fa-project-diagram'],
+        ].map(([tab,label,icon]) =>
+          <button key={tab} class="adm-tab" data-tab={tab} onclick={`switchAdminTab('${tab}')`}
+            style="padding:12px 22px;border:none;background:transparent;cursor:pointer;font-size:0.875rem;font-weight:600;color:#64748B;border-bottom:3px solid transparent;display:flex;align-items:center;gap:6px;transition:color 0.15s">
+            <i class={`fas ${icon}`}></i>{label}
+          </button>
+        )}
+      </div>
+
+      {/* ── Tab 1: Status Overview ── */}
+      <div class="adm-panel" data-panel="overview" style="padding:20px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div>
+            <div style="font-size:15px;font-weight:700">Dataset Status</div>
+            <div style="font-size:12px;color:#64748B">Current state of each dataset — click <i class="fas fa-upload"></i> to upload</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#64748B">
+            <span class="badge badge-success"><i class="fas fa-check-circle"></i> Uploaded</span>
+            <span class="badge badge-critical"><i class="fas fa-times-circle"></i> Failed</span>
+            <span class="badge badge-warning"><i class="fas fa-clock"></i> Not Uploaded</span>
+          </div>
+        </div>
+        <div class="alert alert-info" style="margin-bottom:16px">
+          <i class="fas fa-info-circle"></i>
+          <div>
+            <strong>Safe fallback is always on.</strong> When a dataset is not uploaded or fails validation,
+            the system automatically uses built-in default data — no module functionality is lost.
+          </div>
+        </div>
+        <div id="status-list"><div class="spinner"></div></div>
+      </div>
+
+      {/* ── Tab 2: Upload Datasets ── */}
+      <div class="adm-panel" data-panel="upload" style="padding:20px;display:none">
+        <div style="margin-bottom:16px">
+          <div style="font-size:15px;font-weight:700;margin-bottom:4px">Upload CSV Datasets</div>
+          <div style="font-size:12px;color:#64748B">
+            Drag-and-drop or click to select a CSV. Each card shows the required columns, sample format and which modules use the data.
+            <br/>The <strong>"Use default data if upload fails"</strong> toggle is enabled by default — safe to upload without risk.
+          </div>
+        </div>
+        <div id="upload-cards"><div class="spinner"></div></div>
+      </div>
+
+      {/* ── Tab 3: Module Mapping ── */}
+      <div class="adm-panel" data-panel="mapping" style="padding:20px;display:none">
+        <div style="margin-bottom:14px">
+          <div style="font-size:15px;font-weight:700;margin-bottom:4px">Dataset → Module Dependency Map</div>
+          <div style="font-size:12px;color:#64748B">
+            Shows which planning modules consume each dataset. A <i class="fas fa-check" style="color:#2563EB"></i> means the module depends on this data.
+            The status icon shows the current upload state of each dataset.
+          </div>
+        </div>
+        <div style="overflow-x:auto" id="mapping-table"><div class="spinner"></div></div>
+        <div style="margin-top:16px;display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:#64748B">
+          <span><i class="fas fa-check-circle" style="color:#059669"></i> Uploaded</span>
+          <span><i class="fas fa-times-circle" style="color:#DC2626"></i> Failed – using default</span>
+          <span><i class="fas fa-minus-circle" style="color:#94A3B8"></i> Not uploaded – using default</span>
+          <span><i class="fas fa-check" style="color:#2563EB"></i> Dataset feeds this module</span>
+        </div>
+      </div>
+    </div>
+
+    {/* Info card — how it works */}
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><i class="fas fa-shield-alt"></i> How Data Upload Works</span>
+      </div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
+          {[
+            ['fa-upload','1. Upload','Select or drop a CSV file for any dataset. The file is validated immediately in-browser and on-server.','#2563EB'],
+            ['fa-check-square','2. Validate','Required columns are checked. If any are missing, the upload is rejected and the error is shown clearly.','#7C3AED'],
+            ['fa-database','3. Store','Validated files are recorded in the database. Row count, filename and uploader are logged.','#059669'],
+            ['fa-life-ring','4. Fallback','If upload fails or no file exists, the system automatically uses safe built-in default data. No module breaks.','#D97706'],
+          ].map(([icon, title, desc, color]) =>
+            <div key={title} style={`padding:16px;background:#F8FAFC;border-radius:10px;border-left:3px solid ${color}`}>
+              <div style={`color:${color};font-size:18px;margin-bottom:8px`}><i class={`fas ${icon}`}></i></div>
+              <div style="font-weight:700;font-size:13px;margin-bottom:4px">{title}</div>
+              <div style="font-size:12px;color:#64748B;line-height:1.5">{desc}</div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </Layout>)
+})
 
 export default app
