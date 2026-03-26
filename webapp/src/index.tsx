@@ -4111,7 +4111,7 @@ async function init() {
       <td>\${s.level} – \${s.location}</td>
       <td>\${s.current_ss?.toLocaleString()}</td>
       <td style="font-weight:600;color:\${s.gap>0?'#DC2626':'#059669'}">\${s.optimal_ss?.toLocaleString()}</td>
-      <td style="font-weight:600;color:\${s.gap>0?'#DC2626':'#059669'}">\${s.gap>0?'+':''}${s.gap}</td>
+      <td style="font-weight:600;color:\${s.gap>0?'#DC2626':'#059669'}">\${s.gap>0?'+':''}\${s.gap}</td>
       <td>\${(s.service_level_target*100||97.5).toFixed(1)}%</td>
       <td style="font-size:11px">\${s.recommendation}</td>
       <td>\${s.gap!==0?'<button class="btn btn-sm btn-primary" onclick="updateSS(\\'' + s.sku + '\\',\\'' + s.location + '\\',' + s.optimal_ss + ')">Update</button>':'<span class=\\"badge badge-success\\">Optimal</span>'}</td>
