@@ -1,6 +1,10 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
+import {
+  bomMaster, demandData, inventoryData, purchaseOrders as mrpPurchaseOrders,
+  computeNetRequirements, scenarios as mrpScenarios, constraints as mrpConstraints, objectives as mrpObjectives
+} from './mrpData'
 
 type Bindings = { DB: D1Database }
 const app = new Hono<{ Bindings: Bindings }>()
@@ -144,6 +148,7 @@ const NAV_MODULES = [
       { id: 'mrp-po', label: 'Purchase Orders', icon: 'fa-file-invoice', path: '/mrp/purchase-orders' },
       { id: 'mrp-alerts', label: 'Shortage Alerts', icon: 'fa-bell', path: '/mrp/shortage-alerts' },
       { id: 'mrp-analytics', label: 'MRP Analytics', icon: 'fa-chart-line', path: '/mrp/analytics' },
+      { id: 'mrp-workbench', label: 'Optimization Workbench', icon: 'fa-sliders-h', path: '/mrp/optimization-workbench' },
     ]
   },
   { id: 'procurement', label: 'Procurement Planning', icon: 'fa-handshake', path: '/procurement',
@@ -886,6 +891,144 @@ app.get('/api/mrp/explosion', async (c) => {
     }
     return c.json(explosion)
   } catch { return c.json([]) }
+})
+
+// ── Enhanced MRP API Routes (Optimizer Integration) ──────────────────────────
+
+// Net Requirements (computed from BOM explosion)
+app.get('/api/mrp/net-requirements', (c) => {
+  return c.json(computeNetRequirements())
+})
+
+// Run MRP – full BOM explosion with suggested POs
+app.post('/api/mrp/run-mrp', async (c) => {
+  const body = await c.req.json().catch(() => ({})) as Record<string, unknown>
+  const netReqs = computeNetRequirements()
+  const shortages = netReqs.filter(r => r.status === 'SHORT')
+  const suggestedPOs = shortages.map((s, idx) => ({
+    id: `PO-AUTO-${String(idx + 1).padStart(3, '0')}`,
+    rmSKU: s.rmSKU,
+    rmName: s.rmName,
+    qty: s.plannedOrderReceipt,
+    neededByWeek: s.week,
+    status: 'Planned',
+  }))
+  return c.json({
+    success: true,
+    runAt: new Date().toISOString(),
+    scenario: body.scenario ?? 'Baseline',
+    summary: {
+      totalSKUs: bomMaster.length,
+      totalComponents: bomMaster.reduce((a, b) => a + b.bom.length, 0),
+      shortages: shortages.length,
+      suggestedPOs: suggestedPOs.length,
+      planAdherence: 96.2,
+    },
+    suggestedPOs,
+    netRequirements: netReqs,
+  })
+})
+
+// MRP Scenarios
+app.get('/api/mrp/scenarios', (c) => c.json(mrpScenarios))
+
+// MRP Constraints
+app.get('/api/mrp/constraints', (c) => c.json(mrpConstraints))
+
+// MRP Objectives
+app.get('/api/mrp/objectives', (c) => c.json(mrpObjectives))
+
+// MRP Optimization
+app.post('/api/mrp/optimize', async (c) => {
+  const body = await c.req.json().catch(() => ({})) as Record<string, unknown>
+  const scenarioId = body.scenarioId as string ?? 'S2'
+  const selected = mrpScenarios.find(s => s.id === scenarioId) ?? mrpScenarios[2]
+  return c.json({
+    success: true,
+    optimizedAt: new Date().toISOString(),
+    scenario: selected,
+    recommendations: [
+      { action: 'Recalibrate safety stock for RM-004 (Orange Concentrate)', impact: 'Reduce holding cost by 12%', priority: 'High' },
+      { action: 'Split PO for PKG-005 (Aluminium Can) across 2 suppliers', impact: 'Reduce supply risk by 35%', priority: 'High' },
+      { action: 'Increase Line-4 (Energy) to 3 shifts during W03–W05', impact: 'Eliminate 5.3% capacity gap', priority: 'Medium' },
+      { action: 'Consolidate ordering for SUP-G to reduce order frequency', impact: 'Save ₹42,000 in ordering costs', priority: 'Medium' },
+      { action: 'Implement vendor-managed inventory for CO₂ (SUP-C)', impact: 'Reduce lead time risk by 20%', priority: 'Low' },
+    ],
+  })
+})
+
+// Create MRP Purchase Order
+app.post('/api/mrp/create-po', async (c) => {
+  const body = await c.req.json().catch(() => ({})) as Record<string, unknown>
+  const id = `PO-${Date.now().toString().slice(-6)}`
+  return c.json({
+    success: true,
+    po: {
+      id,
+      rmSKU: body.rmSKU ?? 'RM-001',
+      rmName: body.rmName ?? 'Unknown',
+      supplier: body.supplier ?? 'SUP-A',
+      qty: body.qty ?? 0,
+      orderDate: new Date().toISOString().slice(0, 10),
+      expectedDelivery: new Date(Date.now() + 21 * 86400000).toISOString().slice(0, 10),
+      status: 'Planned',
+      cost: Number(body.qty ?? 0) * Number(body.unitCost ?? 1),
+      priority: body.priority ?? 'Normal',
+    },
+  })
+})
+
+// MRP BOM Data (enhanced)
+app.get('/api/mrp/bom-master', (c) => c.json(bomMaster))
+
+// MRP Demand Data
+app.get('/api/mrp/demand', (c) => c.json(demandData))
+
+// MRP Inventory Data
+app.get('/api/mrp/inventory-data', (c) => c.json(inventoryData))
+
+// MRP Purchase Orders (standalone static POs)
+app.get('/api/mrp/purchase-orders', (c) => c.json(mrpPurchaseOrders))
+
+// MRP Export CSV
+app.get('/api/mrp/export/:type', (c) => {
+  const type = c.req.param('type')
+  let csv = ''
+  let filename = 'export.csv'
+
+  if (type === 'net-requirements') {
+    const data = computeNetRequirements()
+    csv = 'Week,FG SKU,FG Name,RM SKU,RM Name,Gross Req,Scheduled Receipt,Proj Inventory,Net Req,Planned Order,Status\n'
+    csv += data.map(r =>
+      `${r.week},${r.fgSKU},${r.fgName},${r.rmSKU},${r.rmName},${r.grossReq},${r.scheduledReceipt},${r.projectedInventory},${r.netReq},${r.plannedOrderReceipt},${r.status}`
+    ).join('\n')
+    filename = 'net_requirements.csv'
+  } else if (type === 'purchase-orders') {
+    csv = 'PO ID,RM SKU,RM Name,Supplier,Qty,Order Date,Expected Delivery,Status,Cost,Priority\n'
+    csv += mrpPurchaseOrders.map(p =>
+      `${p.id},${p.rmSKU},${p.rmName},${p.supplier},${p.qty},${p.orderDate},${p.expectedDelivery},${p.status},${p.cost},${p.priority}`
+    ).join('\n')
+    filename = 'purchase_orders.csv'
+  } else if (type === 'inventory') {
+    csv = 'SKU,Name,Type,On Hand,In Transit,Safety Stock,Unit,Location\n'
+    csv += inventoryData.map(i =>
+      `${i.sku},${i.name},${i.type},${i.onHand},${i.inTransit},${i.safetyStock},${i.unit},${i.location}`
+    ).join('\n')
+    filename = 'inventory.csv'
+  } else if (type === 'scenarios') {
+    csv = 'Scenario ID,Name,Driver,Material Availability,Inventory Reduction,Cost Reduction,Service Level,Total Cost,Shortage\n'
+    csv += mrpScenarios.map(s =>
+      `${s.id},${s.name},${s.driver},${s.kpis.materialAvailability}%,${s.kpis.inventoryReduction}%,${s.kpis.costReduction}%,${s.kpis.serviceLevel}%,${s.kpis.totalCost},${s.kpis.shortage}%`
+    ).join('\n')
+    filename = 'scenario_comparison.csv'
+  }
+
+  return new Response(csv, {
+    headers: {
+      'Content-Type': 'text/csv',
+      'Content-Disposition': `attachment; filename="${filename}"`,
+    },
+  })
 })
 
 // Inventory KPIs
@@ -3372,6 +3515,441 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     </div>
     <div class="card"><div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> Material Coverage Days</span></div><div class="card-body" style="height:250px"><canvas id="coverage-chart"></canvas></div></div>
+  </Layout>)
+})
+
+// ── Optimization Workbench (new consolidated page) ───────────────────────────
+app.get('/mrp/optimization-workbench', async (c) => {
+  const scripts = `
+// ── Workbench state ──────────────────────────────────────────
+let wbState = {
+  objectives: [], constraints: {}, scenarios: [], optResults: null,
+  charts: { radar: null, donut: null, scAvail: null, scCost: null, scInv: null, scSvc: null }
+};
+let wbCurrentTab = 'objectives';
+
+// ── Tab switcher ─────────────────────────────────────────────
+function switchWbTab(tab) {
+  wbCurrentTab = tab;
+  document.querySelectorAll('.wb-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.querySelectorAll('.wb-panel').forEach(p => p.style.display = p.dataset.panel === tab ? 'block' : 'none');
+  if (tab === 'optresults' && !wbState.optResults) runOptimization();
+  if (tab === 'scenarios') renderScenarioCharts();
+}
+
+// ── Load objectives ──────────────────────────────────────────
+async function loadObjectives() {
+  const res = await axios.get('/api/mrp/objectives').catch(() => ({data:[]}));
+  wbState.objectives = res.data;
+  const grid = document.getElementById('wb-obj-grid');
+  if (!grid) return;
+  const colors = ['#2563EB','#7C3AED','#059669','#D97706','#DC2626'];
+  grid.innerHTML = wbState.objectives.map((o, i) => \`
+    <div style="background:#fff;border-radius:12px;padding:20px;border:1px solid #E2E8F0;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div style="width:36px;height:36px;border-radius:50%;background:\${colors[i%colors.length]};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.875rem">\${i+1}</div>
+        <div>
+          <div style="font-weight:700;color:#1E293B;font-size:0.9rem">\${o.name}</div>
+          <div style="font-size:0.75rem;color:#64748B">\${o.category}</div>
+        </div>
+        <span class="badge badge-\${o.status==='Below Target'?'critical':o.status==='Not Started'?'warning':'success'}" style="margin-left:auto">\${o.status}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:0.82rem">
+        <span style="color:#64748B">Current: <strong>\${o.current}</strong></span>
+        <span style="color:#059669">Target: <strong>\${o.target}</strong></span>
+      </div>
+      <div style="background:#F1F5F9;border-radius:6px;height:6px;overflow:hidden">
+        <div style="height:100%;border-radius:6px;background:\${colors[i%colors.length]};width:\${o.weight*3.33}%"></div>
+      </div>
+      <div style="font-size:11px;color:#94A3B8;margin-top:6px">Weight: \${o.weight}%</div>
+    </div>
+  \`).join('');
+}
+
+// ── Load constraints ──────────────────────────────────────────
+async function loadConstraints() {
+  const res = await axios.get('/api/mrp/constraints').catch(() => ({data:{}}));
+  wbState.constraints = res.data;
+  // Capacity table
+  const capTbody = document.getElementById('wb-cap-table');
+  if (capTbody && res.data.capacity) {
+    capTbody.innerHTML = res.data.capacity.map(c => \`<tr>
+      <td><strong>\${c.line}</strong></td>
+      <td>\${c.plant}</td>
+      <td>\${c.shiftCapacity.toLocaleString()}</td>
+      <td>\${c.shiftsPerWeek}</td>
+      <td>\${c.maxWeekly.toLocaleString()}</td>
+      <td><span class="badge badge-\${c.utilization>=90?'critical':c.utilization>=80?'warning':'success'}">\${c.utilization}%</span></td>
+    </tr>\`).join('');
+  }
+  // Lead time table
+  const ltTbody = document.getElementById('wb-lt-table');
+  if (ltTbody && res.data.leadTime) {
+    ltTbody.innerHTML = res.data.leadTime.map(l => \`<tr>
+      <td><strong>\${l.supplier}</strong></td>
+      <td>\${l.material}</td>
+      <td>\${l.minDays}d</td>
+      <td>\${l.maxDays}d</td>
+      <td><strong>\${l.avgDays}d</strong></td>
+      <td style="color:#64748B">\${l.variability}</td>
+    </tr>\`).join('');
+  }
+  // Supplier table
+  const supTbody = document.getElementById('wb-sup-table');
+  if (supTbody && res.data.supplier) {
+    supTbody.innerHTML = res.data.supplier.map(s => \`<tr>
+      <td><strong>\${s.supplier}</strong></td>
+      <td>\${s.name}</td>
+      <td><span class="badge badge-\${s.reliability>=95?'success':s.reliability>=90?'warning':'critical'}">\${s.reliability}%</span></td>
+      <td>\${s.moq.toLocaleString()} \${s.unit}</td>
+      <td>\${s.maxMonthly.toLocaleString()}</td>
+      <td><span class="badge badge-\${s.contractStatus==='Active'?'success':s.contractStatus==='Under Review'?'warning':'info'}">\${s.contractStatus}</span></td>
+    </tr>\`).join('');
+  }
+  // Inventory policy table
+  const invTbody = document.getElementById('wb-inv-table');
+  if (invTbody && res.data.inventoryPolicy) {
+    invTbody.innerHTML = res.data.inventoryPolicy.map(p => \`<tr>
+      <td><strong>\${p.sku}</strong></td>
+      <td><span class="badge badge-info">\${p.method}</span></td>
+      <td>\${p.minStock.toLocaleString()}</td>
+      <td>\${p.maxStock.toLocaleString()}</td>
+      <td>\${p.reorderPoint.toLocaleString()}</td>
+      <td>\${p.safetyStock.toLocaleString()}</td>
+    </tr>\`).join('');
+  }
+}
+
+// ── Run Optimization ──────────────────────────────────────────
+async function runOptimization() {
+  const btn = document.getElementById('wb-opt-btn');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Optimizing...'; }
+  const res = await axios.post('/api/mrp/optimize', { scenarioId: 'S2' }).catch(() => ({data:{}}));
+  wbState.optResults = res.data;
+  if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-magic"></i> Run Optimization'; }
+  renderOptResults();
+}
+
+function renderOptResults() {
+  const r = wbState.optResults;
+  if (!r || !r.scenario) return;
+  const sc = r.scenario;
+  // KPI cards
+  const kpiEl = document.getElementById('wb-opt-kpis');
+  if (kpiEl) {
+    const kpis = [
+      { label: 'Material Availability', val: sc.kpis.materialAvailability + '%', color: '#059669', icon: 'fa-boxes', base: '94.2%' },
+      { label: 'Service Level', val: sc.kpis.serviceLevel + '%', color: '#2563EB', icon: 'fa-star', base: '93.5%' },
+      { label: 'Plan Adherence', val: sc.kpis.planAdherence + '%', color: '#7C3AED', icon: 'fa-check-circle', base: '88.5%' },
+      { label: 'Inventory Reduction', val: sc.kpis.inventoryReduction + '%', color: '#D97706', icon: 'fa-warehouse', base: '0%' },
+      { label: 'Cost Reduction', val: sc.kpis.costReduction + '%', color: '#DC2626', icon: 'fa-rupee-sign', base: '0%' },
+    ];
+    kpiEl.innerHTML = kpis.map(k => \`<div style="background:#fff;border-radius:10px;padding:16px;border:1px solid #E2E8F0;text-align:center">
+      <i class="fas \${k.icon}" style="color:\${k.color};font-size:1.4rem;margin-bottom:8px;display:block"></i>
+      <div style="font-size:1.5rem;font-weight:800;color:\${k.color}">\${k.val}</div>
+      <div style="font-size:0.75rem;font-weight:600;color:#374151;margin-top:2px">\${k.label}</div>
+      <div style="font-size:0.7rem;color:#94A3B8;margin-top:4px">Baseline: \${k.base}</div>
+    </div>\`).join('');
+  }
+  // Recommendations
+  const recEl = document.getElementById('wb-recommendations');
+  if (recEl && r.recommendations) {
+    const pColors = { High: '#DC2626', Medium: '#D97706', Low: '#059669' };
+    recEl.innerHTML = r.recommendations.map((rec, i) => \`
+      <div style="display:flex;align-items:flex-start;gap:14px;padding:16px;background:#fff;border-radius:10px;border:1px solid #E2E8F0;border-left:4px solid \${pColors[rec.priority]||'#64748B'}">
+        <div style="width:28px;height:28px;border-radius:50%;background:\${pColors[rec.priority]||'#64748B'};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;flex-shrink:0">\${i+1}</div>
+        <div style="flex:1">
+          <div style="font-weight:600;color:#1E293B;font-size:0.875rem">\${rec.action}</div>
+          <div style="font-size:0.78rem;color:#059669;margin-top:4px"><i class="fas fa-arrow-up"></i> \${rec.impact}</div>
+        </div>
+        <span class="badge badge-\${rec.priority==='High'?'critical':rec.priority==='Medium'?'warning':'success'}">\${rec.priority}</span>
+      </div>
+    \`).join('');
+  }
+  // Render radar chart
+  renderRadarChart(sc);
+}
+
+function renderRadarChart(sc) {
+  const ctx = document.getElementById('wb-radar-chart');
+  if (!ctx) return;
+  if (wbState.charts.radar) wbState.charts.radar.destroy();
+  wbState.charts.radar = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: ['Material Avail.', 'Service Level', 'Plan Adherence', 'Supplier OTIF', 'Cost Efficiency'],
+      datasets: [
+        { label: 'Baseline', data: [94.2, 93.5, 88.5, 89.0, 85], borderColor: '#94A3B8', backgroundColor: 'rgba(148,163,184,0.1)', borderWidth: 2, pointRadius: 4 },
+        { label: sc.name, data: [sc.kpis.materialAvailability, sc.kpis.serviceLevel, sc.kpis.planAdherence, sc.kpis.supplierOTIF, (100-sc.kpis.shortage)], borderColor: '#7C3AED', backgroundColor: 'rgba(124,58,237,0.1)', borderWidth: 2.5, pointRadius: 5 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { r: { beginAtZero: false, min: 70, max: 100, ticks: { font: { size: 10 } }, grid: { color: 'rgba(0,0,0,0.08)' } } }, plugins: { legend: { position: 'top', labels: { font: { size: 11 }, boxWidth: 12 } } } }
+  });
+}
+
+// ── Scenario Comparison ──────────────────────────────────────
+async function loadScenarios() {
+  const res = await axios.get('/api/mrp/scenarios').catch(() => ({data:[]}));
+  wbState.scenarios = res.data;
+  // Cards
+  const cardsEl = document.getElementById('wb-scenario-cards');
+  if (cardsEl) {
+    cardsEl.innerHTML = res.data.map(s => \`
+      <div style="background:#fff;border-radius:12px;padding:18px;border:2px solid \${s.active?'#7C3AED':'#E2E8F0'};position:relative">
+        \${s.active ? '<span style="position:absolute;top:10px;right:10px;background:#7C3AED;color:#fff;font-size:10px;padding:2px 8px;border-radius:999px;font-weight:600">ACTIVE</span>' : ''}
+        <div style="font-weight:700;color:#1E293B;margin-bottom:4px">\${s.name}</div>
+        <div style="font-size:0.75rem;color:#64748B;margin-bottom:12px">\${s.description}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="font-size:0.78rem"><span style="color:#64748B">Availability:</span> <strong style="color:\${s.kpis.materialAvailability>=99?'#059669':'#DC2626'}">\${s.kpis.materialAvailability}%</strong></div>
+          <div style="font-size:0.78rem"><span style="color:#64748B">Service:</span> <strong>\${s.kpis.serviceLevel}%</strong></div>
+          <div style="font-size:0.78rem"><span style="color:#64748B">Adherence:</span> <strong>\${s.kpis.planAdherence}%</strong></div>
+          <div style="font-size:0.78rem"><span style="color:#64748B">OTIF:</span> <strong>\${s.kpis.supplierOTIF}%</strong></div>
+        </div>
+      </div>
+    \`).join('');
+  }
+  // Delta table
+  const deltaEl = document.getElementById('wb-delta-table');
+  if (deltaEl && res.data.length > 1) {
+    const base = res.data[0];
+    deltaEl.innerHTML = res.data.map(s => {
+      const da = (s.kpis.materialAvailability - base.kpis.materialAvailability).toFixed(1);
+      const ds = (s.kpis.serviceLevel - base.kpis.serviceLevel).toFixed(1);
+      const dp = (s.kpis.planAdherence - base.kpis.planAdherence).toFixed(1);
+      const dc = s.kpis.costReduction.toFixed(1);
+      const dv = ((base.kpis.totalCost - s.kpis.totalCost)/1000).toFixed(0);
+      return \`<tr>
+        <td><strong>\${s.id}</strong></td>
+        <td>\${s.name}</td>
+        <td class="\${Number(da)>0?'healthy':Number(da)<0?'critical':''}">\${Number(da)>0?'+':''}\${da}%</td>
+        <td class="\${Number(ds)>0?'healthy':Number(ds)<0?'critical':''}">\${Number(ds)>0?'+':''}\${ds}%</td>
+        <td class="\${Number(dp)>0?'healthy':Number(dp)<0?'critical':''}">\${Number(dp)>0?'+':''}\${dp}%</td>
+        <td class="\${Number(dc)>0?'healthy':Number(dc)<0?'critical':''}">\${Number(dc)>0?'+':''}\${dc}%</td>
+        <td class="\${Number(dv)>0?'healthy':Number(dv)<0?'critical':''}">\${Number(dv)>0?'Saves ₹':'Adds ₹'}\${Math.abs(Number(dv))}K</td>
+        <td><span class="badge badge-\${s.active?'success':'info'}">\${s.active?'Active':'Compare'}</span></td>
+      </tr>\`;
+    }).join('');
+  }
+}
+
+function renderScenarioCharts() {
+  if (!wbState.scenarios.length) return;
+  const sc = wbState.scenarios;
+  const labels = sc.map(s => s.id);
+  const avail = sc.map(s => s.kpis.materialAvailability);
+  const svc = sc.map(s => s.kpis.serviceLevel);
+  const cost = sc.map(s => s.kpis.totalCost / 1000);
+  const inv = sc.map(s => s.kpis.inventoryReduction);
+
+  const draw = (id, type, datasets, yLabel) => {
+    const ctx = document.getElementById(id);
+    if (!ctx) return;
+    if (ctx._chart) ctx._chart.destroy();
+    ctx._chart = new Chart(ctx, {
+      type,
+      data: { labels, datasets },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { font: { size: 11 }, boxWidth: 12 } } }, scales: { y: { title: { display: true, text: yLabel }, grid: { color: 'rgba(0,0,0,0.05)' } }, x: { ticks: { font: { size: 10 } } } } }
+    });
+  };
+
+  draw('wb-sc-avail', 'bar', [{ label: 'Material Availability %', data: avail, backgroundColor: avail.map(v => v >= 99 ? '#059669' : v >= 95 ? '#D97706' : '#DC2626'), borderRadius: 5 }], '%');
+  draw('wb-sc-cost', 'bar', [{ label: 'Total Cost (₹K)', data: cost, backgroundColor: 'rgba(124,58,237,0.75)', borderRadius: 5 }], '₹ Thousands');
+  draw('wb-sc-inv', 'bar', [{ label: 'Inventory Reduction %', data: inv, backgroundColor: inv.map(v => v > 0 ? '#059669' : '#DC2626'), borderRadius: 5 }], '% Change');
+  draw('wb-sc-svc', 'line', [
+    { label: 'Service Level %', data: svc, borderColor: '#2563EB', backgroundColor: 'rgba(37,99,235,0.08)', fill: true, tension: 0.35, borderWidth: 2.5, pointRadius: 5 },
+    { label: 'Material Avail. %', data: avail, borderColor: '#059669', backgroundColor: 'transparent', fill: false, tension: 0.35, borderWidth: 2, pointRadius: 4 }
+  ], '%');
+}
+
+// ── Export ────────────────────────────────────────────────────
+function exportWb(type) {
+  window.location.href = '/api/mrp/export/' + type;
+}
+
+// ── Init ─────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+  await Promise.all([loadObjectives(), loadConstraints(), loadScenarios()]);
+  switchWbTab('objectives');
+});
+  `.trim()
+  const _u = getUser(c); return c.html(<Layout user={_u} title="MRP – Optimization Workbench" activeModule="mrp-workbench" scripts={scripts}>
+    <style>{`
+      .wb-tab-btn { padding:10px 20px;border:none;background:transparent;cursor:pointer;font-size:0.875rem;font-weight:600;color:#64748B;border-bottom:3px solid transparent;transition:all .2s;display:flex;align-items:center;gap:8px }
+      .wb-tab-btn.active { color:#7C3AED;border-bottom-color:#7C3AED }
+      .wb-tab-btn:hover:not(.active) { color:#374151;background:#F8FAFC }
+      .wb-tab-bar { display:flex;border-bottom:1px solid #E2E8F0;background:#fff;border-radius:12px 12px 0 0;overflow:hidden }
+      .wb-panel { display:none }
+      .wb-sub-tab { padding:8px 16px;border:1px solid #E2E8F0;border-radius:8px;background:transparent;cursor:pointer;font-size:0.8rem;font-weight:600;color:#64748B;transition:all .15s }
+      .wb-sub-tab.active { background:#0891B2;color:#fff;border-color:#0891B2 }
+      .healthy { color:#059669 } .critical { color:#DC2626 }
+    `}</style>
+    {/* Page Header */}
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#6D28D9,#A78BFA)"><i class="fas fa-sliders-h"></i></div>
+        <div>
+          <div class="page-title">Optimization Workbench</div>
+          <div class="page-subtitle">End-to-end MRP optimization — Objectives · Constraints · Results · Scenario Comparison</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <span class="badge badge-live">Live</span>
+        <button class="btn btn-primary" id="wb-opt-btn" onclick="runOptimization()"><i class="fas fa-magic"></i> Run Optimization</button>
+        <div style="position:relative;display:inline-block">
+          <button class="btn btn-secondary" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">
+            <i class="fas fa-download"></i> Export
+          </button>
+          <div style="display:none;position:absolute;right:0;top:100%;background:#fff;border:1px solid #E2E8F0;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.12);min-width:200px;z-index:50;padding:4px 0">
+            <button onclick="exportWb('net-requirements')" style="width:100%;text-align:left;padding:10px 16px;border:none;background:transparent;cursor:pointer;font-size:0.85rem;color:#374151"><i class="fas fa-table" style="width:16px;margin-right:8px;color:#64748B"></i>Net Requirements CSV</button>
+            <button onclick="exportWb('purchase-orders')" style="width:100%;text-align:left;padding:10px 16px;border:none;background:transparent;cursor:pointer;font-size:0.85rem;color:#374151"><i class="fas fa-file-invoice" style="width:16px;margin-right:8px;color:#64748B"></i>Purchase Orders CSV</button>
+            <button onclick="exportWb('inventory')" style="width:100%;text-align:left;padding:10px 16px;border:none;background:transparent;cursor:pointer;font-size:0.85rem;color:#374151"><i class="fas fa-warehouse" style="width:16px;margin-right:8px;color:#64748B"></i>Inventory CSV</button>
+            <button onclick="exportWb('scenarios')" style="width:100%;text-align:left;padding:10px 16px;border:none;background:transparent;cursor:pointer;font-size:0.85rem;color:#374151"><i class="fas fa-sitemap" style="width:16px;margin-right:8px;color:#64748B"></i>Scenario Comparison CSV</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Tab Bar */}
+    <div style="background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06);margin-bottom:20px;overflow:hidden">
+      <div class="wb-tab-bar">
+        <button class="wb-tab-btn active" data-tab="objectives" onclick="switchWbTab('objectives')">
+          <i class="fas fa-bullseye"></i> <span>1. Objectives</span>
+        </button>
+        <button class="wb-tab-btn" data-tab="constraints" onclick="switchWbTab('constraints')">
+          <i class="fas fa-lock"></i> <span>2. Constraints</span>
+        </button>
+        <button class="wb-tab-btn" data-tab="optresults" onclick="switchWbTab('optresults')">
+          <i class="fas fa-chart-line"></i> <span>3. Optimization Results</span>
+        </button>
+        <button class="wb-tab-btn" data-tab="scenarios" onclick="switchWbTab('scenarios')">
+          <i class="fas fa-layer-group"></i> <span>4. Scenario Comparison</span>
+        </button>
+      </div>
+
+      {/* ── OBJECTIVES PANEL ── */}
+      <div class="wb-panel" data-panel="objectives" style="padding:24px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+          <div>
+            <div style="font-weight:700;color:#1E293B;font-size:1.05rem"><i class="fas fa-bullseye" style="color:#7C3AED;margin-right:8px"></i>Planning Objectives</div>
+            <div style="font-size:0.8rem;color:#64748B;margin-top:2px">Define optimization goals and KPI targets for the MRP run</div>
+          </div>
+        </div>
+        <div id="wb-obj-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px">
+          <div style="text-align:center;padding:40px;color:#64748B"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+      {/* ── CONSTRAINTS PANEL ── */}
+      <div class="wb-panel" data-panel="constraints" style="padding:24px">
+        <div style="margin-bottom:20px">
+          <div style="font-weight:700;color:#1E293B;font-size:1.05rem"><i class="fas fa-lock" style="color:#0891B2;margin-right:8px"></i>Planning Constraints</div>
+          <div style="font-size:0.8rem;color:#64748B;margin-top:2px">System boundaries, capacities, lead times and supplier limits</div>
+        </div>
+        {/* Sub-tabs */}
+        <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+          <button class="wb-sub-tab active" id="ct-cap" onclick="showConstraintTab('cap')">Capacity</button>
+          <button class="wb-sub-tab" id="ct-lt" onclick="showConstraintTab('lt')">Lead Times</button>
+          <button class="wb-sub-tab" id="ct-sup" onclick="showConstraintTab('sup')">Suppliers / MOQ</button>
+          <button class="wb-sub-tab" id="ct-inv" onclick="showConstraintTab('inv')">Inventory Policy</button>
+        </div>
+        {/* Capacity */}
+        <div id="cp-cap">
+          <table class="data-table">
+            <thead><tr><th>Production Line</th><th>Plant</th><th>Shift Capacity</th><th>Shifts/Week</th><th>Max Weekly</th><th>Utilization</th></tr></thead>
+            <tbody id="wb-cap-table"><tr><td colspan="6" style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
+          </table>
+        </div>
+        {/* Lead Times */}
+        <div id="cp-lt" style="display:none">
+          <table class="data-table">
+            <thead><tr><th>Supplier</th><th>Material</th><th>Min Days</th><th>Max Days</th><th>Avg Days</th><th>Variability</th></tr></thead>
+            <tbody id="wb-lt-table"></tbody>
+          </table>
+        </div>
+        {/* Suppliers */}
+        <div id="cp-sup" style="display:none">
+          <table class="data-table">
+            <thead><tr><th>Supplier</th><th>Name</th><th>Reliability</th><th>MOQ</th><th>Max Monthly</th><th>Contract</th></tr></thead>
+            <tbody id="wb-sup-table"></tbody>
+          </table>
+        </div>
+        {/* Inventory Policy */}
+        <div id="cp-inv" style="display:none">
+          <table class="data-table">
+            <thead><tr><th>SKU</th><th>Method</th><th>Min Stock</th><th>Max Stock</th><th>Reorder Point</th><th>Safety Stock</th></tr></thead>
+            <tbody id="wb-inv-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* ── OPT RESULTS PANEL ── */}
+      <div class="wb-panel" data-panel="optresults" style="padding:24px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+          <div>
+            <div style="font-weight:700;color:#1E293B;font-size:1.05rem"><i class="fas fa-chart-line" style="color:#7C3AED;margin-right:8px"></i>Optimization Results</div>
+            <div style="font-size:0.8rem;color:#64748B;margin-top:2px">Optimized scenario KPIs vs baseline, recommendations and charts</div>
+          </div>
+          <button class="btn btn-primary" onclick="runOptimization()"><i class="fas fa-sync-alt"></i> Re-optimize</button>
+        </div>
+        <div id="wb-opt-kpis" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:24px">
+          <div style="text-align:center;padding:40px;color:#64748B;grid-column:1/-1"><div class="spinner"></div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
+          <div class="card" style="margin:0">
+            <div class="card-header"><span class="card-title"><i class="fas fa-radar-chart"></i> Baseline vs Optimized (Radar)</span></div>
+            <div class="card-body" style="height:260px"><canvas id="wb-radar-chart"></canvas></div>
+          </div>
+          <div class="card" style="margin:0">
+            <div class="card-header"><span class="card-title"><i class="fas fa-list-ol"></i> Top Recommendations</span></div>
+            <div class="card-body" style="overflow-y:auto;max-height:280px">
+              <div id="wb-recommendations" style="display:flex;flex-direction:column;gap:10px">
+                <div style="text-align:center;color:#64748B;padding:20px"><div class="spinner"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── SCENARIOS PANEL ── */}
+      <div class="wb-panel" data-panel="scenarios" style="padding:24px">
+        <div style="margin-bottom:20px">
+          <div style="font-weight:700;color:#1E293B;font-size:1.05rem"><i class="fas fa-layer-group" style="color:#0891B2;margin-right:8px"></i>Scenario Comparison</div>
+          <div style="font-size:0.8rem;color:#64748B;margin-top:2px">Compare all planning scenarios across key performance metrics</div>
+        </div>
+        {/* Scenario cards */}
+        <div id="wb-scenario-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-bottom:24px">
+          <div style="text-align:center;padding:40px;color:#64748B;grid-column:1/-1"><div class="spinner"></div></div>
+        </div>
+        {/* Delta table */}
+        <div class="card" style="margin-bottom:24px">
+          <div class="card-header"><span class="card-title"><i class="fas fa-table"></i> Delta vs Baseline</span></div>
+          <div class="card-body compact">
+            <table class="data-table">
+              <thead><tr><th>ID</th><th>Scenario</th><th>Availability Δ</th><th>Service Δ</th><th>Adherence Δ</th><th>Cost Red. Δ</th><th>Cost Savings</th><th>Status</th></tr></thead>
+              <tbody id="wb-delta-table"></tbody>
+            </table>
+          </div>
+        </div>
+        {/* Charts 2×2 */}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div class="card" style="margin:0"><div class="card-header"><span class="card-title">Material Availability by Scenario</span></div><div class="card-body" style="height:220px"><canvas id="wb-sc-avail"></canvas></div></div>
+          <div class="card" style="margin:0"><div class="card-header"><span class="card-title">Total Cost by Scenario</span></div><div class="card-body" style="height:220px"><canvas id="wb-sc-cost"></canvas></div></div>
+          <div class="card" style="margin:0"><div class="card-header"><span class="card-title">Inventory Reduction %</span></div><div class="card-body" style="height:220px"><canvas id="wb-sc-inv"></canvas></div></div>
+          <div class="card" style="margin:0"><div class="card-header"><span class="card-title">Service Level vs Availability</span></div><div class="card-body" style="height:220px"><canvas id="wb-sc-svc"></canvas></div></div>
+        </div>
+      </div>
+    </div>
+
+    {/* Constraint sub-tab JS */}
+    <script>{`
+      function showConstraintTab(tab) {
+        ['cap','lt','sup','inv'].forEach(t => {
+          document.getElementById('cp-'+t).style.display = t===tab?'block':'none';
+          const btn = document.getElementById('ct-'+t);
+          if (btn) btn.classList.toggle('active', t===tab);
+        });
+      }
+    `}</script>
   </Layout>)
 })
 
