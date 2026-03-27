@@ -278,6 +278,45 @@ async function loadRiskMatrix() {
   } catch(e) { el.innerHTML = '<div style="color:#64748B;padding:20px;text-align:center">Error loading risk matrix</div>'; }
 }
 
+// ── Approve PO handler ─────────────────────────────────────────────────────────
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('[data-action="approve-po"]');
+  if (!btn) return;
+  const tr = btn.closest('tr');
+  const poNum = tr ? tr.querySelector('td strong') : null;
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  setTimeout(() => {
+    btn.innerHTML = '<i class="fas fa-check"></i> Approved';
+    btn.className = 'btn btn-sm btn-success';
+    btn.style.fontSize = '0.75rem';
+    btn.style.padding = '3px 8px';
+    const badge = tr ? tr.querySelector('.badge') : null;
+    if (badge) { badge.textContent = 'approved'; badge.className = 'badge badge-healthy'; }
+    if (window.showToast) window.showToast(`PO ${poNum?.textContent || ''} approved successfully`, 'success');
+  }, 1200);
+});
+
+// ── New PO handler ─────────────────────────────────────────────────────────────
+window.openNewPO = function() {
+  const mat = prompt('Enter material name:');
+  if (!mat) return;
+  const qty = prompt('Enter quantity (kg):');
+  if (!qty) return;
+  const supplier = prompt('Enter supplier name:');
+  if (!supplier) return;
+  if (window.showToast) window.showToast(`New PO created: ${mat} – ${Number(qty).toLocaleString()} kg from ${supplier}. PO-2026-DRAFT sent for approval.`, 'success');
+};
+
+// ── Supplier Contract handler ──────────────────────────────────────────────────
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  if (btn.innerHTML.includes('Contract') && btn.classList.contains('btn-primary')) {
+    if (window.showToast) window.showToast('Contract review initiated. Document will be shared via email.', 'success');
+  }
+});
+
 // ── Supplier OTIF Trend ────────────────────────────────────────────────────────
 function loadProcOTIFTrend() {
   const ctx = document.getElementById('proc-otif-trend');

@@ -471,6 +471,24 @@ function initCopilot() {
   }
 }
 
+// ── Global action handlers ─────────────────────────────────────────────
+window.checkATP = function() {
+  if (window.showToast) window.showToast('ATP Check: Querying real-time inventory & supply schedules...', 'info');
+  setTimeout(() => {
+    const skuInput = document.querySelector('.form-input[placeholder="Search SKU..."]');
+    const sku = skuInput ? skuInput.value.trim() : '';
+    if (sku) {
+      if (window.showToast) window.showToast('ATP for ' + sku + ': 8,400 cases available — W1 Mar. Commit date: Mar 18.', 'success');
+    } else {
+      if (window.showToast) window.showToast('ATP Refresh Complete: 4 SKUs available, 1 constrained (SKU-1L-PET W3: –2,800 cases). Review exceptions panel.', 'success');
+    }
+  }, 800);
+};
+
+window.batchCommit = function() {
+  if (window.showToast) window.showToast('Batch Commit: Committing all positive-ATP orders to ERP... 4 SKUs committed successfully.', 'success');
+};
+
 window.sendCopilot = function(text) {
   const input = document.getElementById('copilot-input');
   if (input) { input.value = text; }

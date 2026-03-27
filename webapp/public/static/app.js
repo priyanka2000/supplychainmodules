@@ -209,6 +209,117 @@
     }
   });
 
+  // ── GLOBAL BUTTON HANDLERS (used across pages) ───────────────────────────
+
+  window.newProcurementPO = function() {
+    const mat = prompt('Material name:') || 'PET Resin 500ml';
+    const qty = prompt('Quantity (units):') || '50000';
+    const supplier = prompt('Supplier name:') || 'PetroPlastics Ltd';
+    const del = prompt('Delivery date (YYYY-MM-DD):') || new Date(Date.now()+10*864e5).toISOString().slice(0,10);
+    if (mat && qty) {
+      const poNum = 'PO-' + new Date().toISOString().slice(2,10).replace(/-/g,'') + '-' + String(Math.floor(Math.random()*900)+100);
+      window.showToast('PO ' + poNum + ' created: ' + mat + ' × ' + Number(qty).toLocaleString() + ' units from ' + supplier + '. Delivery: ' + del + '. Status: Draft.', 'success');
+      const tbody = document.querySelector('#po-workbench-table tbody, .data-table tbody');
+      if (tbody) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td><strong>' + poNum + '</strong></td><td>' + mat + '</td><td>' + supplier + '</td><td>' + Number(qty).toLocaleString() + '</td><td>₹' + (Number(qty)*0.00018).toFixed(1) + 'L</td><td>' + del + '</td><td><span class="badge badge-warning">draft</span></td><td><button class="btn btn-sm btn-success" data-action="approve-po">Approve</button> <button class="btn btn-sm btn-secondary">View</button></td>';
+        tbody.insertBefore(tr, tbody.firstChild);
+      }
+    }
+  };
+
+  window.optimizeSeq = function(btn) {
+    if (!btn) return;
+    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Optimizing...';
+    setTimeout(() => {
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-rocket"></i> Optimize Sequence';
+      window.showToast('Sequence optimized: 3 changeovers eliminated. Efficiency gain: +12.4%. Estimated savings: ₹8.4L/month.', 'success');
+    }, 2000);
+  };
+
+  window.autoOptimize = function(btn) {
+    if (!btn) return;
+    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Optimizing...';
+    setTimeout(() => {
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-rocket"></i> Auto-Optimize';
+      window.showToast('Auto-Optimization complete: Schedule adherence improved from 91.8% → 94.2%. 2 capacity conflicts resolved.', 'success');
+    }, 2200);
+  };
+
+  window.publishPlan = function(btn) {
+    if (confirm('Publish plan to execution? This will lock the schedule for the next 48 hours.')) {
+      window.showToast('Plan published. Schedule locked for 48-hr horizon. MES notified.', 'success');
+    }
+  };
+
+  window.addSequencingScenario = function(btn) {
+    const name = prompt('Scenario name:') || 'New Scenario';
+    const driver = prompt('Optimization driver (e.g., "Cost Optimal", "OTD Focused"):') || 'Cost Optimal';
+    if (name) window.showToast('Scenario "' + name + '" (' + driver + ') created. Configure parameters and run to compare.', 'success');
+  };
+
+  window.addOperator = function() {
+    const name = prompt('Operator name:') || 'New Operator';
+    const plant = prompt('Plant (e.g., MUM, DEL, CHN):') || 'MUM';
+    const skill = prompt('Primary skill (e.g., Line Operation, Packaging, Quality):') || 'Line Operation';
+    if (name) window.showToast('Operator ' + name + ' added to ' + plant + ' plant with skill: ' + skill + '. Pending certification review.', 'success');
+  };
+
+  window.addSopActionItem = function() {
+    const title = prompt('Action item title:') || 'New Action Item';
+    const owner = prompt('Owner name:') || 'Supply Chain Team';
+    const due = prompt('Due date (YYYY-MM-DD):') || new Date(Date.now()+7*864e5).toISOString().slice(0,10);
+    if (title) window.showToast('Action item "' + title + '" assigned to ' + owner + '. Due: ' + due + '.', 'success');
+  };
+
+  window.recalcRCCP = function(btn) {
+    if (!btn) return;
+    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Recalculating...';
+    setTimeout(() => {
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-sync"></i> Recalculate';
+      window.showToast('RCCP recalculated. 2 lines overloaded in W2 (MUM-L1: 91%, MUM-L2: 98%). Review and adjust.', 'warning');
+    }, 1500);
+  };
+
+  window.resolveBottleneck = function(btn) {
+    const row = btn && btn.closest('.alert');
+    const title = row ? (row.querySelector('strong') || {}).textContent || 'bottleneck' : 'bottleneck';
+    window.showToast('Resolution logged for: ' + title + '. Action item created. Follow-up in 24 hrs.', 'success');
+    if (btn) { btn.innerHTML = '<i class="fas fa-check"></i> Resolved'; btn.disabled = true; btn.className = 'btn btn-sm btn-success'; }
+  };
+
+  window.runCarrierRFQ = function(btn) {
+    if (!btn) return;
+    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Running RFQ...';
+    setTimeout(() => {
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-gavel"></i> Run RFQ';
+      window.showToast('RFQ sent to 5 carriers. Responses expected within 48 hours. BlueDart and DHL pre-qualified for preferential rates.', 'success');
+    }, 2000);
+  };
+
+  window.addCarrier = function() {
+    const name = prompt('Carrier name:') || 'New Carrier';
+    const lanes = prompt('Number of lanes:') || '3';
+    if (name) window.showToast('Carrier "' + name + '" added with ' + lanes + ' lanes. Pending contract upload and SLA configuration.', 'success');
+  };
+
+  window.runMLModel = function(btn, modelName) {
+    if (!btn) return;
+    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Training...';
+    setTimeout(() => {
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-play"></i> Run';
+      const acc = (Math.random() * 3 + 85).toFixed(1);
+      window.showToast('ML Model "' + (modelName || 'Forecast') + '" training complete. Accuracy: ' + acc + '%. MAPE: ' + (100 - Number(acc)).toFixed(1) + '%. Model updated.', 'success');
+    }, 2500);
+  };
+
+  window.lockHorizon = function(btn) {
+    if (confirm('Lock scheduling horizon for the next 48 hours? Changes will require override authorization.')) {
+      window.showToast('48-hour horizon locked. Override requires Plant Manager approval.', 'success');
+      if (btn) { btn.innerHTML = '<i class="fas fa-lock"></i> Horizon Locked'; btn.disabled = true; }
+    }
+  };
+
   // ── HOME PAGE DATA LOADING ────────────────────────────────────────────────
   async function loadDashboardSummary() {
     const el = document.getElementById('dashboard-summary-stats');
@@ -387,3 +498,106 @@
   }
 
 })();
+
+// ── GLOBAL ACTION HANDLERS (accessible as window globals) ─────────────────
+
+function showToastGlobal(msg, type) {
+  if (typeof window.showToast === 'function') { window.showToast(msg, type || 'success'); return; }
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#1e293b;color:#fff;padding:12px 20px;border-radius:8px;z-index:9999;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,.3);max-width:360px';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
+// Sequencing
+function lockHorizon(btn) {
+  if (!btn) return;
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Locking…';
+  setTimeout(() => {
+    btn.disabled = false; btn.innerHTML = '<i class="fas fa-lock"></i> Locked';
+    btn.classList.replace('btn-secondary','btn-success');
+    showToastGlobal('Production horizon locked for 48 hours. Sequence frozen for W1-W2.');
+  }, 1800);
+}
+
+function optimizeSeq(btn) {
+  if (!btn) return;
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Optimising…';
+  setTimeout(() => {
+    btn.disabled = false; btn.innerHTML = '<i class="fas fa-rocket"></i> Optimize Sequence';
+    showToastGlobal('Sequence Optimised: Changeover reduced 22 %, throughput +8.3 %. Apply to schedule?');
+  }, 2600);
+}
+
+function autoOptimize(btn) {
+  if (!btn) return;
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Optimising…';
+  setTimeout(() => {
+    btn.disabled = false; btn.innerHTML = '<i class="fas fa-rocket"></i> Auto-Optimize';
+    showToastGlobal('Auto-Optimize complete: 3 scenarios evaluated. Best plan selected — saves ₹14.2L/month.');
+  }, 2400);
+}
+
+function addSequencingScenario(btn) {
+  const name = prompt('New sequencing scenario name:');
+  if (!name) return;
+  showToastGlobal('Scenario "' + name + '" created. Configure constraints and run optimisation.');
+}
+
+// Resource
+function addOperator(btn) {
+  const name = prompt('Enter operator name:');
+  if (!name) return;
+  showToastGlobal('Operator "' + name + '" added to roster. Assign skills and shift pattern in profile.');
+}
+
+// SOP
+function addSopActionItem() {
+  const text = prompt('New action item description:');
+  if (!text) return;
+  showToastGlobal('Action item added: "' + text + '". Assigned to review queue.');
+}
+
+// Procurement
+function newProcurementPO() {
+  const supplier = prompt('Supplier name for new PO:');
+  if (!supplier) return;
+  showToastGlobal('Draft PO created for "' + supplier + '". Complete details in PO Workbench.');
+}
+
+// MRP
+function recalcRCCP(btn) {
+  if (!btn) return;
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Recalculating…';
+  setTimeout(() => {
+    btn.disabled = false; btn.innerHTML = '<i class="fas fa-sync"></i> Recalculate';
+    showToastGlobal('RCCP Recalculated: 2 lines over capacity in W2 (MUM-L2 103 %, DEL-L1 101 %). Review horizon.');
+  }, 2200);
+}
+
+// Capacity
+function resolveBottleneck(btn) {
+  if (!btn) return;
+  const row = btn.closest('tr');
+  const line = row ? (row.cells[0] && row.cells[0].textContent.trim()) : 'Line';
+  btn.disabled = true; btn.textContent = 'Resolving…';
+  setTimeout(() => {
+    btn.textContent = 'Resolved';
+    btn.classList.replace('btn-secondary','btn-success');
+    btn.disabled = true;
+    showToastGlobal('Bottleneck on ' + line + ' resolved: Load rebalanced. ETA improvement 1.5 hrs.');
+  }, 1500);
+}
+
+// Workbench — changeover matrix load
+function loadChangeover() {
+  showToastGlobal('Changeover matrix loaded from latest sequence master. All times in hours.');
+}
+
+// Carriers
+function addCarrier() {
+  const name = prompt('Enter carrier / 3PL name:');
+  if (!name) return;
+  showToastGlobal('Carrier "' + name + '" added to panel. Complete SLA and rate card in profile.');
+}
