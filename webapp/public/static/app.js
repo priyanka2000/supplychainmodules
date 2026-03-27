@@ -4,6 +4,176 @@
 (function() {
   'use strict';
 
+  // ── MOCK DATA FALLBACK + AXIOS INTERCEPTOR ───────────────────────────────
+  function isEmptyData(data) {
+    if (data == null) return true;
+    if (Array.isArray(data)) return data.length === 0;
+    if (typeof data === 'object') {
+      if (Array.isArray(data.data)) return data.data.length === 0;
+      if (data.data == null && Object.keys(data).length === 0) return true;
+      return Object.keys(data).length === 0;
+    }
+    return false;
+  }
+
+  function resolveMockFromUrl(url) {
+    const u = String(url || '').toLowerCase();
+    const mrp = window.getMRPData ? window.getMRPData() : null;
+
+    if (u.includes('/mrp')) {
+      if (u.includes('/kpis')) return mrp && mrp.kpis ? mrp.kpis : [];
+      if (u.includes('/alerts')) return mrp && mrp.alerts ? mrp.alerts : [];
+      if (u.includes('/materials')) return mrp && mrp.materials ? mrp.materials : [];
+      if (u.includes('/run-mrp')) return mrp && mrp.runResult ? mrp.runResult : {};
+      return mrp && mrp.alerts ? mrp.alerts : [];
+    }
+
+    if (u.includes('/network') || u.includes('/deployment')) {
+      const network = window.getNetworkData ? window.getNetworkData() : { nodes: [] };
+      if (u.includes('/kpis')) {
+        return [
+          { name: 'On-Time Delivery', value: '93.1%', target: '95%', status: 'warning', trend: '↑ +0.8%', icon: 'fa-clock' },
+          { name: 'Truck Utilization', value: '84.6%', target: '88%', status: 'warning', trend: '↑ +1.1%', icon: 'fa-truck' },
+          { name: 'Routes Optimized', value: '132', target: '150', status: 'warning', trend: '↑ +9', icon: 'fa-route' }
+        ];
+      }
+      if (u.includes('/shipments')) {
+        return network.lanes.map((l, i) => ({
+          shipment_id: `SHP-MK-${String(i + 1).padStart(3, '0')}`,
+          origin: l.origin,
+          destination: l.destination,
+          volume: 900 + i * 120,
+          truck_type: '32ft Container',
+          utilization: 78 + i * 4,
+          etd: 'Mar 27, 08:00',
+          eta: 'Mar 28, 10:00',
+          status: i % 3 === 0 ? 'in_transit' : 'planned'
+        }));
+      }
+      if (u.includes('/routes')) {
+        return network.lanes.map((l, i) => ({
+          route_id: l.lane_id,
+          origin: l.origin,
+          destination: l.destination,
+          distance_km: 180 + i * 60,
+          transit_time: `${6 + i} hrs`,
+          cost_per_case: (15.5 + i * 0.9).toFixed(1),
+          carrier: ['BlueDart Logistics', 'DHL Supply Chain', 'Gati-KWE', 'Mahindra Logistics'][i % 4],
+          optimization_score: 80 + i * 3
+        }));
+      }
+      return network.nodes || [];
+    }
+
+    if (u.includes('/forecast') || u.includes('/sop/forecast')) {
+      return window.getForecastData ? window.getForecastData() : [];
+    }
+
+    if (u.includes('/atp')) {
+      return window.getATPData ? window.getATPData() : [];
+    }
+
+    if (u.includes('/po') || u.includes('/procurement/plans')) {
+      return window.getPOData ? window.getPOData() : [];
+    }
+
+    return null;
+  }
+
+  function setupAxiosFallbackInterceptor() {
+    if (!window.axios || window.__mockAxiosInterceptorSet) return;
+
+    window.axios.interceptors.response.use(
+      function onFulfilled(response) {
+        const url = response && response.config ? response.config.url : '';
+        const mockData = resolveMockFromUrl(url);
+        if (mockData !== null && isEmptyData(response.data)) {
+          response.data = mockData;
+        }
+        return response;
+      },
+      function onRejected(error) {
+        const config = error && error.config ? error.config : {};
+        const mockData = resolveMockFromUrl(config.url);
+        if (mockData !== null) {
+          return Promise.resolve({
+            data: mockData,
+            status: 200,
+            statusText: 'OK',
+            headers: {},
+            config
+          });
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    window.__mockAxiosInterceptorSet = true;
+  }
+
+  function loadMockDataScript() {
+    if (window.getTimeSeriesData && window.getMRPData) {
+      setupAxiosFallbackInterceptor();
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = '/static/mock-data.js';
+    script.async = false;
+    script.onload = function () {
+      setupAxiosFallbackInterceptor();
+    };
+    script.onerror = function () {
+      setupAxiosFallbackInterceptor();
+    };
+    document.head.appendChild(script);
+  }
+
+  loadMockDataScript();
+
+  window.__refreshMRPViews = async function() {
+    if (typeof window.loadAlertsTable === 'function') await window.loadAlertsTable();
+    if (typeof window.loadMaterialsTable === 'function') await window.loadMaterialsTable();
+    if (typeof window.loadAlertChart === 'function') await window.loadAlertChart();
+    if (typeof window.loadMaterialChart === 'function') await window.loadMaterialChart();
+    if (typeof window.loadCoverageChart === 'function') await window.loadCoverageChart();
+  };
+
+  window.__simulateWithMockData = function() {
+    window.dispatchEvent(new CustomEvent('mock-data-simulated', {
+      detail: {
+        ts: Date.now(),
+        forecast: window.getForecastData ? window.getForecastData() : [],
+        network: window.getNetworkData ? window.getNetworkData() : { nodes: [] }
+      }
+    }));
+  };
+
+  window.__exportCurrentTable = function(buttonEl) {
+    const root = (buttonEl && (buttonEl.closest('.card') || buttonEl.closest('.panel') || buttonEl.closest('section'))) || document;
+    const table = root.querySelector('table');
+    if (!table) {
+      if (window.showToast) window.showToast('No table available to export', 'warning');
+      return;
+    }
+
+    const rows = Array.from(table.querySelectorAll('tr'));
+    const csv = rows.map(row => Array.from(row.querySelectorAll('th,td'))
+      .map(cell => `"${String(cell.textContent || '').replace(/"/g, '""').replace(/\s+/g, ' ').trim()}"`)
+      .join(',')).join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `export_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    if (window.showToast) window.showToast('Table export downloaded', 'success');
+  };
+
   // ── GLOBAL CLOCK ──────────────────────────────────────────────────────────
   function updateClock() {
     const el = document.getElementById('global-clock');
@@ -172,10 +342,11 @@
     if (action === 'run-mrp') {
       btn.innerHTML = '<span class="spinner" style="width:14px;height:14px;border-width:2px;margin-right:8px"></span> Computing...';
       btn.disabled = true;
-      setTimeout(() => {
+      setTimeout(async () => {
         btn.innerHTML = '<i class="fas fa-check"></i> MRP Complete';
         btn.style.background = '#10B981';
         window.showToast('✅ MRP run complete. 5 new shortage alerts generated. 3 POs recommended.', 'success');
+        if (typeof window.__refreshMRPViews === 'function') await window.__refreshMRPViews();
         setTimeout(() => { btn.innerHTML = '<i class="fas fa-cogs"></i> Run MRP'; btn.style.background = ''; btn.disabled = false; }, 3000);
       }, 3000);
     }
@@ -189,6 +360,27 @@
         window.showToast('✅ S&OP cycle complete. Plan reliability: 93.5%. 4 new action items created.', 'success');
         setTimeout(() => { btn.innerHTML = '<i class="fas fa-chart-line"></i> Run S&OP'; btn.style.background = ''; btn.disabled = false; }, 3000);
       }, 2800);
+    }
+
+    if (action === 'simulate') {
+      btn.disabled = true;
+      const original = btn.innerHTML;
+      btn.innerHTML = '<span class="spinner" style="width:14px;height:14px;border-width:2px;margin-right:8px"></span> Simulating...';
+      setTimeout(() => {
+        if (typeof window.__simulateWithMockData === 'function') window.__simulateWithMockData();
+        btn.innerHTML = '<i class="fas fa-check"></i> Simulated';
+        btn.style.background = '#2563EB';
+        if (window.showToast) window.showToast('Simulation completed with updated mock dataset', 'success');
+        setTimeout(() => {
+          btn.innerHTML = original;
+          btn.style.background = '';
+          btn.disabled = false;
+        }, 1800);
+      }, 1200);
+    }
+
+    if (action === 'export') {
+      if (typeof window.__exportCurrentTable === 'function') window.__exportCurrentTable(btn);
     }
     
     if (action === 'publish-plan') {
