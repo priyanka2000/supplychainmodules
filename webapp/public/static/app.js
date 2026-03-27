@@ -18,7 +18,118 @@
 
   function resolveMockFromUrl(url) {
     const u = String(url || '').toLowerCase();
-    const mrp = window.getMRPData ? window.getMRPData() : null;
+    const mrp = window.getMRPData ? window.getMRPData() : { kpis: [], alerts: [], materials: [], runResult: {} };
+    const network = window.getNetworkData ? window.getNetworkData() : { nodes: [], lanes: [], trend: [] };
+    const forecast = window.getForecastData ? window.getForecastData() : [];
+
+    if (u.includes('/api/control-tower/pulse')) {
+      const plantNodes = (network.nodes || []).map(n => ({
+        id: n.id,
+        label: n.label,
+        type: n.type,
+        util: n.utilization || n.util || 75,
+        fill: n.utilization || n.fill || 72,
+        status: (n.utilization || 75) >= 90 ? 'critical' : (n.utilization || 75) >= 80 ? 'warning' : 'healthy'
+      }));
+      const lanes = (network.lanes || []).map(l => ({
+        from: l.origin,
+        to: l.destination,
+        vol: l.weekly_cases || 12000,
+        otd: l.otd || 91,
+        status: (l.otd || 91) < 85 ? 'critical' : (l.otd || 91) < 93 ? 'warning' : 'healthy'
+      }));
+      return {
+        ts: new Date().toISOString(),
+        overall_health: 78,
+        status: 'warning',
+        nodes: plantNodes,
+        lanes,
+        kpis: {
+          total_output: 150200,
+          plan_adherence: 91.6,
+          otd: 92.1,
+          service_level: 96.5,
+          total_inventory: 640500,
+          open_exceptions: (mrp.alerts || []).length || 5
+        }
+      };
+    }
+
+    if (u.includes('/api/control-tower/exceptions')) {
+      return (mrp.alerts || []).map((a, i) => ({
+        id: a.id || `EX-MK-${String(i + 1).padStart(3, '0')}`,
+        severity: a.severity || 'high',
+        module: 'MRP',
+        title: `${a.material_name || 'Material'} alert`,
+        detail: a.message || 'Fallback exception generated from mock data.',
+        action: 'Review and resolve',
+        status: 'open'
+      }));
+    }
+
+    if (u.includes('/api/control-tower/flow')) {
+      const trend = network.trend || [];
+      return {
+        supply_chain_flow: [
+          { stage: 'Demand Signal', score: 86, status: 'healthy', kpi: 'Forecast Accuracy 88.2%', delta: '+1.0%' },
+          { stage: 'Procurement', score: 74, status: 'warning', kpi: 'Supplier OTIF 90.1%', delta: '-0.6%' },
+          { stage: 'Production', score: 82, status: 'warning', kpi: 'MPS Adherence 92.7%', delta: '+0.4%' },
+          { stage: 'Inventory', score: 79, status: 'warning', kpi: 'Service Level 96.1%', delta: '-0.3%' },
+          { stage: 'Deployment', score: 77, status: 'warning', kpi: `Weekly Vol ${(trend[trend.length - 1]?.volume || 38000).toLocaleString()} cs`, delta: '+0.5%' },
+          { stage: 'Customer OTIF', score: 91, status: 'healthy', kpi: 'Customer OTIF 92.4%', delta: '+0.8%' }
+        ]
+      };
+    }
+
+    if (u.includes('/api/network/graph')) {
+      return {
+        nodes: network.nodes || [],
+        edges: (network.lanes || []).map((l) => ({
+          from: l.origin,
+          to: l.destination,
+          type: 'deployment',
+          vol: l.weekly_cases || 12000,
+          otd: l.otd || 91,
+          status: (l.otd || 91) < 85 ? 'critical' : (l.otd || 91) < 93 ? 'warning' : 'healthy'
+        }))
+      };
+    }
+
+    if (u.includes('/api/scenario-lab/scenarios')) {
+      return [
+        { id: 'SCN-MK-001', name: 'Demand Surge +18%', type: 'demand', status: 'simulated', created_by: 'Planner', created_at: new Date().toISOString(), delta_otd: -2.1, delta_cost: 5.2, delta_fill: -1.2, delta_util: 7.8, risk: 'high' },
+        { id: 'SCN-MK-002', name: 'Supplier Delay Buffer Plan', type: 'disruption', status: 'draft', created_by: 'Planner', created_at: new Date().toISOString(), delta_otd: -1.4, delta_cost: 2.8, delta_fill: -0.8, delta_util: 4.1, risk: 'medium' }
+      ];
+    }
+
+    if (u.includes('/api/mrp/explosion')) {
+      const materials = mrp.materials || [];
+      return materials.map((m, i) => {
+        const gross = Math.round((m.reorder_point || 15000) * 1.15);
+        const stock = Number(m.current_stock || 0);
+        const net = Math.max(gross - stock, 0);
+        return {
+          job_number: `JOB-${String(i + 1).padStart(4, '0')}`,
+          sku_name: ['PET 500ml Regular', 'Mango 200ml', 'Soda Lime 750ml', 'Energy 330ml'][i % 4],
+          material_code: `MAT-${String(i + 101)}`,
+          material_name: m.material_name || 'Material',
+          gross_requirement: gross,
+          current_stock: stock,
+          net_requirement: net,
+          status: net > 0 ? 'critical' : 'ok',
+          lead_time_days: 7 + (i % 5)
+        };
+      });
+    }
+
+    if (u.includes('/api/skus')) {
+      return [
+        { id: 'SKU-001', sku_name: 'PET 500ml Regular' },
+        { id: 'SKU-002', sku_name: 'Mango 200ml' },
+        { id: 'SKU-003', sku_name: 'Soda Lime 750ml' },
+        { id: 'SKU-004', sku_name: 'Energy 330ml' }
+      ];
+    }
 
     if (u.includes('/mrp')) {
       if (u.includes('/kpis')) return mrp && mrp.kpis ? mrp.kpis : [];
@@ -29,7 +140,6 @@
     }
 
     if (u.includes('/network') || u.includes('/deployment')) {
-      const network = window.getNetworkData ? window.getNetworkData() : { nodes: [] };
       if (u.includes('/kpis')) {
         return [
           { name: 'On-Time Delivery', value: '93.1%', target: '95%', status: 'warning', trend: '↑ +0.8%', icon: 'fa-clock' },
@@ -38,7 +148,7 @@
         ];
       }
       if (u.includes('/shipments')) {
-        return network.lanes.map((l, i) => ({
+        return (network.lanes || []).map((l, i) => ({
           shipment_id: `SHP-MK-${String(i + 1).padStart(3, '0')}`,
           origin: l.origin,
           destination: l.destination,
@@ -51,7 +161,7 @@
         }));
       }
       if (u.includes('/routes')) {
-        return network.lanes.map((l, i) => ({
+        return (network.lanes || []).map((l, i) => ({
           route_id: l.lane_id,
           origin: l.origin,
           destination: l.destination,
@@ -66,7 +176,7 @@
     }
 
     if (u.includes('/forecast') || u.includes('/sop/forecast')) {
-      return window.getForecastData ? window.getForecastData() : [];
+      return forecast;
     }
 
     if (u.includes('/atp')) {

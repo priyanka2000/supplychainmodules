@@ -3640,8 +3640,10 @@ app.get('/mrp/explosion', async (c) => {
   const scripts = `
 async function init() {
   const [exploRes, skuRes] = await Promise.allSettled([axios.get('/api/mrp/explosion'), axios.get('/api/skus')]);
-  const expl = exploRes.status==='fulfilled' ? exploRes.value.data : [];
-  const skus = skuRes.status==='fulfilled' ? skuRes.value.data : [];
+  const explRaw = exploRes.status==='fulfilled' ? exploRes.value.data : [];
+  const skuRaw = skuRes.status==='fulfilled' ? skuRes.value.data : [];
+  const expl = Array.isArray(explRaw) ? explRaw : (Array.isArray(explRaw?.rows) ? explRaw.rows : []);
+  const skus = Array.isArray(skuRaw) ? skuRaw : (Array.isArray(skuRaw?.data) ? skuRaw.data : []);
   const skuSel = document.getElementById('sku-select');
   if (skuSel) skuSel.innerHTML = '<option value="">All SKUs</option>' + skus.map(s => \`<option value="\${s.id}">\${s.sku_name}</option>\`).join('');
   renderExpl(expl);
@@ -3649,7 +3651,8 @@ async function init() {
 function renderExpl(expl) {
   const tbody = document.getElementById('expl-table');
   if (!tbody) return;
-  tbody.innerHTML = expl.map(e => \`<tr>
+  const list = Array.isArray(expl) ? expl : [];
+  tbody.innerHTML = list.map(e => \`<tr>
     <td><strong>\${e.job_number}</strong></td>
     <td>\${e.sku_name}</td>
     <td>\${e.material_code}</td>
@@ -3660,7 +3663,7 @@ function renderExpl(expl) {
     <td><span class="badge badge-\${e.status==='critical'?'critical':e.status==='shortage'?'warning':'success'}">\${e.status}</span></td>
     <td>\${e.lead_time_days||7}d</td>
     <td>\${e.net_requirement>0?'<button class="btn btn-sm btn-primary" onclick="raisePOExpl(\''+e.material_name+'\','+e.net_requirement+')">Raise PO</button>':''}</td>
-  </tr>\`).join('') || '<tr><td colspan="10" style="text-align:center">No explosion data. Run MRP first.</td></tr>';
+  </tr>\`).join('') || '<tr><td colspan="10" style="text-align:center;color:#64748B">No explosion data available. Run MRP or review source data.</td></tr>';
 }
 function raisePOExpl(material, qty) {
   const poNum = 'PO-EXP-' + String(Math.floor(Math.random()*9000)+1000);
@@ -3668,7 +3671,7 @@ function raisePOExpl(material, qty) {
 }
 function recalcExplode(btn) {
   btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating...';
-  axios.get('/api/mrp/explosion').then(r => { renderExpl(r.data); }).catch(()=>{}).finally(() => {
+  axios.get('/api/mrp/explosion').then(r => { renderExpl(Array.isArray(r.data) ? r.data : (Array.isArray(r.data?.rows) ? r.data.rows : [])); }).catch(()=>{ renderExpl([]); }).finally(() => {
     btn.disabled = false; btn.innerHTML = '<i class="fas fa-play"></i> Recalculate';
     if (window.showToast) window.showToast('MRP Explosion recalculated. Net requirements updated.', 'success');
   });
@@ -8930,47 +8933,58 @@ async function initControlTower() {
     axios.get('/api/control-tower/exceptions'),
     axios.get('/api/control-tower/flow'),
   ]);
-  const pulse = pulseRes.status==='fulfilled' ? pulseRes.value.data : null;
-  const exceptions = exceptRes.status==='fulfilled' ? exceptRes.value.data : [];
-  const flow = flowRes.status==='fulfilled' ? flowRes.value.data : { supply_chain_flow:[] };
+  const pulseRaw = pulseRes.status==='fulfilled' ? pulseRes.value.data : {};
+  const exceptionsRaw = exceptRes.status==='fulfilled' ? exceptRes.value.data : [];
+  const flowRaw = flowRes.status==='fulfilled' ? flowRes.value.data : { supply_chain_flow:[] };
 
-  if (pulse) {
-    document.getElementById('ct-output').textContent = pulse.kpis.total_output.toLocaleString();
-    document.getElementById('ct-adherence').textContent = pulse.kpis.plan_adherence + '%';
-    document.getElementById('ct-otd').textContent = pulse.kpis.otd + '%';
-    document.getElementById('ct-service').textContent = pulse.kpis.service_level + '%';
-    document.getElementById('ct-inventory').textContent = (pulse.kpis.total_inventory/1000).toFixed(1)+'K cs';
-    document.getElementById('ct-exceptions').textContent = pulse.kpis.open_exceptions;
+  const pulse = pulseRaw && typeof pulseRaw === 'object' ? pulseRaw : {};
+  const pulseKpis = pulse.kpis && typeof pulse.kpis === 'object' ? pulse.kpis : {};
+  const pulseNodes = Array.isArray(pulse.nodes) ? pulse.nodes : [];
+  const pulseLanes = Array.isArray(pulse.lanes) ? pulse.lanes : [];
+  const exceptions = Array.isArray(exceptionsRaw) ? exceptionsRaw : [];
+  const flowSteps = Array.isArray(flowRaw && flowRaw.supply_chain_flow) ? flowRaw.supply_chain_flow : [];
 
-    // Node map
-    const nodeGrid = document.getElementById('ct-nodes');
+  document.getElementById('ct-output').textContent = Number(pulseKpis.total_output || 0).toLocaleString();
+  document.getElementById('ct-adherence').textContent = (pulseKpis.plan_adherence ?? 0) + '%';
+  document.getElementById('ct-otd').textContent = (pulseKpis.otd ?? 0) + '%';
+  document.getElementById('ct-service').textContent = (pulseKpis.service_level ?? 0) + '%';
+  document.getElementById('ct-inventory').textContent = (Number(pulseKpis.total_inventory || 0)/1000).toFixed(1)+'K cs';
+  document.getElementById('ct-exceptions').textContent = pulseKpis.open_exceptions ?? exceptions.length;
+
+  // Node map
+  const nodeGrid = document.getElementById('ct-nodes');
+  if (nodeGrid) {
     nodeGrid.innerHTML = '';
-    pulse.nodes.forEach(n => {
-      const sc = n.status==='critical'?'#DC2626':n.status==='warning'?'#D97706':'#059669';
-      const metric = n.type==='plant' ? n.util+'% util' : n.fill+'% fill';
-      const icon = n.type==='plant' ? 'fa-industry' : 'fa-warehouse';
-      nodeGrid.innerHTML += '<div class="ct-node '+n.status+'" onclick="showNodeDetail(\''+n.id+'\')">' +
-        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
-        '<i class="fas '+icon+'" style="color:'+sc+';font-size:16px"></i>' +
-        '<span class="badge badge-'+n.status+'" style="font-size:9px">'+n.status.toUpperCase()+'</span>' +
-        '</div>' +
-        '<div style="font-size:12px;font-weight:600;color:#1E293B;margin-bottom:2px">'+n.label+'</div>' +
-        '<div style="font-size:13px;font-weight:800;color:'+sc+'">'+metric+'</div>' +
-        '</div>';
-    });
-
-    // Lane table
-    const lanesTbl = document.getElementById('ct-lanes');
-    if (lanesTbl) {
-      lanesTbl.innerHTML = pulse.lanes.map(l => {
-        const sc = l.status==='critical'?'#DC2626':l.status==='warning'?'#D97706':'#059669';
-        return '<tr><td><strong>'+l.from+'</strong> → <strong>'+l.to+'</strong></td>' +
-          '<td>'+l.vol.toLocaleString()+' cs</td>' +
-          '<td style="font-weight:700;color:'+sc+'">'+l.otd+'%</td>' +
-          '<td><span class="badge badge-'+l.status+'">'+l.status+'</span></td>' +
-          '<td><button class="btn btn-sm btn-secondary" onclick="optimizeLane(\''+l.from+'\',\''+l.to+'\')"><i class="fas fa-route"></i> Optimize</button></td></tr>';
-      }).join('');
+    if (!pulseNodes.length) {
+      nodeGrid.innerHTML = '<div style="font-size:12px;color:#64748B;padding:8px">No node data available</div>';
+    } else {
+      pulseNodes.forEach(n => {
+        const sc = n.status==='critical'?'#DC2626':n.status==='warning'?'#D97706':'#059669';
+        const metric = n.type==='plant' ? n.util+'% util' : n.fill+'% fill';
+        const icon = n.type==='plant' ? 'fa-industry' : 'fa-warehouse';
+        nodeGrid.innerHTML += '<div class="ct-node '+n.status+'" onclick="showNodeDetail(\''+n.id+'\')">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
+          '<i class="fas '+icon+'" style="color:'+sc+';font-size:16px"></i>' +
+          '<span class="badge badge-'+n.status+'" style="font-size:9px">'+n.status.toUpperCase()+'</span>' +
+          '</div>' +
+          '<div style="font-size:12px;font-weight:600;color:#1E293B;margin-bottom:2px">'+n.label+'</div>' +
+          '<div style="font-size:13px;font-weight:800;color:'+sc+'">'+metric+'</div>' +
+          '</div>';
+      });
     }
+  }
+
+  // Lane table
+  const lanesTbl = document.getElementById('ct-lanes');
+  if (lanesTbl) {
+    lanesTbl.innerHTML = pulseLanes.length ? pulseLanes.map(l => {
+      const sc = l.status==='critical'?'#DC2626':l.status==='warning'?'#D97706':'#059669';
+      return '<tr><td><strong>'+l.from+'</strong> → <strong>'+l.to+'</strong></td>' +
+        '<td>'+Number(l.vol || 0).toLocaleString()+' cs</td>' +
+        '<td style="font-weight:700;color:'+sc+'">'+l.otd+'%</td>' +
+        '<td><span class="badge badge-'+l.status+'">'+l.status+'</span></td>' +
+        '<td><button class="btn btn-sm btn-secondary" onclick="optimizeLane(\''+l.from+'\',\''+l.to+'\')"><i class="fas fa-route"></i> Optimize</button></td></tr>';
+    }).join('') : '<tr><td colspan="5" style="text-align:center;color:#64748B">No lane data available</td></tr>';
   }
 
   // Exceptions
@@ -8993,20 +9007,21 @@ async function initControlTower() {
         '<button class="btn btn-sm btn-primary" onclick="resolveException(\''+e.id+'\')"><i class="fas fa-check"></i> '+e.action+'</button>' +
         '<a href="'+modUrl+'" class="btn btn-sm btn-secondary"><i class="fas fa-external-link-alt"></i> View in '+e.module+'</a>' +
         '</div></div></div>';
-    }).join('');
+    }).join('') || '<div style="font-size:12px;color:#64748B;padding:10px">No open exceptions</div>';
   }
 
   // Supply chain flow
   const flowEl = document.getElementById('sc-flow');
   if (flowEl) {
-    flowEl.innerHTML = flow.supply_chain_flow.map((s,i) => {
+    const chain = flowSteps.length ? flowSteps : [{ stage:'No flow data', score:0, kpi:'Data unavailable', delta:'0%' }];
+    flowEl.innerHTML = chain.map((s,i) => {
       const sc = s.score>=85?'#059669':s.score>=70?'#D97706':'#DC2626';
       return '<div class="flow-step" style="text-align:center;flex:1">' +
         '<div style="font-size:24px;font-weight:800;color:'+sc+'">'+s.score+'</div>' +
         '<div style="font-size:11px;font-weight:600;color:#1E293B;margin:4px 0">'+s.stage+'</div>' +
         '<div style="font-size:10px;color:#64748B">'+s.kpi+'</div>' +
-        '<div style="font-size:10px;font-weight:700;color:'+(s.delta.startsWith('+')&&!s.delta.includes('fill')?'#DC2626':'#059669')+'">'+s.delta+'</div>' +
-        (i < flow.supply_chain_flow.length-1 ? '<div style="position:absolute;right:-10px;top:50%;transform:translateY(-50%);font-size:16px;color:#CBD5E1">▶</div>' : '') +
+        '<div style="font-size:10px;font-weight:700;color:'+(String(s.delta || '').startsWith('+')&&!String(s.delta || '').includes('fill')?'#DC2626':'#059669')+'">'+s.delta+'</div>' +
+        (i < chain.length-1 ? '<div style="position:absolute;right:-10px;top:50%;transform:translateY(-50%);font-size:16px;color:#CBD5E1">▶</div>' : '') +
         '</div>';
     }).join('');
   }
@@ -9208,19 +9223,32 @@ async function initNetworkMap() {
     axios.get('/api/network/graph'),
     axios.get('/api/control-tower/pulse'),
   ]);
-  const graph = graphRes.status==='fulfilled' ? graphRes.value.data : { nodes:[], edges:[] };
+  const graphRaw = graphRes.status==='fulfilled' ? graphRes.value.data : { nodes:[], edges:[] };
   const pulse = pulseRes.status==='fulfilled' ? pulseRes.value.data : {};
+  const nodes = Array.isArray(graphRaw && graphRaw.nodes) ? graphRaw.nodes : [];
+  const edges = Array.isArray(graphRaw && graphRaw.edges)
+    ? graphRaw.edges
+    : Array.isArray(graphRaw && graphRaw.lanes)
+      ? graphRaw.lanes.map(l => ({
+          from: l.origin,
+          to: l.destination,
+          type: 'deployment',
+          vol: l.weekly_cases || 0,
+          otd: l.otd || 0,
+          status: (l.otd || 0) < 85 ? 'critical' : (l.otd || 0) < 93 ? 'warning' : 'healthy'
+        }))
+      : [];
 
   // Node legend stats
-  document.getElementById('nm-plants').textContent   = graph.nodes.filter(n=>n.type==='plant').length;
-  document.getElementById('nm-warehouses').textContent = graph.nodes.filter(n=>n.type==='warehouse').length;
-  document.getElementById('nm-suppliers').textContent = graph.nodes.filter(n=>n.type==='supplier').length;
-  document.getElementById('nm-markets').textContent   = graph.nodes.filter(n=>n.type==='market').length;
+  document.getElementById('nm-plants').textContent = String(nodes.filter(n=>n.type==='plant').length);
+  document.getElementById('nm-warehouses').textContent = String(nodes.filter(n=>n.type==='warehouse').length);
+  document.getElementById('nm-suppliers').textContent = String(nodes.filter(n=>n.type==='supplier').length);
+  document.getElementById('nm-markets').textContent = String(nodes.filter(n=>n.type==='market').length);
 
   // Build node list table
   const nodesTbl = document.getElementById('nm-nodes-table');
   if (nodesTbl) {
-    nodesTbl.innerHTML = graph.nodes.map(n => {
+    nodesTbl.innerHTML = nodes.map(n => {
       const typeColor = n.type==='plant'?'#7C3AED':n.type==='warehouse'?'#059669':n.type==='supplier'?'#D97706':'#0891B2';
       const typeIcon  = n.type==='plant'?'fa-industry':n.type==='warehouse'?'fa-warehouse':n.type==='supplier'?'fa-handshake':'fa-store';
       const metric = n.type==='plant' ? n.util+'% util' : n.type==='warehouse' ? n.fill+'% fill' : n.type==='supplier' ? '₹'+n.spend_cr+'Cr' : n.demand?.toLocaleString()+' cs';
@@ -9232,13 +9260,13 @@ async function initNetworkMap() {
         '<td style="font-weight:700">'+(metric||'—')+'</td>' +
         '<td><span class="badge badge-'+status+'" style="font-size:10px">'+status+'</span></td>' +
         '<td><button class="btn btn-sm btn-secondary" onclick="drillDown(\''+n.id+'\',\''+n.type+'\')"><i class="fas fa-search"></i></button></td></tr>';
-    }).join('');
+    }).join('') || '<tr><td colspan="6" style="text-align:center;color:#64748B">No node records available</td></tr>';
   }
 
   // Build edge table
   const edgesTbl = document.getElementById('nm-edges-table');
   if (edgesTbl) {
-    edgesTbl.innerHTML = graph.edges.map(e => {
+    edgesTbl.innerHTML = edges.map(e => {
       const sc = e.status==='critical'?'#DC2626':e.status==='warning'?'#D97706':'#059669';
       const metric = e.otd ? e.otd+'% OTD' : e.util ? e.util+'% util' : '—';
       return '<tr><td><strong>'+e.from+'</strong></td><td style="color:#94A3B8">→</td><td><strong>'+e.to+'</strong></td>' +
@@ -9247,7 +9275,7 @@ async function initNetworkMap() {
         '<td style="font-weight:700;color:'+sc+'">'+metric+'</td>' +
         '<td><span class="badge badge-'+e.status+'">'+e.status+'</span></td>' +
         '<td><button class="btn btn-sm btn-secondary" onclick="optimizeEdge(\''+e.from+'\',\''+e.to+'\')"><i class="fas fa-magic"></i></button></td></tr>';
-    }).join('');
+    }).join('') || '<tr><td colspan="8" style="text-align:center;color:#64748B">No edge records available</td></tr>';
   }
 
   // Flow volume chart
@@ -9392,7 +9420,7 @@ app.get('/scenario-lab', async (c) => {
   const scripts = `
 async function initScenarioLab() {
   const res = await axios.get('/api/scenario-lab/scenarios').catch(() => ({ data:[] }));
-  const scenarios = res.data;
+  const scenarios = Array.isArray(res.data) ? res.data : (Array.isArray(res.data?.scenarios) ? res.data.scenarios : []);
   renderScenarios(scenarios);
 }
 
@@ -9401,7 +9429,8 @@ function renderScenarios(scenarios) {
   if (!grid) return;
   const typeColors = { demand:'#2563EB', disruption:'#DC2626', promotion:'#7C3AED', new_sku:'#059669' };
   const typeIcons  = { demand:'fa-chart-line', disruption:'fa-exclamation-triangle', promotion:'fa-tag', new_sku:'fa-plus-circle' };
-  grid.innerHTML = scenarios.map(s => {
+  const list = Array.isArray(scenarios) ? scenarios : [];
+  grid.innerHTML = list.map(s => {
     const sc = s.risk==='critical'?'critical':s.risk==='high'?'critical':s.risk==='medium'?'warning':'success';
     const col = typeColors[s.type]||'#64748B';
     const ico = typeIcons[s.type]||'fa-layer-group';
@@ -9427,7 +9456,7 @@ function renderScenarios(scenarios) {
       '<button class="btn btn-sm btn-secondary" onclick="compareScenario(\''+s.id+'\')"><i class="fas fa-balance-scale"></i> Compare</button>' +
       '<button class="btn btn-sm btn-secondary" onclick="approveScenario(\''+s.id+'\',\''+s.name+'\')"><i class="fas fa-check"></i> Approve</button>' +
       '</div></div></div>';
-  }).join('');
+  }).join('') || '<div class="card"><div class="card-body" style="text-align:center;color:#64748B">No saved scenarios found. Create and run a scenario to populate this area.</div></div>';
 }
 
 async function runNewScenario() {
