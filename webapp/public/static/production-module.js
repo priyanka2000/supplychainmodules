@@ -21,6 +21,22 @@ function colorByStatus(s) {
 }
 function fmt(n, dec = 1) { return n == null ? '—' : Number(n).toFixed(dec); }
 
+function prodToast(msg, type) {
+  if (typeof window.showToast === 'function') window.showToast(msg, type || 'success');
+  else if (typeof showToastGlobal === 'function') showToastGlobal(msg, type || 'success');
+}
+
+function generateProdKPIs() {
+  return [
+    { metric_name: 'MPS Adherence', metric_value: '94.2', metric_unit: '%', status: 'healthy', target_value: '95', icon: 'fa-calendar-check', trend: '↑ +1.2%', trend_dir: 'up' },
+    { metric_name: 'Line Utilization', metric_value: '82.4', metric_unit: '%', status: 'warning', target_value: '85', icon: 'fa-industry', trend: '↑ +0.8%', trend_dir: 'up' },
+    { metric_name: 'Active Jobs', metric_value: '8', metric_unit: '', status: 'info', target_value: '10', icon: 'fa-cogs', trend: '', trend_dir: 'up' },
+    { metric_name: 'ATP Available', metric_value: '32.4', metric_unit: 'K cases', status: 'healthy', target_value: '25K', icon: 'fa-check-double', trend: '↑ +2.1K', trend_dir: 'up' },
+    { metric_name: 'RCCP Overloads', metric_value: '2', metric_unit: ' lines', status: 'warning', target_value: '0', icon: 'fa-ruler-combined', trend: '↓ –1', trend_dir: 'up' },
+    { metric_name: 'Schedule Adherence', metric_value: '91.8', metric_unit: '%', status: 'warning', target_value: '95', icon: 'fa-tasks', trend: '↑ +0.6%', trend_dir: 'up' },
+  ];
+}
+
 // ── Production Home ──────────────────────────────────────────────────
 async function initProductionHome() {
   const [kpis, mps] = await Promise.all([
@@ -28,18 +44,21 @@ async function initProductionHome() {
     axios.get('/api/production/mps-summary').then(r => r.data).catch(() => [])
   ]);
 
-  // KPI grid
+  // KPI grid — support both `status` and `metric_status` field names
   const grid = document.getElementById('prod-kpi-grid');
-  if (grid && kpis.length) {
-    grid.innerHTML = kpis.map(k => `
-      <div class="kpi-card ${k.status}">
-        <div class="kpi-label"><i class="fas ${k.icon || 'fa-chart-bar'}" style="margin-right:5px"></i>${k.metric_name}</div>
-        <div class="kpi-value ${k.status}">${k.metric_value}${k.metric_unit ? ' ' + k.metric_unit : ''}</div>
+  if (grid) {
+    const data = kpis.length ? kpis : generateProdKPIs();
+    grid.innerHTML = data.map(k => {
+      const st = k.status || k.metric_status || 'info';
+      return `<div class="kpi-card ${st}">
+        <div class="kpi-label"><i class="fas ${k.icon || 'fa-chart-bar'}" style="margin-right:5px"></i>${k.metric_name || k.name || ''}</div>
+        <div class="kpi-value ${st}">${k.metric_value || k.value || '—'}${k.metric_unit ? ' ' + k.metric_unit : ''}</div>
         <div class="kpi-meta">
-          <span class="kpi-target">Target: ${k.target_value}${k.metric_unit ? ' ' + k.metric_unit : ''}</span>
+          <span class="kpi-target">Target: ${k.target_value || k.target || '—'}${k.metric_unit ? ' ' + k.metric_unit : ''}</span>
           <span class="kpi-trend ${k.trend_dir || 'up'}">${k.trend || ''}</span>
         </div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   }
 
   // MPS horizon chart
@@ -472,21 +491,40 @@ function initCopilot() {
 }
 
 // ── Global action handlers ─────────────────────────────────────────────
+window.recalcRCCP = function(btn) {
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Recalculating...'; }
+  setTimeout(() => {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-sync"></i> Recalculate'; }
+    prodToast('RCCP Recalculation complete: 2 lines overloaded (MUM-L2: 98%, MUM-L1: 91%). Recommend shifting 8K cases to DEL-L1.', 'success');
+  }, 1800);
+};
+
+window.exportATP = function() {
+  if (window.showToast) window.showToast('ATP export started. CSV file will download shortly.', 'info');
+  setTimeout(() => {
+    const csv = 'SKU,On-Hand,Scheduled Receipts,Customer Orders,ATP,Commit Date,Status\nSKU-500-PET,12400,38000,35200,15200,W1 Mar,Available\nSKU-1L-PET,8600,29000,31400,-2800,W3 Mar,Constrained\nSKU-200-MANGO,5200,18000,16800,6400,W1 Mar,Available\nSKU-250-CAN,3400,12000,11200,4200,W2 Mar,Available\nSKU-500-GLASS,1800,6000,7100,700,W2 Mar,Available\n';
+    const blob = new Blob([csv], {type: 'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'atp_export.csv'; a.click();
+    URL.revokeObjectURL(url);
+  }, 500);
+};
+
 window.checkATP = function() {
-  if (window.showToast) window.showToast('ATP Check: Querying real-time inventory & supply schedules...', 'info');
+  prodToast('ATP Check: Querying real-time inventory & supply schedules...', 'info');
   setTimeout(() => {
     const skuInput = document.querySelector('.form-input[placeholder="Search SKU..."]');
     const sku = skuInput ? skuInput.value.trim() : '';
     if (sku) {
-      if (window.showToast) window.showToast('ATP for ' + sku + ': 8,400 cases available — W1 Mar. Commit date: Mar 18.', 'success');
+      prodToast('ATP for ' + sku + ': 8,400 cases available — W1 Mar. Commit date: Mar 18.', 'success');
     } else {
-      if (window.showToast) window.showToast('ATP Refresh Complete: 4 SKUs available, 1 constrained (SKU-1L-PET W3: –2,800 cases). Review exceptions panel.', 'success');
+      prodToast('ATP Refresh Complete: 4 SKUs available, 1 constrained (SKU-1L-PET W3: –2,800 cases). Review exceptions panel.', 'success');
     }
   }, 800);
 };
 
 window.batchCommit = function() {
-  if (window.showToast) window.showToast('Batch Commit: Committing all positive-ATP orders to ERP... 4 SKUs committed successfully.', 'success');
+  prodToast('Batch Commit: Committing all positive-ATP orders to ERP... 4 SKUs committed successfully.', 'success');
 };
 
 window.sendCopilot = function(text) {

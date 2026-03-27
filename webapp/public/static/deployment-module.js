@@ -18,6 +18,12 @@ document.addEventListener('DOMContentLoaded', () => {
 // ── Shared helpers ──────────────────────────────────────────────────
 const COLORS = { blue: '#2563EB', green: '#059669', amber: '#D97706', red: '#DC2626', purple: '#7C3AED', cyan: '#0891B2', navy: '#1E3A8A' };
 
+function depToast(msg, type) {
+  if (typeof window.showToast === 'function') window.showToast(msg, type || 'success');
+  else if (typeof showToastGlobal === 'function') showToastGlobal(msg, type || 'success');
+  else alert(msg);
+}
+
 // ── Deployment Home ──────────────────────────────────────────────────
 async function initDeploymentHome() {
   // KPIs
@@ -534,10 +540,35 @@ window.redesignNetwork = function() {
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Optimizing...'; }
   setTimeout(() => {
     if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-sitemap"></i> Redesign Network'; }
-    if (window.showToast) window.showToast('Network Redesign Complete: 3 hub consolidations identified. Projected savings ₹18.4L/year. Review recommendations in Scenarios tab.', 'success');
+    depToast('Network Redesign Complete: 3 hub consolidations identified. Projected savings ₹18.4L/year. Review recommendations in Scenarios tab.', 'success');
   }, 2200);
 };
 
 window.optimizeLane = function(from, to) {
-  if (window.showToast) window.showToast('Lane Optimization: ' + from + ' → ' + to + ' — Re-routing via alternate hub. ETA improvement: +2.1 hrs. Carrier switch recommended.', 'success');
+  depToast('Lane Optimization: ' + from + ' → ' + to + ' — Re-routing via alternate hub. ETA improvement: +2.1 hrs. Carrier switch recommended.', 'success');
+};
+
+window.runCarrierRFQ = function(btn) {
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Running RFQ...'; }
+  setTimeout(() => {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-gavel"></i> Run RFQ'; }
+    depToast('RFQ Complete: 5 carriers responded. BlueDart offered best rate at ₹15.8/case (–6.2% vs current). DHL at ₹16.4/case. Review bids in contract panel.', 'success');
+  }, 2200);
+};
+
+window.addCarrier = function() {
+  const name = prompt('Carrier Name (e.g., TCI Express, Delhivery):');
+  if (!name || !name.trim()) return;
+  const lanes = prompt('Number of lanes to assign (e.g., 5):') || '5';
+  depToast('Carrier "' + name.trim() + '" added to panel with ' + lanes + ' lanes. Pending compliance verification. KYC documents required within 7 days.', 'success');
+};
+
+window.createShipment = function() {
+  const origin = prompt('Origin Hub (e.g., Mumbai, Delhi, Chennai, Bangalore):');
+  if (!origin || !origin.trim()) return;
+  const dest = prompt('Destination DC (e.g., Pune, Jaipur, Coimbatore, Hyderabad):');
+  if (!dest || !dest.trim()) return;
+  const qty = prompt('Quantity (cases):') || '1000';
+  const id = 'SHP-' + new Date().toISOString().slice(5,10).replace('-','') + '-' + String(Math.floor(Math.random()*900)+100);
+  depToast('Shipment ' + id + ' created: ' + origin.trim() + ' → ' + dest.trim() + ', ' + Number(qty).toLocaleString() + ' cases. Carrier assignment in progress.', 'success');
 };

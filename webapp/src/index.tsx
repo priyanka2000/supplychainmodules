@@ -570,6 +570,7 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
           </main>
         </div>
         {scripts && <script dangerouslySetInnerHTML={{ __html: scripts }}></script>}
+        <script src="/static/app.js"></script>
         <script dangerouslySetInnerHTML={{ __html: `
 // Notification panel
 (async function loadNotifs() {
@@ -7018,7 +7019,7 @@ app.get('/production/atp', (c) => {
       <div class="page-header-right">
         <span class="badge badge-live">Live</span>
         <button class="btn btn-primary" onclick="checkATP()"><i class="fas fa-search"></i> Check ATP</button>
-        <button class="btn btn-secondary" onclick="location.href='/api/export/atp?format=csv'"><i class="fas fa-download"></i> Export</button>
+        <button class="btn btn-secondary" onclick="exportATP()"><i class="fas fa-download"></i> Export</button>
       </div>
     </div>
 
@@ -7060,7 +7061,7 @@ app.get('/production/atp', (c) => {
         <span class="card-title"><i class="fas fa-table"></i> ATP by SKU</span>
         <div style="display:flex;gap:8px">
           <input class="form-input" style="width:200px;font-size:12px" placeholder="Search SKU..." />
-          <button class="btn btn-sm btn-primary"><i class="fas fa-bolt"></i> Batch Commit</button>
+          <button class="btn btn-sm btn-primary" onclick="batchCommit()"><i class="fas fa-bolt"></i> Batch Commit</button>
         </div>
       </div>
       <div class="card-body compact">
