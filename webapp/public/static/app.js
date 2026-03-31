@@ -175,11 +175,242 @@
       return network.nodes || [];
     }
 
-    if (u.includes('/forecast') || u.includes('/sop/forecast')) {
-      return forecast;
+    if (u.includes('/api/production')) {
+      if (u.includes('/kpis')) {
+        return [
+          { metric_name: 'MPS Adherence', metric_value: '94.2', metric_unit: '%', metric_status: 'healthy', target_value: '95' },
+          { metric_name: 'Line Utilization', metric_value: '82.4', metric_unit: '%', metric_status: 'warning', target_value: '85' },
+          { metric_name: 'Active Jobs', metric_value: '8', metric_unit: '', metric_status: 'info', target_value: '10' },
+          { metric_name: 'ATP Available', metric_value: '32.4', metric_unit: 'K cases', metric_status: 'healthy', target_value: '25K' },
+          { metric_name: 'RCCP Overloads', metric_value: '2', metric_unit: ' lines', metric_status: 'warning', target_value: '0' },
+          { metric_name: 'Schedule Adherence', metric_value: '91.8', metric_unit: '%', metric_status: 'warning', target_value: '95' }
+        ];
+      }
+      if (u.includes('/mps-summary')) {
+        return [
+          { week: 'W1', planned_qty: 42000, confirmed_qty: 38000, capacity: 50000 },
+          { week: 'W2', planned_qty: 45000, confirmed_qty: 42000, capacity: 50000 },
+          { week: 'W3', planned_qty: 41000, confirmed_qty: 39000, capacity: 50000 },
+          { week: 'W4', planned_qty: 48000, confirmed_qty: 45000, capacity: 50000 },
+          { week: 'W5', planned_qty: 46000, confirmed_qty: 43000, capacity: 50000 },
+          { week: 'W6', planned_qty: 43000, confirmed_qty: 41000, capacity: 50000 },
+          { week: 'W7', planned_qty: 47000, confirmed_qty: 44000, capacity: 50000 },
+          { week: 'W8', planned_qty: 44000, confirmed_qty: 42000, capacity: 50000 }
+        ];
+      }
+      if (u.includes('/mps')) {
+        return [
+          { sku_code: 'SKU-500-PET', sku_name: 'PET 500ml Regular', week: 'W1 Mar', planned_qty: 8200, confirmed_qty: 7800, available_qty: 1200, status: 'firm', line: 'MUM-L1' },
+          { sku_code: 'SKU-1L-PET', sku_name: 'PET 1L Regular', week: 'W1 Mar', planned_qty: 7600, confirmed_qty: 7400, available_qty: 800, status: 'firm', line: 'MUM-L2' },
+          { sku_code: 'SKU-200-MANGO', sku_name: 'Mango 200ml Can', week: 'W2 Mar', planned_qty: 6800, confirmed_qty: 0, available_qty: 0, status: 'planned', line: 'DEL-L1' },
+          { sku_code: 'SKU-250-CAN', sku_name: 'Sparkling 250ml Can', week: 'W2 Mar', planned_qty: 7100, confirmed_qty: 0, available_qty: 0, status: 'planned', line: 'DEL-L2' },
+          { sku_code: 'SKU-500-GLASS', sku_name: 'Glass 500ml Premium', week: 'W3 Mar', planned_qty: 5400, confirmed_qty: 0, available_qty: 0, status: 'planned', line: 'CHN-L1' }
+        ];
+      }
+      if (u.includes('/atp')) {
+        return [
+          { sku: 'SKU-500-PET', sku_name: 'PET 500ml Regular', oh_stock: 12400, scheduled_receipts: 38000, customer_orders: 35200, atp: 15200, commit_date: 'W1 Mar' },
+          { sku: 'SKU-1L-PET', sku_name: 'PET 1L Regular', oh_stock: 8600, scheduled_receipts: 29000, customer_orders: 31400, atp: -2800, commit_date: 'W3 Mar' },
+          { sku: 'SKU-200-MANGO', sku_name: 'Mango 200ml Can', oh_stock: 5200, scheduled_receipts: 18000, customer_orders: 16800, atp: 6400, commit_date: 'W1 Mar' },
+          { sku: 'SKU-250-CAN', sku_name: 'Sparkling 250ml Can', oh_stock: 3400, scheduled_receipts: 12000, customer_orders: 11200, atp: 4200, commit_date: 'W2 Mar' },
+          { sku: 'SKU-500-GLASS', sku_name: 'Glass 500ml Premium', oh_stock: 1800, scheduled_receipts: 6000, customer_orders: 7100, atp: 700, commit_date: 'W2 Mar' }
+        ];
+      }
+      if (u.includes('/scenarios')) {
+        return [
+          { id: 'PRD-SCN-001', name: 'Base Plan - Mar 2026', module: 'production', description: 'Standard production plan aligned with S&OP consensus demand.', driver: 'Demand', status: 'active', impact_pct: 0, updated_at: '2026-03-10' },
+          { id: 'PRD-SCN-002', name: 'Demand Upside +15%', module: 'production', description: 'Demand increases 15% above base for PET 500ml.', driver: 'Demand Spike', status: 'draft', impact_pct: 15, updated_at: '2026-03-12' },
+          { id: 'PRD-SCN-003', name: 'Line Breakdown Contingency', module: 'production', description: 'Mumbai L2 breaks down for 5 days.', driver: 'Risk', status: 'draft', impact_pct: -8, updated_at: '2026-03-14' }
+        ];
+      }
+      if (u.includes('/capacity/oee')) {
+        return [
+          { line_name: 'MUM-L1', oee_pct: 71.8, availability_pct: 82.4, performance_pct: 88.1, quality_pct: 96.5 },
+          { line_name: 'MUM-L2', oee_pct: 68.3, availability_pct: 79.7, performance_pct: 85.3, quality_pct: 97.1 },
+          { line_name: 'DEL-L1', oee_pct: 75.4, availability_pct: 84.8, performance_pct: 89.6, quality_pct: 96.7 },
+          { line_name: 'DEL-L2', oee_pct: 73.1, availability_pct: 83.2, performance_pct: 87.9, quality_pct: 96.9 },
+          { line_name: 'CHN-L1', oee_pct: 77.6, availability_pct: 86.2, performance_pct: 90.4, quality_pct: 97.3 },
+          { line_name: 'BAN-L1', oee_pct: 74.2, availability_pct: 84.1, performance_pct: 88.7, quality_pct: 96.4 }
+        ];
+      }
+      if (u.includes('/capacity/utilization')) {
+        return Array.from({ length: 14 }, (_, i) => {
+          const d = new Date('2026-03-03');
+          d.setDate(d.getDate() + i);
+          const base = [82, 84, 86, 88, 87, 89, 91, 90, 88, 87, 85, 83, 86, 88][i];
+          return { date: d.toISOString().split('T')[0], avg_util: base, total_ot: base > 85 ? 2.1 : 0.4 };
+        });
+      }
     }
 
-    if (u.includes('/atp')) {
+    if (u.includes('/api/procurement')) {
+      if (u.includes('/kpis')) {
+        return [
+          { name: 'Active Suppliers', value: 18, unit: '', target: 20, status: 'healthy' },
+          { name: 'High Risk Suppliers', value: 2, unit: '', target: 0, status: 'warning' },
+          { name: 'Approved POs', value: 14, unit: '', target: 18, status: 'warning' },
+          { name: 'Avg Lead Time', value: 9.6, unit: 'days', target: 10, status: 'healthy' },
+          { name: 'Supplier OTIF', value: 94.8, unit: '%', target: 95, status: 'warning' },
+          { name: 'Spend This Month', value: '?48.2', unit: 'Cr', target: '?46.0', status: 'warning' }
+        ];
+      }
+      if (u.includes('/suppliers')) {
+        return [
+          { name: 'IndoPlast Industries', location: 'Mumbai', rating: 4.6, reliability_score: 95.2, lead_time_days: 8, risk_level: 'low', is_sustainable: true },
+          { name: 'GlobalFlavors Co', location: 'Bengaluru', rating: 4.3, reliability_score: 92.4, lead_time_days: 10, risk_level: 'medium', is_sustainable: false },
+          { name: 'SweetSource Ltd', location: 'Pune', rating: 4.2, reliability_score: 90.7, lead_time_days: 12, risk_level: 'low', is_sustainable: true },
+          { name: 'CanTech Solutions', location: 'Ahmedabad', rating: 4.0, reliability_score: 88.9, lead_time_days: 14, risk_level: 'medium', is_sustainable: false }
+        ];
+      }
+      if (u.includes('/plans')) return window.getPOData ? window.getPOData() : [];
+    }
+
+    if (u.includes('/api/resource')) {
+      if (u.includes('/kpis')) {
+        return [
+          { name: 'Avg Resource Utilization', value: 84.2, unit: '%', target: 85, status: 'warning' },
+          { name: 'Operators On Shift', value: 126, unit: '', target: 128, status: 'healthy' },
+          { name: 'Overtime Hours', value: 142, unit: 'hrs', target: 100, status: 'critical' },
+          { name: 'Training Coverage', value: 77.2, unit: '%', target: 80, status: 'warning' },
+          { name: 'Workforce Efficiency', value: 88.5, unit: '%', target: 90, status: 'warning' },
+          { name: 'Skill Gap Lines', value: 2, unit: '', target: 0, status: 'warning' }
+        ];
+      }
+      if (u.includes('/capacity')) {
+        return [
+          { line_name: 'PET Line 1', utilization_pct: 92, available_hours: 14, maintenance_hours: 2, capacity_date: '2026-03-17' },
+          { line_name: 'PET Line 2', utilization_pct: 87, available_hours: 15, maintenance_hours: 2, capacity_date: '2026-03-18' },
+          { line_name: 'Can Line 1', utilization_pct: 78, available_hours: 16, maintenance_hours: 1, capacity_date: '2026-03-19' },
+          { line_name: 'Glass Line', utilization_pct: 74, available_hours: 15, maintenance_hours: 2, capacity_date: '2026-03-20' },
+          { line_name: 'Tetra Line', utilization_pct: 69, available_hours: 17, maintenance_hours: 1, capacity_date: '2026-03-21' }
+        ];
+      }
+      if (u.includes('/operators')) {
+        return [
+          { operator_name: 'Amit Kumar', skill_name: 'PET Line 1', proficiency_level: 4, plant_name: 'Mumbai', line_name: 'PET Line 1', certification_date: '2025-12-11', expiry_date: '2026-12-11', status: 'active' },
+          { operator_name: 'Amit Kumar', skill_name: 'PET Line 2', proficiency_level: 3, plant_name: 'Mumbai', line_name: 'PET Line 2', certification_date: '2025-12-11', expiry_date: '2026-12-11', status: 'active' },
+          { operator_name: 'Neha Sharma', skill_name: 'Can Line 1', proficiency_level: 4, plant_name: 'Delhi', line_name: 'Can Line 1', certification_date: '2026-01-08', expiry_date: '2027-01-08', status: 'active' },
+          { operator_name: 'Rahul Verma', skill_name: 'Glass Line', proficiency_level: 3, plant_name: 'Chennai', line_name: 'Glass Line', certification_date: '2025-11-16', expiry_date: '2026-11-16', status: 'active' },
+          { operator_name: 'Pooja Singh', skill_name: 'Tetra Line', proficiency_level: 2, plant_name: 'Bangalore', line_name: 'Tetra Line', certification_date: '2026-02-12', expiry_date: '2027-02-12', status: 'active' }
+        ];
+      }
+    }
+
+    if (u.includes('/api/sequencing')) {
+      if (u.includes('/kpis')) {
+        return [
+          { name: 'Jobs In Progress', value: 8, unit: '', target: 10, status: 'info' },
+          { name: 'Schedule Adherence', value: 91.5, unit: '%', target: 95, status: 'warning' },
+          { name: 'Avg Delay', value: 14, unit: 'min', target: 10, status: 'warning' },
+          { name: 'Changeover Loss', value: 28, unit: 'min', target: 20, status: 'critical' },
+          { name: 'OTD Performance', value: 92.1, unit: '%', target: 95, status: 'warning' },
+          { name: 'Throughput Efficiency', value: 84.6, unit: '%', target: 90, status: 'warning' }
+        ];
+      }
+      if (u.includes('/jobs')) {
+        return [
+          { id: 1, job_number: 'JOB-2026-001', priority: 'critical', status: 'in_progress', quantity: 8200, scheduled_start: '2026-03-17T06:00:00', scheduled_end: '2026-03-17T14:00:00', line_name: 'MUM-L1', sku_id: 'SKU-500-PET', sku_name: 'PET 500ml Regular', delay_minutes: 5 },
+          { id: 2, job_number: 'JOB-2026-002', priority: 'high', status: 'scheduled', quantity: 7600, scheduled_start: '2026-03-17T08:00:00', scheduled_end: '2026-03-17T16:00:00', line_name: 'MUM-L2', sku_id: 'SKU-1L-PET', sku_name: 'PET 1L Regular', delay_minutes: 0 },
+          { id: 3, job_number: 'JOB-2026-003', priority: 'medium', status: 'pending', quantity: 6800, scheduled_start: '2026-03-18T06:00:00', scheduled_end: '2026-03-18T14:00:00', line_name: 'DEL-L1', sku_id: 'SKU-200-MANGO', sku_name: 'Mango 200ml Can', delay_minutes: 10 },
+          { id: 4, job_number: 'JOB-2026-004', priority: 'low', status: 'completed', quantity: 7100, scheduled_start: '2026-03-16T06:00:00', scheduled_end: '2026-03-16T14:00:00', line_name: 'DEL-L2', sku_id: 'SKU-250-CAN', sku_name: 'Sparkling 250ml Can', delay_minutes: 0 },
+          { id: 5, job_number: 'JOB-2026-005', priority: 'high', status: 'delayed', quantity: 5400, scheduled_start: '2026-03-18T10:00:00', scheduled_end: '2026-03-18T18:00:00', line_name: 'CHN-L1', sku_id: 'SKU-500-GLASS', sku_name: 'Glass 500ml Premium', delay_minutes: 18 }
+        ];
+      }
+      if (u.includes('/setup-matrix')) {
+        return [
+          { from_sku: 'SKU-500-PET', to_sku: 'SKU-1L-PET', setup_time_minutes: 12 },
+          { from_sku: 'SKU-1L-PET', to_sku: 'SKU-200-MANGO', setup_time_minutes: 24 },
+          { from_sku: 'SKU-200-MANGO', to_sku: 'SKU-250-CAN', setup_time_minutes: 38 },
+          { from_sku: 'SKU-250-CAN', to_sku: 'SKU-500-GLASS', setup_time_minutes: 52 }
+        ];
+      }
+    }
+
+    if (u.includes('/api/sop')) {
+      if (u.includes('/kpis')) {
+        return [
+          { category: 'Demand', name: 'Forecast Accuracy', value: 87.8, unit: '%', target: 90, trend: 'up', period: '2026-03' },
+          { category: 'Supply', name: 'Supply Coverage', value: 96.1, unit: '%', target: 95, trend: 'up', period: '2026-03' },
+          { category: 'Inventory', name: 'Coverage Days', value: 18.6, unit: 'days', target: 21, trend: 'flat', period: '2026-03' },
+          { category: 'Financial', name: 'Plan Variance', value: 2.4, unit: '%', target: 3, trend: 'down', period: '2026-03' },
+          { category: 'Service', name: 'Service Level', value: 94.2, unit: '%', target: 95, trend: 'up', period: '2026-03' }
+        ];
+      }
+      if (u.includes('/forecast')) return forecast;
+      if (u.includes('/scenarios')) {
+        return [
+          { name: 'Base S&OP Plan', module: 'sop', driver: 'Demand', description: 'Baseline consensus plan', status: 'approved', updated_at: '2026-03-10', is_baseline: true },
+          { name: 'Demand Surge +12%', module: 'sop', driver: 'Demand Spike', description: 'Demand surge scenario', status: 'draft', updated_at: '2026-03-12', is_baseline: false },
+          { name: 'Supplier Delay Buffer', module: 'sop', driver: 'Risk', description: 'Supply disruption contingency', status: 'review', updated_at: '2026-03-14', is_baseline: false }
+        ];
+      }
+    }
+
+    if (u.includes('/api/action-items')) {
+      return [
+        { title: 'Approve consensus plan', description: 'Lock demand/supply consensus for March.', owner: 'S&OP Lead', due_date: '2026-03-18', priority: 'high', status: 'in_progress', module: 'sop' },
+        { title: 'Review supply gap', description: 'Address can shortage in W3/W4.', owner: 'Supply Planner', due_date: '2026-03-17', priority: 'critical', status: 'open', module: 'sop' },
+        { title: 'Update inventory policy', description: 'Revisit safety stock for PET 1L.', owner: 'Inventory Lead', due_date: '2026-03-20', priority: 'medium', status: 'open', module: 'sop' }
+      ];
+    }
+
+    if (u.includes('/api/inventory')) {
+      if (u.includes('/kpis')) {
+        return [
+          { name: 'Total SKUs Tracked', value: 36, unit: '', target: 40, status: 'healthy' },
+          { name: 'Stockout Risk', value: 3, unit: '', target: 0, status: 'warning' },
+          { name: 'Excess Inventory', value: 5, unit: '', target: 2, status: 'warning' },
+          { name: 'Avg Days of Supply', value: 18.4, unit: 'days', target: 21, status: 'warning' },
+          { name: 'Inventory Turns', value: 18.5, unit: 'x', target: 20, status: 'warning' },
+          { name: 'Service Level', value: 97.8, unit: '%', target: 98, status: 'warning' }
+        ];
+      }
+      if (u.includes('/stock')) {
+        return [
+          { sku_id: 1, sku_name: 'Limca PET 500ml', sku_code: 'SKU-LIM-500', plant_name: 'Mumbai', on_hand_qty: 124000, reserved_qty: 35000, in_transit_qty: 8000, safety_stock: 28000, available_qty: 97000, days_of_supply: 14.7, max_stock: 150000 },
+          { sku_id: 2, sku_name: 'Sprite PET 750ml', sku_code: 'SKU-SPR-750', plant_name: 'Delhi', on_hand_qty: 86000, reserved_qty: 22000, in_transit_qty: 12000, safety_stock: 24000, available_qty: 76000, days_of_supply: 22.3, max_stock: 120000 },
+          { sku_id: 3, sku_name: 'Thums Up Can 330ml', sku_code: 'SKU-THU-330', plant_name: 'Chennai', on_hand_qty: 42000, reserved_qty: 16000, in_transit_qty: 6000, safety_stock: 18000, available_qty: 32000, days_of_supply: 7.2, max_stock: 60000 },
+          { sku_id: 4, sku_name: 'Fanta PET 1L', sku_code: 'SKU-FAN-1L', plant_name: 'Bangalore', on_hand_qty: 94000, reserved_qty: 20000, in_transit_qty: 10000, safety_stock: 30000, available_qty: 84000, days_of_supply: 18.9, max_stock: 130000 }
+        ];
+      }
+    }
+
+    if (u.includes('/api/capacity')) {
+      if (u.includes('/kpis')) {
+        return [
+          { metric_name: 'Overall Line Utilization', metric_value: 84.2, metric_unit: '%', metric_status: 'warning', target_value: 85 },
+          { metric_name: 'Peak Line Utilization', metric_value: 95.1, metric_unit: '%', metric_status: 'critical', target_value: 95 },
+          { metric_name: 'Order Fill Rate', metric_value: 96.8, metric_unit: '%', metric_status: 'healthy', target_value: 98 },
+          { metric_name: 'OTIF Service Level', metric_value: 92.4, metric_unit: '%', metric_status: 'warning', target_value: 95 },
+          { metric_name: 'OEE', metric_value: 74.8, metric_unit: '%', metric_status: 'warning', target_value: 75 },
+          { metric_name: 'Bottleneck Lines', metric_value: 2, metric_unit: '', metric_status: 'warning', target_value: 0 }
+        ];
+      }
+      if (u.includes('/utilization')) return [
+        { date: '2026-03-03', avg_util: 82, total_ot: 0.4 },
+        { date: '2026-03-04', avg_util: 84, total_ot: 0.4 },
+        { date: '2026-03-05', avg_util: 86, total_ot: 2.1 },
+        { date: '2026-03-06', avg_util: 88, total_ot: 2.1 },
+        { date: '2026-03-07', avg_util: 87, total_ot: 2.1 },
+        { date: '2026-03-08', avg_util: 89, total_ot: 2.1 },
+        { date: '2026-03-09', avg_util: 91, total_ot: 2.1 },
+        { date: '2026-03-10', avg_util: 90, total_ot: 2.1 }
+      ];
+      if (u.includes('/oee')) return [
+        { line_name: 'MUM-L1', oee_pct: 71.8, availability_pct: 82.4, performance_pct: 88.1, quality_pct: 96.5 },
+        { line_name: 'MUM-L2', oee_pct: 68.3, availability_pct: 79.7, performance_pct: 85.3, quality_pct: 97.1 },
+        { line_name: 'DEL-L1', oee_pct: 75.4, availability_pct: 84.8, performance_pct: 89.6, quality_pct: 96.7 },
+        { line_name: 'DEL-L2', oee_pct: 73.1, availability_pct: 83.2, performance_pct: 87.9, quality_pct: 96.9 }
+      ];
+      if (u.includes('/bottlenecks')) return [ { bottleneck_type: 'Changeover', line_name: 'MUM-L2' }, { bottleneck_type: 'Maintenance', line_name: 'DEL-L2' } ];
+      if (u.includes('/plants')) return [
+        { plant_name: 'Mumbai', location: 'Maharashtra', plant_type: 'Owned', installed_capacity: 1200, capacity_units: 'tons/day', utilization_pct: 91.2, status: 'active' },
+        { plant_name: 'Delhi', location: 'NCR', plant_type: 'Owned', installed_capacity: 980, capacity_units: 'tons/day', utilization_pct: 84.6, status: 'active' },
+        { plant_name: 'Chennai', location: 'Tamil Nadu', plant_type: 'Owned', installed_capacity: 860, capacity_units: 'tons/day', utilization_pct: 78.3, status: 'active' }
+      ];
+    }
+
+    if (u.includes('/forecast') || u.includes('/sop/forecast')) {
       return window.getATPData ? window.getATPData() : [];
     }
 

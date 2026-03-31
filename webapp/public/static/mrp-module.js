@@ -4,7 +4,37 @@
 // ======================================================
 'use strict';
 
-document.addEventListener('DOMContentLoaded', async () => {
+const runWhenReady = (fn) => {
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
+  else fn();
+};
+
+const asArray = (value) => Array.isArray(value) ? value : (Array.isArray(value?.data) ? value.data : []);
+
+const FALLBACK_MRP_KPIS = [
+  { name:'Open MRP Alerts', value:6, unit:'', status:'warning' },
+  { name:'Critical Shortages', value:1, unit:'', status:'critical' },
+  { name:'Below Reorder Point', value:3, unit:'materials', status:'warning' },
+  { name:'Active Suppliers', value:8, unit:'', status:'healthy' },
+  { name:'PO On-Time Delivery', value:87.4, unit:'%', status:'warning' },
+  { name:'MRP Coverage', value:21, unit:'days', status:'healthy' },
+];
+
+const FALLBACK_MRP_ALERTS = [
+  { id:1, alert_type:'shortage', severity:'high', material_name:'Orange Concentrate', sku_name:'Fanta PET 500ml', message:'Stock 2.1 MT vs 4.8 MT required for W2 production. Gap: 2.7 MT', recommended_action:'Raise emergency PO and expedite delivery.', status:'open' },
+  { id:2, alert_type:'shortage', severity:'medium', material_name:'HDPE Cap 28mm', sku_name:'Limca PET 500ml', message:'Reorder point breached. Current: 8,200 pcs vs 12,000 pcs minimum.', recommended_action:'Place top-up PO with alternate pack supplier.', status:'open' },
+  { id:3, alert_type:'reorder', severity:'low', material_name:'Secondary Carton 1L', sku_name:'Multiple', message:'Approaching reorder point.', recommended_action:'Place routine replenishment order.', status:'open' },
+];
+
+const FALLBACK_MRP_MATERIALS = [
+  { id:1, material_code:'RM-001', material_name:'PET Resin 500ml Grade', material_type:'RM', abc_classification:'A', current_stock:185000, reorder_point:120000, unit_of_measure:'kg', shelf_life_days:365 },
+  { id:2, material_code:'RM-002', material_name:'PET Resin 1L Grade', material_type:'RM', abc_classification:'A', current_stock:68000, reorder_point:80000, unit_of_measure:'kg', shelf_life_days:365 },
+  { id:3, material_code:'RM-004', material_name:'Orange Concentrate', material_type:'RM', abc_classification:'A', current_stock:2100, reorder_point:4800, unit_of_measure:'kg', shelf_life_days:180 },
+  { id:4, material_code:'PM-001', material_name:'HDPE Cap 28mm', material_type:'PM', abc_classification:'B', current_stock:8200, reorder_point:12000, unit_of_measure:'pcs', shelf_life_days:1825 },
+  { id:5, material_code:'PM-003', material_name:'Secondary Carton 1L', material_type:'PM', abc_classification:'C', current_stock:22500, reorder_point:20000, unit_of_measure:'pcs', shelf_life_days:null },
+];
+
+runWhenReady(async () => {
   if (document.getElementById('mrp-kpi-grid')) await loadMRPKPIs();
   if (document.getElementById('mrp-alert-chart')) await loadAlertChart();
   if (document.getElementById('mrp-material-chart')) await loadMaterialChart();
@@ -22,7 +52,7 @@ async function loadMRPKPIs() {
   if (!grid) return;
   try {
     const res = await axios.get('/api/mrp/kpis');
-    const kpis = res.data;
+    const kpis = asArray(res.data).length ? asArray(res.data) : FALLBACK_MRP_KPIS;
     const icons = {
       'Open MRP Alerts': 'fa-bell',
       'Critical Shortages': 'fa-exclamation-circle',
@@ -49,8 +79,8 @@ async function loadAlertChart() {
   if (!ctx) return;
   try {
     const res = await axios.get('/api/mrp/alerts');
-    let alerts = (res.data.data || res.data);
-    if (!alerts.length) alerts = [{severity:'high'},{severity:'high'},{severity:'high'},{severity:'medium'},{severity:'medium'},{severity:'low'}];
+    let alerts = asArray(res.data);
+    if (!alerts.length) alerts = FALLBACK_MRP_ALERTS;
     const counts = { high:0, medium:0, low:0 };
     alerts.forEach(a => { if(counts[a.severity]!==undefined) counts[a.severity]++; });
     new Chart(ctx, {
@@ -73,7 +103,7 @@ async function loadMaterialChart() {
   if (!ctx) return;
   try {
     const res = await axios.get('/api/mrp/materials');
-    const mats = res.data;
+    const mats = asArray(res.data).length ? asArray(res.data) : FALLBACK_MRP_MATERIALS;
     const labels = mats.slice(0,10).map(m => m.material_name ? m.material_name.slice(0,14) : 'Mat-'+m.id);
     const stocks = mats.slice(0,10).map(m => m.current_stock||0);
     const reorders = mats.slice(0,10).map(m => m.reorder_point||0);
@@ -105,7 +135,7 @@ async function loadAlertsTable() {
   if (!tbody) return;
   try {
     const res = await axios.get('/api/mrp/alerts');
-    const alerts = (res.data.data || res.data);
+    const alerts = asArray(res.data).length ? asArray(res.data) : FALLBACK_MRP_ALERTS;
     tbody.innerHTML = alerts.map(a => {
       const sev = a.severity;
       const sevColor = sev==='high'?'critical':sev==='medium'?'warning':'info';
@@ -134,7 +164,7 @@ async function loadMaterialsTable() {
   if (!tbody) return;
   try {
     const res = await axios.get('/api/mrp/materials');
-    const mats = res.data;
+    const mats = asArray(res.data).length ? asArray(res.data) : FALLBACK_MRP_MATERIALS;
     tbody.innerHTML = mats.map(m => {
       const at_risk = m.current_stock < m.reorder_point;
       const excess = m.current_stock > m.reorder_point * 3;
@@ -166,7 +196,7 @@ async function loadCoverageChart() {
   if (!ctx) return;
   try {
     const res = await axios.get('/api/mrp/materials');
-    const mats = res.data.slice(0, 10);
+    const mats = (asArray(res.data).length ? asArray(res.data) : FALLBACK_MRP_MATERIALS).slice(0, 10);
     const labels = mats.map(m => m.material_name ? m.material_name.slice(0,14) : 'Mat');
     const dos = mats.map(m => {
       if (!m.current_stock) return 0;
@@ -229,7 +259,7 @@ async function loadDemandForecastChart() {
   if (!ctx) return;
   try {
     const res = await axios.get('/api/sop/forecast');
-    let data = res.data.slice(0, 12);
+    let data = asArray(res.data).slice(0, 12);
     if (!data.length) {
       data = [
         {period:'W1 Jan',forecast_qty:1080000,actual_qty:1052000},{period:'W2 Jan',forecast_qty:1120000,actual_qty:1105000},
@@ -299,7 +329,7 @@ async function loadShortageTimeline() {
   if (!el) return;
   try {
     const res = await axios.get('/api/mrp/alerts');
-    const alerts = (res.data.data || res.data).filter(a => a.severity === 'high').slice(0, 6);
+    const alerts = (asArray(res.data).length ? asArray(res.data) : FALLBACK_MRP_ALERTS).filter(a => a.severity === 'high').slice(0, 6);
     let html = '<div style="display:flex;flex-direction:column;gap:12px;padding:4px 0">';
     const today = new Date();
     alerts.forEach((a, i) => {

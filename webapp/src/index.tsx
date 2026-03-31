@@ -1,4 +1,4 @@
-import { Hono } from 'hono'
+﻿import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
 import {
@@ -36,7 +36,7 @@ app.get('/login', (c) => {
   const err = c.req.query('error')
   return c.html(`<!DOCTYPE html><html lang="en"><head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Login — SYDIAI Supply Chain Suite</title>
+<title>Login ? SYDIAI Supply Chain Suite</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
@@ -117,7 +117,7 @@ app.get('/favicon.ico', (c) => {
 // ============================================================
 // SHARED LAYOUT
 // ============================================================
-// Supply chain flow order: S&OP → Demand → MRP → Procurement → Production → Capacity → Sequencing → Resource → Inventory → Deployment
+// Supply chain flow order: S&OP -> Demand -> MRP -> Procurement -> Production -> Capacity -> Sequencing -> Resource -> Inventory -> Deployment
 const NAV_MODULES = [
   { id: 'control-tower', label: 'Control Tower', icon: 'fa-satellite-dish', path: '/control-tower',
     subs: [
@@ -266,7 +266,7 @@ const Layout = ({ title, activeModule = 'home', scripts = '', user = null as any
       <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>{title} — SYDIAI Supply Chain Suite</title>
+        <title>{title} ? SYDIAI Supply Chain Suite</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
         <script src="/static/vendor/chart.umd.min.js"></script>
@@ -478,15 +478,15 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
               <span class="header-greeting">Welcome, <strong>{displayName}</strong></span>
               <button class="header-btn" title="Notifications" id="notifBtn" onclick="toggleNotifPanel()">
                 <i class="fas fa-bell"></i>
-                <span class="notif-badge" id="notifCount">·</span>
+                <span class="notif-badge" id="notifCount">?</span>
               </button>
               <a href="/approvals" class="header-btn" title="Pending Approvals" id="approvalBtn">
                 <i class="fas fa-clipboard-check"></i>
-                <span class="notif-badge" id="approvalCount" style="background:#D97706">·</span>
+                <span class="notif-badge" id="approvalCount" style="background:#D97706">?</span>
               </a>
               <button class="header-btn" title="Settings"><i class="fas fa-cog"></i></button>
               <a href="/logout" class="header-btn" title="Logout"><i class="fas fa-sign-out-alt"></i></a>
-              <div class="header-avatar" title={displayName + ' — ' + displayRole}>{displayInitials}</div>
+              <div class="header-avatar" title={displayName + ' ? ' + displayRole}>{displayInitials}</div>
               <div id="notif-panel" style="display:none;position:fixed;top:56px;right:16px;width:380px;background:white;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-lg);z-index:9999;max-height:500px;overflow-y:auto">
                 <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
                   <strong style="font-size:14px">Notifications</strong>
@@ -589,7 +589,7 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
             <div>
               <div style="font-weight:600;font-size:13px;color:#1E293B">\${n.title}</div>
               <div style="font-size:12px;color:#64748B">\${n.message}</div>
-              <div style="font-size:11px;color:#94A3B8;margin-top:2px">\${n.module.toUpperCase()} · \${n.time}</div>
+              <div style="font-size:11px;color:#94A3B8;margin-top:2px">\${n.module.toUpperCase()} ? \${n.time}</div>
             </div>
           </div>
         </a>\`).join('') || '<p style="color:#64748B;text-align:center;padding:16px;font-size:13px">No notifications</p>';
@@ -930,12 +930,12 @@ app.get('/api/mrp/kpis', async (c) => {
 
 // MRP Alerts
 const MOCK_MRP_ALERTS = [
-  { id:1, alert_type:'shortage', severity:'high', material_name:'Orange Concentrate', sku_name:'Fanta PET 500ml', message:'Stock 2.1 MT vs 4.8 MT required for W2 production. Gap: 2.7 MT', recommended_action:'Raise emergency PO with GlobalFlavors Co. Approve expedite surcharge ₹12K.', status:'open' },
-  { id:2, alert_type:'shortage', severity:'high', material_name:'HDPE Cap 28mm', sku_name:'Limca PET 500ml', message:'Reorder point breached. Current: 8,200 pcs vs 12,000 pcs minimum.', recommended_action:'Place top-up PO with IndoPlast Industries – 30,000 pcs, 5-day lead time.', status:'open' },
+  { id:1, alert_type:'shortage', severity:'high', material_name:'Orange Concentrate', sku_name:'Fanta PET 500ml', message:'Stock 2.1 MT vs 4.8 MT required for W2 production. Gap: 2.7 MT', recommended_action:'Raise emergency PO with GlobalFlavors Co. Approve expedite surcharge ?12K.', status:'open' },
+  { id:2, alert_type:'shortage', severity:'high', material_name:'HDPE Cap 28mm', sku_name:'Limca PET 500ml', message:'Reorder point breached. Current: 8,200 pcs vs 12,000 pcs minimum.', recommended_action:'Place top-up PO with IndoPlast Industries ? 30,000 pcs, 5-day lead time.', status:'open' },
   { id:3, alert_type:'expiry_risk', severity:'medium', material_name:'Mango Concentrate Aseptic', sku_name:'Maaza Tetra 200ml', message:'Batch B-2026-012 expires in 14 days. 1.8 MT at risk.', recommended_action:'Prioritize Maaza production for W2 to consume expiring batch.', status:'open' },
   { id:4, alert_type:'shortage', severity:'medium', material_name:'PET Resin 1L Grade', sku_name:'Sprite PET 1L', message:'Coverage 8.2 days. Below 14-day target coverage.', recommended_action:'Accelerate next PO delivery with PetroPlastics Ltd.', status:'open' },
   { id:5, alert_type:'reorder', severity:'low', material_name:'Secondary Carton 1L', sku_name:'Multiple', message:'Approaching reorder point. Current: 22,500 vs 20,000 minimum.', recommended_action:'Place routine replenishment order. No urgency.', status:'open' },
-  { id:6, alert_type:'shortage', severity:'high', material_name:'CO₂ Food Grade Gas', sku_name:'Thums Up Can 330ml', message:'Supplier delivery delayed by 2 days. Buffer of 1 day only.', recommended_action:'Activate backup supplier CarbonGas Ltd. Emergency delivery arranged.', status:'acknowledged' },
+  { id:6, alert_type:'shortage', severity:'high', material_name:'COâ‚‚ Food Grade Gas', sku_name:'Thums Up Can 330ml', message:'Supplier delivery delayed by 2 days. Buffer of 1 day only.', recommended_action:'Activate backup supplier CarbonGas Ltd. Emergency delivery arranged.', status:'acknowledged' },
 ]
 app.get('/api/mrp/alerts', async (c) => {
   try {
@@ -955,7 +955,7 @@ const MOCK_MATERIALS = [
   { id:3, material_code:'RM-003', material_name:'Mango Concentrate Aseptic', material_type:'RM', abc_classification:'A', current_stock:3800, reorder_point:2500, unit_of_measure:'kg', shelf_life_days:180 },
   { id:4, material_code:'RM-004', material_name:'Orange Concentrate', material_type:'RM', abc_classification:'A', current_stock:2100, reorder_point:4800, unit_of_measure:'kg', shelf_life_days:180 },
   { id:5, material_code:'RM-005', material_name:'Sugar Food Grade', material_type:'RM', abc_classification:'B', current_stock:55000, reorder_point:40000, unit_of_measure:'kg', shelf_life_days:730 },
-  { id:6, material_code:'RM-006', material_name:'CO₂ Food Grade Gas', material_type:'RM', abc_classification:'A', current_stock:1200, reorder_point:1000, unit_of_measure:'kg', shelf_life_days:null },
+  { id:6, material_code:'RM-006', material_name:'COâ‚‚ Food Grade Gas', material_type:'RM', abc_classification:'A', current_stock:1200, reorder_point:1000, unit_of_measure:'kg', shelf_life_days:null },
   { id:7, material_code:'PM-001', material_name:'HDPE Cap 28mm', material_type:'PM', abc_classification:'B', current_stock:8200, reorder_point:12000, unit_of_measure:'pcs', shelf_life_days:1825 },
   { id:8, material_code:'PM-002', material_name:'Label Film 500ml', material_type:'PM', abc_classification:'B', current_stock:42000, reorder_point:30000, unit_of_measure:'rolls', shelf_life_days:null },
   { id:9, material_code:'PM-003', material_name:'Secondary Carton 1L', material_type:'PM', abc_classification:'C', current_stock:22500, reorder_point:20000, unit_of_measure:'pcs', shelf_life_days:null },
@@ -976,7 +976,7 @@ const MOCK_BOM = [
   { id:4, sku_name:'PET 1L Regular', material_code:'RM-002', material_name:'PET Resin 1L Grade', quantity_per_unit:0.042, unit_of_measure:'kg', waste_percentage:2.5, version:'v1', current_stock:68000, reorder_point:80000 },
   { id:5, sku_name:'Mango 200ml Can', material_code:'RM-003', material_name:'Mango Concentrate Aseptic', quantity_per_unit:0.018, unit_of_measure:'kg', waste_percentage:1.5, version:'v1', current_stock:3800, reorder_point:2500 },
   { id:6, sku_name:'Fanta PET 500ml', material_code:'RM-004', material_name:'Orange Concentrate', quantity_per_unit:0.022, unit_of_measure:'kg', waste_percentage:1.5, version:'v1', current_stock:2100, reorder_point:4800 },
-  { id:7, sku_name:'Thums Up Can 330ml', material_code:'RM-006', material_name:'CO₂ Food Grade Gas', quantity_per_unit:0.006, unit_of_measure:'kg', waste_percentage:5.0, version:'v1', current_stock:1200, reorder_point:1000 },
+  { id:7, sku_name:'Thums Up Can 330ml', material_code:'RM-006', material_name:'COâ‚‚ Food Grade Gas', quantity_per_unit:0.006, unit_of_measure:'kg', waste_percentage:5.0, version:'v1', current_stock:1200, reorder_point:1000 },
   { id:8, sku_name:'Multiple SKUs', material_code:'PM-003', material_name:'Secondary Carton 1L', quantity_per_unit:0.042, unit_of_measure:'pcs', waste_percentage:2.0, version:'v1', current_stock:22500, reorder_point:20000 },
 ]
 app.get('/api/mrp/bom', async (c) => {
@@ -1032,14 +1032,14 @@ app.get('/api/mrp/explosion', async (c) => {
   }
 })
 
-// ── Enhanced MRP API Routes (Optimizer Integration) ──────────────────────────
+// â”€â”€ Enhanced MRP API Routes (Optimizer Integration) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 // Net Requirements (computed from BOM explosion)
 app.get('/api/mrp/net-requirements', (c) => {
   return c.json(computeNetRequirements())
 })
 
-// Run MRP – full BOM explosion with suggested POs
+// Run MRP ? full BOM explosion with suggested POs
 app.post('/api/mrp/run-mrp', async (c) => {
   const body = await c.req.json().catch(() => ({})) as Record<string, unknown>
   const netReqs = computeNetRequirements()
@@ -1089,9 +1089,9 @@ app.post('/api/mrp/optimize', async (c) => {
     recommendations: [
       { action: 'Recalibrate safety stock for RM-004 (Orange Concentrate)', impact: 'Reduce holding cost by 12%', priority: 'High' },
       { action: 'Split PO for PKG-005 (Aluminium Can) across 2 suppliers', impact: 'Reduce supply risk by 35%', priority: 'High' },
-      { action: 'Increase Line-4 (Energy) to 3 shifts during W03–W05', impact: 'Eliminate 5.3% capacity gap', priority: 'Medium' },
-      { action: 'Consolidate ordering for SUP-G to reduce order frequency', impact: 'Save ₹42,000 in ordering costs', priority: 'Medium' },
-      { action: 'Implement vendor-managed inventory for CO₂ (SUP-C)', impact: 'Reduce lead time risk by 20%', priority: 'Low' },
+      { action: 'Increase Line-4 (Energy) to 3 shifts during W03?W05', impact: 'Eliminate 5.3% capacity gap', priority: 'Medium' },
+      { action: 'Consolidate ordering for SUP-G to reduce order frequency', impact: 'Save ?42,000 in ordering costs', priority: 'Medium' },
+      { action: 'Implement vendor-managed inventory for COâ‚‚ (SUP-C)', impact: 'Reduce lead time risk by 20%', priority: 'Low' },
     ],
   })
 })
@@ -1232,7 +1232,7 @@ app.get('/api/procurement/kpis', async (c) => {
       { name:'Approved POs', value:plans?.cnt||5, unit:'', status:'info' },
       { name:'Avg Lead Time', value:11.2, unit:'days', status:'warning' },
       { name:'Supplier OTIF', value:87.4, unit:'%', status:'warning' },
-      { name:'Spend This Month', value:99.01, unit:'₹ Lakh', status:'info' },
+      { name:'Spend This Month', value:99.01, unit:'? Lakh', status:'info' },
     ])
   } catch {
     return c.json([
@@ -1241,7 +1241,7 @@ app.get('/api/procurement/kpis', async (c) => {
       { name:'Approved POs', value:5, unit:'', status:'info' },
       { name:'Avg Lead Time', value:11.2, unit:'days', status:'warning' },
       { name:'Supplier OTIF', value:87.4, unit:'%', status:'warning' },
-      { name:'Spend This Month', value:99.01, unit:'₹ Lakh', status:'info' },
+      { name:'Spend This Month', value:99.01, unit:'? Lakh', status:'info' },
     ])
   }
 })
@@ -1266,7 +1266,7 @@ const MOCK_PLANS = [
   { id:6, material_name:'Label Film 500ml', supplier_name:'IndoPlast Industries', planned_qty:95000, planned_cost:9975000, period:'2026-03', status:'executed' },
   { id:7, material_name:'Can Body 250ml', supplier_name:'CanTech Solutions', planned_qty:22000, planned_cost:2530000, period:'2026-04', status:'draft' },
   { id:8, material_name:'HDPE Cap 28mm', supplier_name:'IndoPlast Industries', planned_qty:45000, planned_cost:3240000, period:'2026-04', status:'draft' },
-  { id:9, material_name:'CO₂ Gas Food Grade', supplier_name:'CarbonGas Ltd', planned_qty:5000, planned_cost:750000, period:'2026-03', status:'pending' },
+  { id:9, material_name:'COâ‚‚ Gas Food Grade', supplier_name:'CarbonGas Ltd', planned_qty:5000, planned_cost:750000, period:'2026-03', status:'pending' },
 ]
 app.get('/api/procurement/suppliers', async (c) => {
   try {
@@ -1382,9 +1382,9 @@ const MOCK_FORECAST = [
   { period:'W4 Mar', sku_name:'All India', forecast_qty:1310000, actual_qty:null, confidence_level:0.80 },
 ]
 const MOCK_SOP_SCENARIOS = [
-  { id:1, name:'Baseline – Mar 2026', module:'sop', driver:'Balanced', description:'Standard consensus plan balancing demand forecast with supply capacity. Approved by planning team.', status:'approved', is_baseline:true, updated_at:'2026-03-15T10:00:00' },
+  { id:1, name:'Baseline ? Mar 2026', module:'sop', driver:'Balanced', description:'Standard consensus plan balancing demand forecast with supply capacity. Approved by planning team.', status:'approved', is_baseline:true, updated_at:'2026-03-15T10:00:00' },
   { id:2, name:'Summer Demand Upside +15%', module:'sop', driver:'Demand', description:'Account for early summer demand surge. Requires additional production at Mumbai and Chennai plants.', status:'draft', is_baseline:false, updated_at:'2026-03-14T14:30:00' },
-  { id:3, name:'Capacity Constraint – Mumbai W1-W2', module:'sop', driver:'Supply', description:'MUM-L2 overload mitigation: defer 120K cases to Delhi, approve weekend overtime.', status:'approved', is_baseline:false, updated_at:'2026-03-16T09:00:00' },
+  { id:3, name:'Capacity Constraint ? Mumbai W1-W2', module:'sop', driver:'Supply', description:'MUM-L2 overload mitigation: defer 120K cases to Delhi, approve weekend overtime.', status:'approved', is_baseline:false, updated_at:'2026-03-16T09:00:00' },
   { id:4, name:'Promotion: Thums Up IPL', module:'sop', driver:'Promotion', description:'IPL season uplift 22% for Thums Up. Incremental 280K cases over 8 weeks.', status:'review', is_baseline:false, updated_at:'2026-03-12T16:00:00' },
 ]
 app.get('/api/sop/kpis', async (c) => {
@@ -1416,11 +1416,11 @@ app.get('/api/sop/scenarios', async (c) => {
 // Recommendations
 const MOCK_RECOMMENDATIONS = [
   { id:1, module:'capacity', impact:'critical', status:'pending', title:'Shift 8K cases from MUM-L2 to MUM-L1', description:'MUM-L2 at 98% risks unplanned downtime. Shift production this week.', savings_inr:840000, confidence:94 },
-  { id:2, module:'deployment', impact:'high', status:'pending', title:'Re-optimize 24 routes – ₹4.2L/mo savings', description:'AI identified inefficiencies in Mumbai–Tier2 distribution network.', savings_inr:420000, confidence:89 },
-  { id:3, module:'mrp', impact:'high', status:'pending', title:'Emergency PO – Orange Concentrate', description:'Raise 2.7MT PO immediately to avoid Fanta production stoppage in W2.', savings_inr:0, confidence:99 },
-  { id:4, module:'inventory', impact:'medium', status:'pending', title:'Excess Maaza Tetra stock – plan depletion', description:'31.4 days stock. Increase distribution push to modern trade.', savings_inr:180000, confidence:81 },
-  { id:5, module:'sop', impact:'medium', status:'completed', title:'Approve weekend overtime – Mumbai', description:'Close 120K case gap in March supply plan via 2 weekend shifts.', savings_inr:0, confidence:92 },
-  { id:6, module:'sequencing', impact:'medium', status:'pending', title:'Optimize changeover sequence – MUM-L1', description:'Resequencing PET bottles by size reduces changeover by 35 min/shift.', savings_inr:280000, confidence:87 },
+  { id:2, module:'deployment', impact:'high', status:'pending', title:'Re-optimize 24 routes ? ?4.2L/mo savings', description:'AI identified inefficiencies in Mumbai?Tier2 distribution network.', savings_inr:420000, confidence:89 },
+  { id:3, module:'mrp', impact:'high', status:'pending', title:'Emergency PO ? Orange Concentrate', description:'Raise 2.7MT PO immediately to avoid Fanta production stoppage in W2.', savings_inr:0, confidence:99 },
+  { id:4, module:'inventory', impact:'medium', status:'pending', title:'Excess Maaza Tetra stock ? plan depletion', description:'31.4 days stock. Increase distribution push to modern trade.', savings_inr:180000, confidence:81 },
+  { id:5, module:'sop', impact:'medium', status:'completed', title:'Approve weekend overtime ? Mumbai', description:'Close 120K case gap in March supply plan via 2 weekend shifts.', savings_inr:0, confidence:92 },
+  { id:6, module:'sequencing', impact:'medium', status:'pending', title:'Optimize changeover sequence ? MUM-L1', description:'Resequencing PET bottles by size reduces changeover by 35 min/shift.', savings_inr:280000, confidence:87 },
 ]
 app.get('/api/recommendations', async (c) => {
   const module = c.req.query('module')
@@ -1440,12 +1440,12 @@ app.get('/api/recommendations', async (c) => {
 // Action Items
 const MOCK_ACTION_ITEMS = [
   { id:1, module:'production', priority:'critical', status:'open', title:'Resolve MUM-L2 Overload', description:'MUM-L2 at 98% utilization. Shift 8K cases to MUM-L1 to prevent breakdown.', due_date:'2026-03-18', owner:'Sankar Mamidela' },
-  { id:2, module:'mrp', priority:'high', status:'open', title:'Emergency PO – Orange Concentrate', description:'Raise PO for 2.7MT with GlobalFlavors Co. Approve expedite surcharge.', due_date:'2026-03-17', owner:'Vikrant Hole' },
-  { id:3, module:'sop', priority:'high', status:'in_progress', title:'Approve Weekend Overtime – Mumbai', description:'Approve 2 weekend shifts to close 120K case gap in Mar supply plan.', due_date:'2026-03-18', owner:'Sankar Mamidela' },
-  { id:4, module:'deployment', priority:'medium', status:'open', title:'Optimize 24 Routes for Cost Saving', description:'AI identified ₹4.2L/month savings via route reoptimization.', due_date:'2026-03-20', owner:'Vikrant Hole' },
+  { id:2, module:'mrp', priority:'high', status:'open', title:'Emergency PO ? Orange Concentrate', description:'Raise PO for 2.7MT with GlobalFlavors Co. Approve expedite surcharge.', due_date:'2026-03-17', owner:'Vikrant Hole' },
+  { id:3, module:'sop', priority:'high', status:'in_progress', title:'Approve Weekend Overtime ? Mumbai', description:'Approve 2 weekend shifts to close 120K case gap in Mar supply plan.', due_date:'2026-03-18', owner:'Sankar Mamidela' },
+  { id:4, module:'deployment', priority:'medium', status:'open', title:'Optimize 24 Routes for Cost Saving', description:'AI identified ?4.2L/month savings via route reoptimization.', due_date:'2026-03-20', owner:'Vikrant Hole' },
   { id:5, module:'procurement', priority:'medium', status:'open', title:'Renew Citrus India Contract', description:'Contract expiring in 45 days. Initiate renewal negotiation.', due_date:'2026-04-01', owner:'Vikrant Hole' },
-  { id:6, module:'capacity', priority:'medium', status:'completed', title:'Preventive Maintenance – MUM-L1', description:'Scheduled PM completed. Line back to normal operation.', due_date:'2026-03-15', owner:'Sankar Mamidela' },
-  { id:7, module:'mrp', priority:'low', status:'open', title:'Update Safety Stock – HDPE Cap', description:'Safety stock model recommends increase from 8K to 15K pcs.', due_date:'2026-03-25', owner:'Vikrant Hole' },
+  { id:6, module:'capacity', priority:'medium', status:'completed', title:'Preventive Maintenance ? MUM-L1', description:'Scheduled PM completed. Line back to normal operation.', due_date:'2026-03-15', owner:'Sankar Mamidela' },
+  { id:7, module:'mrp', priority:'low', status:'open', title:'Update Safety Stock ? HDPE Cap', description:'Safety stock model recommends increase from 8K to 15K pcs.', due_date:'2026-03-25', owner:'Vikrant Hole' },
   { id:8, module:'inventory', priority:'medium', status:'in_progress', title:'Deplete Maaza Expiring Batch', description:'1.8MT Mango Concentrate expiring in 14 days. Prioritize production.', due_date:'2026-03-22', owner:'Sankar Mamidela' },
 ]
 app.get('/api/action-items', async (c) => {
@@ -1470,7 +1470,7 @@ app.patch('/api/action-items/:id', async (c) => {
   } catch { return c.json({ success: false }) }
 })
 
-// M2: Optimizer action persist — stores optimizer run results into action_items
+// M2: Optimizer action persist ? stores optimizer run results into action_items
 app.post('/api/optimizer/run', async (c) => {
   try {
     const { module, action, result_summary, impact } = await c.req.json()
@@ -1497,21 +1497,21 @@ app.post('/api/copilot/chat', async (c) => {
     if (msg.includes('bottleneck') || msg.includes('line 2') || msg.includes('mum-l2')) {
       const bns = await db.prepare('SELECT b.*, pl.line_name FROM bottlenecks b JOIN production_lines pl ON b.line_id=pl.id WHERE b.resolved_at IS NULL').all()
       const bn = bns.results[0] as any
-      response = `📊 **Bottleneck Analysis**\n\n${bn ? `**${bn.line_name}** is the primary bottleneck: ${bn.description}\n\nSeverity: ${bn.severity?.toUpperCase()}\nDetected: ${bn.detected_at}` : 'No critical bottlenecks detected'}\n\n**Recommended Actions:**\n1. Redistribute 15% load to Mumbai L1\n2. Authorize 2hr overtime this shift\n3. Defer 2 low-priority C-class jobs to tomorrow\n\nExpected improvement: Reduce utilization from 97% → 82%`
+      response = `ðŸ“Š **Bottleneck Analysis**\n\n${bn ? `**${bn.line_name}** is the primary bottleneck: ${bn.description}\n\nSeverity: ${bn.severity?.toUpperCase()}\nDetected: ${bn.detected_at}` : 'No critical bottlenecks detected'}\n\n**Recommended Actions:**\n1. Redistribute 15% load to Mumbai L1\n2. Authorize 2hr overtime this shift\n3. Defer 2 low-priority C-class jobs to tomorrow\n\nExpected improvement: Reduce utilization from 97% ? 82%`
     } else if (msg.includes('delay') || msg.includes('late') || msg.includes('otd')) {
       const delayed = await db.prepare('SELECT j.*, s.sku_name FROM jobs j JOIN skus s ON j.sku_id=s.id WHERE j.delay_minutes > 0').all()
       const cnt = delayed.results.length
-      response = `⏱️ **Schedule Delay Analysis**\n\n${cnt} job(s) currently delayed:\n${(delayed.results as any[]).map((j:any) => `• ${j.job_number}: ${j.sku_name} — +${j.delay_minutes} min delay`).join('\n')}\n\n**Root Causes:**\n1. Late material staging (38%)\n2. Changeover overrun (29%)\n3. Operator shift overlap (19%)\n4. Equipment issue (14%)\n\n**Actions:** Prioritize material pre-staging for next 3 jobs. Schedule changeover during shift handover.`
+      response = `â±ï¸ **Schedule Delay Analysis**\n\n${cnt} job(s) currently delayed:\n${(delayed.results as any[]).map((j:any) => `â€¢ ${j.job_number}: ${j.sku_name} ? +${j.delay_minutes} min delay`).join('\n')}\n\n**Root Causes:**\n1. Late material staging (38%)\n2. Changeover overrun (29%)\n3. Operator shift overlap (19%)\n4. Equipment issue (14%)\n\n**Actions:** Prioritize material pre-staging for next 3 jobs. Schedule changeover during shift handover.`
     } else if (msg.includes('mrp') || msg.includes('material') || msg.includes('shortage')) {
       const alerts = await db.prepare('SELECT * FROM mrp_alerts WHERE status="open" AND severity IN ("critical","high") LIMIT 3').all()
-      response = `📦 **MRP Status**\n\n${(alerts.results as any[]).map((a:any) => `🔴 ${a.alert_type}: ${a.message}`).join('\n\n')}\n\n**Recommended immediate actions:**\n1. Raise emergency PO for orange concentrate\n2. Contact SUP004 for PET resin alternate supply\n3. Review can body alternate sourcing`
+      response = `ðŸ“¦ **MRP Status**\n\n${(alerts.results as any[]).map((a:any) => `ðŸ”´ ${a.alert_type}: ${a.message}`).join('\n\n')}\n\n**Recommended immediate actions:**\n1. Raise emergency PO for orange concentrate\n2. Contact SUP004 for PET resin alternate supply\n3. Review can body alternate sourcing`
     } else if (msg.includes('sop') || msg.includes('forecast') || msg.includes('demand')) {
-      response = `📈 **S&OP Snapshot — March 2026**\n\n**Demand:** 4.8M cases (All India) — Confidence: 87%\n**Supply Plan:** 4.62M cases — Gap: 180K cases shortfall\n**Inventory:** 18.4 DOI (target: 15)\n\n**Key Risks:**\n1. Mumbai supply constrained — 97% utilization\n2. Forecast accuracy below 90% target\n3. Mango concentrate price variance +18%\n\n**Recommended:** Approve Mumbai overtime for 2 weeks to close 180K gap.`
+      response = `ðŸ“ˆ **S&OP Snapshot ? March 2026**\n\n**Demand:** 4.8M cases (All India) ? Confidence: 87%\n**Supply Plan:** 4.62M cases ? Gap: 180K cases shortfall\n**Inventory:** 18.4 DOI (target: 15)\n\n**Key Risks:**\n1. Mumbai supply constrained ? 97% utilization\n2. Forecast accuracy below 90% target\n3. Mango concentrate price variance +18%\n\n**Recommended:** Approve Mumbai overtime for 2 weeks to close 180K gap.`
     } else if (msg.includes('optimization') || msg.includes('sequence') || msg.includes('schedule')) {
-      response = `🎯 **Scheduling Optimization Analysis**\n\nRunning scenario comparison...\n\n| Scenario | Cost | Lateness | Util |\n|----------|------|----------|------|\n| Base Plan | ₹45,200 | 12% | 78.5% |\n| Cost Optimal | ₹38,900 | 18% | 82.3% |\n| OTD Max | ₹52,100 | 3% | 75.2% |\n\n**Recommendation:** For current week, use OTD Maximized scenario — customer OTIF target of 95% is more critical than cost reduction.`
+      response = `ðŸŽ¯ **Scheduling Optimization Analysis**\n\nRunning scenario comparison...\n\n| Scenario | Cost | Lateness | Util |\n|----------|------|----------|------|\n| Base Plan | ?45,200 | 12% | 78.5% |\n| Cost Optimal | ?38,900 | 18% | 82.3% |\n| OTD Max | ?52,100 | 3% | 75.2% |\n\n**Recommendation:** For current week, use OTD Maximized scenario ? customer OTIF target of 95% is more critical than cost reduction.`
     } else {
       const summary = await db.prepare('SELECT COUNT(*) as jobs FROM jobs WHERE status="in_progress"').first<{jobs:number}>()
-      response = `👋 **Hello Sankar & Vikrant!**\n\nCurrent suite status:\n• **${summary?.jobs||3} jobs** in progress\n• **4 active bottlenecks** detected\n• **6 open MRP alerts** requiring attention\n• **8 recommendations** pending review\n\nI can help you with:\n• Bottleneck analysis & resolution\n• Schedule delay root causes\n• MRP shortage recommendations\n• S&OP demand-supply gap analysis\n• Optimization scenario comparison\n\nWhat would you like to explore?`
+      response = `ðŸ‘‹ **Hello Sankar & Vikrant!**\n\nCurrent suite status:\nâ€¢ **${summary?.jobs||3} jobs** in progress\nâ€¢ **4 active bottlenecks** detected\nâ€¢ **6 open MRP alerts** requiring attention\nâ€¢ **8 recommendations** pending review\n\nI can help you with:\nâ€¢ Bottleneck analysis & resolution\nâ€¢ Schedule delay root causes\nâ€¢ MRP shortage recommendations\nâ€¢ S&OP demand-supply gap analysis\nâ€¢ Optimization scenario comparison\n\nWhat would you like to explore?`
     }
     return c.json({ response, timestamp: new Date().toISOString() })
   } catch {
@@ -1586,10 +1586,10 @@ app.get('/api/audit-log', async (c) => {
 })
 
 // ============================================================
-// NEW SPRINT 0–5 APIs
+// NEW SPRINT 0?5 APIs
 // ============================================================
 
-// ── PRODUCTION: Finite Capacity MPS Optimizer ──────────────────────────
+// â”€â”€ PRODUCTION: Finite Capacity MPS Optimizer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.post('/api/production/optimize', async (c) => {
   try {
     const body = await c.req.json()
@@ -1624,7 +1624,7 @@ app.post('/api/production/optimize', async (c) => {
   } catch { return c.json({ status: 'error', message: 'Optimization failed' }) }
 })
 
-// ── PRODUCTION: Changeover Matrix ──────────────────────────────────────
+// â”€â”€ PRODUCTION: Changeover Matrix â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/production/changeover', async (c) => {
   return c.json({
     matrix: [
@@ -1654,19 +1654,19 @@ app.get('/api/production/changeover', async (c) => {
   })
 })
 
-// ── PRODUCTION: Variance Drill-Down ────────────────────────────────────
+// â”€â”€ PRODUCTION: Variance Drill-Down â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/production/variance', async (c) => {
   const period = c.req.query('period') || 'W1'
   return c.json({
     period,
     summary: { planned: 310000, actual: 291400, variance: -18600, variance_pct: -6.0 },
     by_line: [
-      { line: 'MUM-L1', planned: 85000, actual: 81200, variance: -3800, variance_pct: -4.5, root_cause: 'Speed loss – preform jam 2hrs', action: 'Maintenance scheduled' },
-      { line: 'MUM-L2', planned: 78000, actual: 69300, variance: -8700, variance_pct: -11.2, root_cause: 'MPS overload – 98% load, no overtime approved', action: 'Approve overtime W2' },
+      { line: 'MUM-L1', planned: 85000, actual: 81200, variance: -3800, variance_pct: -4.5, root_cause: 'Speed loss ? preform jam 2hrs', action: 'Maintenance scheduled' },
+      { line: 'MUM-L2', planned: 78000, actual: 69300, variance: -8700, variance_pct: -11.2, root_cause: 'MPS overload ? 98% load, no overtime approved', action: 'Approve overtime W2' },
       { line: 'DEL-L1', planned: 62000, actual: 59800, variance: -2200, variance_pct: -3.5, root_cause: 'Planned CIP extended by 1.5hrs', action: 'None' },
       { line: 'DEL-L2', planned: 45000, actual: 44600, variance: -400, variance_pct: -0.9, root_cause: 'Minor changeover overrun', action: 'None' },
       { line: 'CHN-L1', planned: 25000, actual: 24800, variance: -200, variance_pct: -0.8, root_cause: 'On target', action: 'None' },
-      { line: 'BAN-L1', planned: 15000, actual: 11700, variance: -3300, variance_pct: -22.0, root_cause: 'Operator skill gap – new line, training in progress', action: 'Skill matrix review' },
+      { line: 'BAN-L1', planned: 15000, actual: 11700, variance: -3300, variance_pct: -22.0, root_cause: 'Operator skill gap ? new line, training in progress', action: 'Skill matrix review' },
     ],
     by_sku: [
       { sku: 'SKU-500-PET', planned: 140000, actual: 134200, variance: -5800 },
@@ -1685,7 +1685,7 @@ app.get('/api/production/variance', async (c) => {
   })
 })
 
-// ── PRODUCTION: Campaign Scheduling ─────────────────────────────────────
+// â”€â”€ PRODUCTION: Campaign Scheduling â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/production/campaigns', async (c) => {
   return c.json([
     { id: 'CAMP-001', name: 'PET Summer Pack W1-W4', sku_family: 'PET Range', lines: ['MUM-L1','MUM-L2'], start_date: '2026-03-17', end_date: '2026-04-13', total_qty: 220000, status: 'active', min_run_length_hrs: 12, cip_frequency_days: 3 },
@@ -1695,7 +1695,7 @@ app.get('/api/production/campaigns', async (c) => {
   ])
 })
 
-// ── PRODUCTION: Shelf Life / FEFO ─────────────────────────────────────
+// â”€â”€ PRODUCTION: Shelf Life / FEFO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/production/shelf-life', async (c) => {
   return c.json([
     { sku: 'SKU-200-MANGO', sku_name: 'Mango 200ml Can', batch_id: 'BAT-001', mfg_date: '2026-03-10', expiry_date: '2026-09-10', shelf_life_days: 183, remaining_days: 177, qty: 28400, location: 'Mumbai WH', fefo_priority: 1, risk: 'healthy' },
@@ -1706,7 +1706,7 @@ app.get('/api/production/shelf-life', async (c) => {
   ])
 })
 
-// ── DEPLOYMENT: Primary Dispatch Engine ────────────────────────────────
+// â”€â”€ DEPLOYMENT: Primary Dispatch Engine â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.post('/api/deployment/dispatch', async (c) => {
   try {
     const body = await c.req.json()
@@ -1714,13 +1714,13 @@ app.post('/api/deployment/dispatch', async (c) => {
     const dispatch_plan = [
       { trip_id: `TRP-${Date.now()}-001`, vehicle: 'TN-01-AB-1234', type: '32ft', capacity_cases: 1500, allocated_cases: 1380, utilization: 92, origin: plant, destination: 'Pune DC', departure: `${date} 06:00`, eta: `${date} 10:00`, sku_mix: [{ sku:'SKU-500-PET',qty:800 },{ sku:'SKU-1L-PET',qty:580 }], load_optimized: true, cost_inr: 18600 },
       { trip_id: `TRP-${Date.now()}-002`, vehicle: 'MH-04-CD-5678', type: '22ft', capacity_cases: 800, allocated_cases: 720, utilization: 90, origin: plant, destination: 'Nashik DC', departure: `${date} 08:00`, eta: `${date} 12:30`, sku_mix: [{ sku:'SKU-200-MANGO',qty:480 },{ sku:'SKU-250-CAN',qty:240 }], load_optimized: true, cost_inr: 11200 },
-      { trip_id: `TRP-${Date.now()}-003`, vehicle: 'MH-12-EF-9012', type: '22ft', capacity_cases: 800, allocated_cases: 560, utilization: 70, origin: plant, destination: 'Surat DC', departure: `${date} 07:00`, eta: `${date} 13:00`, sku_mix: [{ sku:'SKU-500-PET',qty:560 }], load_optimized: false, cost_inr: 14800, alert: 'Under-loaded – consolidate with next batch' },
+      { trip_id: `TRP-${Date.now()}-003`, vehicle: 'MH-12-EF-9012', type: '22ft', capacity_cases: 800, allocated_cases: 560, utilization: 70, origin: plant, destination: 'Surat DC', departure: `${date} 07:00`, eta: `${date} 13:00`, sku_mix: [{ sku:'SKU-500-PET',qty:560 }], load_optimized: false, cost_inr: 14800, alert: 'Under-loaded ? consolidate with next batch' },
     ]
     return c.json({ status: 'success', plant, date, trips: dispatch_plan, total_cost_inr: 44600, avg_utilization: 84, savings_vs_unoptimized_inr: 8200, run_time_ms: 920 })
   } catch { return c.json({ status: 'error' }) }
 })
 
-// ── DEPLOYMENT: Safety Stock Trigger / DDMRP ───────────────────────────
+// â”€â”€ DEPLOYMENT: Safety Stock Trigger / DDMRP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/deployment/safety-stock', async (c) => {
   return c.json([
     { dc: 'Pune DC', sku: 'SKU-500-PET', safety_stock: 4200, current_stock: 3800, buffer_status: 'yellow', avg_daily_demand: 840, lt_days: 1.2, ddmrp_buffer: 5040, replenish_now: true, qty_to_deploy: 1240, source_plant: 'Mumbai' },
@@ -1732,7 +1732,7 @@ app.get('/api/deployment/safety-stock', async (c) => {
   ])
 })
 
-// ── DEPLOYMENT: Inter-DC Transfer Recommender ──────────────────────────
+// â”€â”€ DEPLOYMENT: Inter-DC Transfer Recommender â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/deployment/inter-dc-transfers', async (c) => {
   return c.json([
     { id: 'IDT-001', from_dc: 'Surat DC', to_dc: 'Pune DC', sku: 'SKU-500-PET', qty: 800, reason: 'Pune buffer in yellow zone; Surat has surplus 1,600 cases', estimated_saving_inr: 4200, transit_hrs: 2.5, status: 'recommended', priority: 'high' },
@@ -1742,7 +1742,7 @@ app.get('/api/deployment/inter-dc-transfers', async (c) => {
   ])
 })
 
-// ── DEPLOYMENT: Market-Level SLA Tracking ──────────────────────────────
+// â”€â”€ DEPLOYMENT: Market-Level SLA Tracking â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/deployment/market-sla', async (c) => {
   return c.json([
     { market: 'Modern Trade', target_otd: 98, actual_otd: 96.2, target_lead_time_days: 1.5, actual_lead_time_days: 1.6, fill_rate: 97.8, sla_status: 'warning', trend: 'declining' },
@@ -1754,7 +1754,7 @@ app.get('/api/deployment/market-sla', async (c) => {
   ])
 })
 
-// ── DEPLOYMENT: Network Optimization (LP/VRP) ──────────────────────────
+// â”€â”€ DEPLOYMENT: Network Optimization (LP/VRP) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.post('/api/deployment/optimize-network', async (c) => {
   try {
     const body = await c.req.json()
@@ -1771,39 +1771,39 @@ app.post('/api/deployment/optimize-network', async (c) => {
         co2_kg: objective === 'cost' ? 102400 : 118600
       },
       route_changes: [
-        { route: 'Mumbai → Surat', change: 'Consolidate 3 trips → 2 (merge with Nashik leg)', saving_inr: 28000 },
-        { route: 'Delhi → Lucknow', change: 'Switch from Gati-KWE to BlueDart (better OTD 94%→97%)', saving_inr: -12000 },
-        { route: 'Bangalore → Hyderabad', change: 'Add hubbing via Chennai DC (reduce cost ₹19.2→₹16.8/case)', saving_inr: 42000 },
+        { route: 'Mumbai ? Surat', change: 'Consolidate 3 trips ? 2 (merge with Nashik leg)', saving_inr: 28000 },
+        { route: 'Delhi ? Lucknow', change: 'Switch from Gati-KWE to BlueDart (better OTD 94%?97%)', saving_inr: -12000 },
+        { route: 'Bangalore ? Hyderabad', change: 'Add hubbing via Chennai DC (reduce cost ?19.2??16.8/case)', saving_inr: 42000 },
       ],
       solver: 'OR-Tools VRP', run_time_ms: 2840
     })
   } catch { return c.json({ status: 'error' }) }
 })
 
-// ── INVENTORY: Multi-Echelon Safety Stock (MEIO) ───────────────────────
+// â”€â”€ INVENTORY: Multi-Echelon Safety Stock (MEIO) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/inventory/safety-stock', async (c) => {
   return c.json([
     { sku: 'SKU-500-PET', level: 'Plant', location: 'Mumbai', current_ss: 8400, optimal_ss: 10200, gap: 1800, service_level_target: 97.5, demand_variability: 0.18, lt_variability: 0.12, recommendation: 'Increase SS by 1,800 cases to buffer forecast uncertainty' },
     { sku: 'SKU-500-PET', level: 'DC', location: 'Pune', current_ss: 4200, optimal_ss: 3800, gap: -400, service_level_target: 97.5, demand_variability: 0.22, lt_variability: 0.08, recommendation: 'Slight excess; reduce to free working capital' },
-    { sku: 'SKU-1L-PET', level: 'Plant', location: 'Mumbai', current_ss: 6200, optimal_ss: 7400, gap: 1200, service_level_target: 95.0, demand_variability: 0.20, lt_variability: 0.15, recommendation: 'Increase SS – higher demand variability in peak season' },
-    { sku: 'SKU-200-MANGO', level: 'Plant', location: 'Delhi', current_ss: 5800, optimal_ss: 7200, gap: 1400, service_level_target: 98.0, demand_variability: 0.35, lt_variability: 0.10, recommendation: 'Season SKU – significantly increase SS for Mar-May' },
+    { sku: 'SKU-1L-PET', level: 'Plant', location: 'Mumbai', current_ss: 6200, optimal_ss: 7400, gap: 1200, service_level_target: 95.0, demand_variability: 0.20, lt_variability: 0.15, recommendation: 'Increase SS ? higher demand variability in peak season' },
+    { sku: 'SKU-200-MANGO', level: 'Plant', location: 'Delhi', current_ss: 5800, optimal_ss: 7200, gap: 1400, service_level_target: 98.0, demand_variability: 0.35, lt_variability: 0.10, recommendation: 'Season SKU ? significantly increase SS for Mar-May' },
     { sku: 'SKU-250-CAN', level: 'DC', location: 'Chennai', current_ss: 2200, optimal_ss: 1900, gap: -300, service_level_target: 95.0, demand_variability: 0.14, lt_variability: 0.09, recommendation: 'Marginal excess; monitor and reduce next cycle' },
-    { sku: 'SKU-500-GLASS', level: 'Plant', location: 'Bangalore', current_ss: 1400, optimal_ss: 2800, gap: 1400, service_level_target: 97.5, demand_variability: 0.28, lt_variability: 0.20, recommendation: 'Critical gap – premium SKU, high stockout impact' },
+    { sku: 'SKU-500-GLASS', level: 'Plant', location: 'Bangalore', current_ss: 1400, optimal_ss: 2800, gap: 1400, service_level_target: 97.5, demand_variability: 0.28, lt_variability: 0.20, recommendation: 'Critical gap ? premium SKU, high stockout impact' },
   ])
 })
 
-// ── INVENTORY: ABC-XYZ Matrix ───────────────────────────────────────────
+// â”€â”€ INVENTORY: ABC-XYZ Matrix â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/inventory/abc-xyz', async (c) => {
   return c.json([
     { sku: 'SKU-500-PET', sku_name: 'PET 500ml Regular', abc: 'A', xyz: 'X', revenue_pct: 38.2, cv: 0.14, recommendation: 'Tight control, frequent replenishment, short SS coverage', policy: 'Min-Max 7d/21d' },
     { sku: 'SKU-1L-PET', sku_name: 'PET 1L Regular', abc: 'A', xyz: 'Y', revenue_pct: 24.8, cv: 0.22, recommendation: 'Moderate buffer; monitor seasonality', policy: 'EOQ + SS' },
-    { sku: 'SKU-200-MANGO', sku_name: 'Mango 200ml Can', abc: 'B', xyz: 'Z', revenue_pct: 18.4, cv: 0.38, recommendation: 'High variability – seasonal; large SS during peak', policy: 'Campaign-based' },
+    { sku: 'SKU-200-MANGO', sku_name: 'Mango 200ml Can', abc: 'B', xyz: 'Z', revenue_pct: 18.4, cv: 0.38, recommendation: 'High variability ? seasonal; large SS during peak', policy: 'Campaign-based' },
     { sku: 'SKU-250-CAN', sku_name: 'Sparkling 250ml Can', abc: 'B', xyz: 'Y', revenue_pct: 11.2, cv: 0.19, recommendation: 'Standard MRP replenishment', policy: 'MRP driven' },
-    { sku: 'SKU-500-GLASS', sku_name: 'Glass 500ml Premium', abc: 'C', xyz: 'Z', revenue_pct: 7.4, cv: 0.44, recommendation: 'Periodic review; high variability – consider make-to-order', policy: 'Periodic / MTO' },
+    { sku: 'SKU-500-GLASS', sku_name: 'Glass 500ml Premium', abc: 'C', xyz: 'Z', revenue_pct: 7.4, cv: 0.44, recommendation: 'Periodic review; high variability ? consider make-to-order', policy: 'Periodic / MTO' },
   ])
 })
 
-// ── DEMAND: Statistical Forecast ───────────────────────────────────────
+// â”€â”€ DEMAND: Statistical Forecast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/demand/forecast', async (c) => {
   const sku = c.req.query('sku') || 'ALL'
   const weeks = Array.from({length: 13}, (_,i) => {
@@ -1826,21 +1826,21 @@ app.get('/api/demand/forecast', async (c) => {
   })
 })
 
-// ── DEMAND: Demand Sensing ─────────────────────────────────────────────
+// â”€â”€ DEMAND: Demand Sensing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/demand/sensing', async (c) => {
   return c.json({
     horizon_days: 7,
     sensing_source: 'POS + DC withdrawals + Order pipeline',
     signals: [
       { sku: 'SKU-500-PET', location: 'Mumbai', statistical_fcst: 8400, sensed_demand: 9200, uplift_pct: 9.5, confidence: 0.88, driver: 'Heatwave signal + POS velocity +12%', action: 'Increase W1 deployment by 800 cases' },
-      { sku: 'SKU-200-MANGO', location: 'Delhi', statistical_fcst: 4200, sensed_demand: 5600, uplift_pct: 33.3, confidence: 0.92, driver: 'Summer onset + IPL demand surge', action: 'Alert MPS – increase W1-W2 by 1,400 cases' },
+      { sku: 'SKU-200-MANGO', location: 'Delhi', statistical_fcst: 4200, sensed_demand: 5600, uplift_pct: 33.3, confidence: 0.92, driver: 'Summer onset + IPL demand surge', action: 'Alert MPS ? increase W1-W2 by 1,400 cases' },
       { sku: 'SKU-1L-PET', location: 'Bangalore', statistical_fcst: 2800, sensed_demand: 2400, uplift_pct: -14.3, confidence: 0.75, driver: 'GT channel de-stocking', action: 'Defer 400 cases to W3; release capacity' },
       { sku: 'SKU-250-CAN', location: 'Chennai', statistical_fcst: 1800, sensed_demand: 2200, uplift_pct: 22.2, confidence: 0.82, driver: 'New retail listings in MT', action: 'Increase deployment W1-W2 by 400 cases' },
     ]
   })
 })
 
-// ── RISK: Stock-out Risk Model ─────────────────────────────────────────
+// â”€â”€ RISK: Stock-out Risk Model â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/risk/stockout', async (c) => {
   return c.json([
     { sku: 'SKU-500-PET', location: 'Pune DC', probability_pct: 12, days_to_stockout: 3.2, current_dos: 4.5, risk_level: 'critical', drivers: ['Demand sensing +9.5%', 'Delayed shipment SHP-0317-001'], suggested_action: 'Deploy 800 additional cases today', financial_impact_inr: 142000 },
@@ -1850,25 +1850,25 @@ app.get('/api/risk/stockout', async (c) => {
   ])
 })
 
-// ── RISK: OTD Risk Scorer ─────────────────────────────────────────────
+// â”€â”€ RISK: OTD Risk Scorer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/risk/otd', async (c) => {
   return c.json([
-    { shipment_id: 'SHP-0317-006', route: 'Delhi → Lucknow', risk_score: 82, risk_level: 'critical', eta: '2026-03-17 21:00', predicted_eta: '2026-03-17 23:30', delay_hrs: 2.5, drivers: ['Route NH-30 congestion','Gati-KWE 3 prior delays this week'], mitigation: 'Dispatch alternate carrier + customer notification' },
-    { shipment_id: 'SHP-0317-003', route: 'Chennai → Coimbatore', risk_score: 48, risk_level: 'warning', eta: '2026-03-17 15:00', predicted_eta: '2026-03-17 16:00', delay_hrs: 1.0, drivers: ['Loading delay 1hr'], mitigation: 'Monitor; driver can recover on highway' },
-    { shipment_id: 'SHP-0317-002', route: 'Delhi → Jaipur', risk_score: 22, risk_level: 'healthy', eta: '2026-03-17 13:00', predicted_eta: '2026-03-17 12:45', delay_hrs: 0, drivers: ['On track'], mitigation: 'None' },
-    { shipment_id: 'SHP-0317-001', route: 'Mumbai → Pune', risk_score: 15, risk_level: 'healthy', eta: '2026-03-17 10:00', predicted_eta: '2026-03-17 09:50', delay_hrs: 0, drivers: ['Ahead of schedule'], mitigation: 'None' },
+    { shipment_id: 'SHP-0317-006', route: 'Delhi ? Lucknow', risk_score: 82, risk_level: 'critical', eta: '2026-03-17 21:00', predicted_eta: '2026-03-17 23:30', delay_hrs: 2.5, drivers: ['Route NH-30 congestion','Gati-KWE 3 prior delays this week'], mitigation: 'Dispatch alternate carrier + customer notification' },
+    { shipment_id: 'SHP-0317-003', route: 'Chennai ? Coimbatore', risk_score: 48, risk_level: 'warning', eta: '2026-03-17 15:00', predicted_eta: '2026-03-17 16:00', delay_hrs: 1.0, drivers: ['Loading delay 1hr'], mitigation: 'Monitor; driver can recover on highway' },
+    { shipment_id: 'SHP-0317-002', route: 'Delhi ? Jaipur', risk_score: 22, risk_level: 'healthy', eta: '2026-03-17 13:00', predicted_eta: '2026-03-17 12:45', delay_hrs: 0, drivers: ['On track'], mitigation: 'None' },
+    { shipment_id: 'SHP-0317-001', route: 'Mumbai ? Pune', risk_score: 15, risk_level: 'healthy', eta: '2026-03-17 10:00', predicted_eta: '2026-03-17 09:50', delay_hrs: 0, drivers: ['Ahead of schedule'], mitigation: 'None' },
   ])
 })
 
-// ── APPROVAL WORKFLOW ──────────────────────────────────────────────────
+// â”€â”€ APPROVAL WORKFLOW â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/approvals', async (c) => {
   const type = c.req.query('type')
   const allApprovals = [
-    { id: 'APR-001', type: 'overtime', title: 'Approve Weekend Overtime – MUM-L2', requestor: 'Vikrant Hole', module: 'production', priority: 'critical', status: 'pending', requested_at: '2026-03-17 08:00', due_by: '2026-03-17 12:00', description: 'MUM-L2 at 98% load W1-W2. Weekend overtime 16hrs will produce 8,000 additional cases and clear ATP deficit.', impact: '+8,000 cases, Cost: ₹48,000 OT premium', approver: 'Sankar Mamidela' },
-    { id: 'APR-002', type: 'procurement', title: 'Emergency PO – Orange Concentrate', requestor: 'Vikrant Hole', module: 'mrp', priority: 'critical', status: 'pending', requested_at: '2026-03-17 07:30', due_by: '2026-03-17 15:00', description: 'Current stock 2.1MT vs required 4.8MT for W2 Mango run. Emergency PO to SUP-003 at ₹12/kg premium.', impact: '+2.7MT raw material, Cost premium: ₹32,400', approver: 'Sankar Mamidela' },
-    { id: 'APR-003', type: 'shipment', title: 'Expedite Shipment SHP-0317-006', requestor: 'Vikrant Hole', module: 'deployment', priority: 'high', status: 'pending', requested_at: '2026-03-17 09:00', due_by: '2026-03-17 18:00', description: 'SHP-0317-006 Delhi→Lucknow predicted 2.5hr delay. Switch to alternate carrier BlueDart at ₹8,200 premium.', impact: 'Avoid stockout at Lucknow DC, Cost premium: ₹8,200', approver: 'Sankar Mamidela' },
-    { id: 'APR-004', type: 'inter_dc', title: 'Approve IDT-003 Coimbatore→Hyderabad', requestor: 'Sankar Mamidela', module: 'deployment', priority: 'high', status: 'approved', requested_at: '2026-03-16 14:00', due_by: '2026-03-17 09:00', description: 'Inter-DC transfer 600 cases SKU-250-CAN for Hyderabad promo event.', impact: 'Support ₹2.4L promo revenue, Transfer cost: ₹4,800', approver: 'Vikrant Hole' },
-    { id: 'APR-005', type: 'scenario', title: 'Activate Scenario: Demand Upside +15%', requestor: 'Sankar Mamidela', module: 'sop', priority: 'medium', status: 'review', requested_at: '2026-03-15 16:00', due_by: '2026-03-18 09:00', description: 'S&OP consensus favours activating +15% demand plan for PET range in April.', impact: '+46K cases output, +₹2.8L OT cost, service improvement +3.2%', approver: 'Vikrant Hole' },
+    { id: 'APR-001', type: 'overtime', title: 'Approve Weekend Overtime ? MUM-L2', requestor: 'Vikrant Hole', module: 'production', priority: 'critical', status: 'pending', requested_at: '2026-03-17 08:00', due_by: '2026-03-17 12:00', description: 'MUM-L2 at 98% load W1-W2. Weekend overtime 16hrs will produce 8,000 additional cases and clear ATP deficit.', impact: '+8,000 cases, Cost: ?48,000 OT premium', approver: 'Sankar Mamidela' },
+    { id: 'APR-002', type: 'procurement', title: 'Emergency PO ? Orange Concentrate', requestor: 'Vikrant Hole', module: 'mrp', priority: 'critical', status: 'pending', requested_at: '2026-03-17 07:30', due_by: '2026-03-17 15:00', description: 'Current stock 2.1MT vs required 4.8MT for W2 Mango run. Emergency PO to SUP-003 at ?12/kg premium.', impact: '+2.7MT raw material, Cost premium: ?32,400', approver: 'Sankar Mamidela' },
+    { id: 'APR-003', type: 'shipment', title: 'Expedite Shipment SHP-0317-006', requestor: 'Vikrant Hole', module: 'deployment', priority: 'high', status: 'pending', requested_at: '2026-03-17 09:00', due_by: '2026-03-17 18:00', description: 'SHP-0317-006 Delhi?Lucknow predicted 2.5hr delay. Switch to alternate carrier BlueDart at ?8,200 premium.', impact: 'Avoid stockout at Lucknow DC, Cost premium: ?8,200', approver: 'Sankar Mamidela' },
+    { id: 'APR-004', type: 'inter_dc', title: 'Approve IDT-003 Coimbatore?Hyderabad', requestor: 'Sankar Mamidela', module: 'deployment', priority: 'high', status: 'approved', requested_at: '2026-03-16 14:00', due_by: '2026-03-17 09:00', description: 'Inter-DC transfer 600 cases SKU-250-CAN for Hyderabad promo event.', impact: 'Support ?2.4L promo revenue, Transfer cost: ?4,800', approver: 'Vikrant Hole' },
+    { id: 'APR-005', type: 'scenario', title: 'Activate Scenario: Demand Upside +15%', requestor: 'Sankar Mamidela', module: 'sop', priority: 'medium', status: 'review', requested_at: '2026-03-15 16:00', due_by: '2026-03-18 09:00', description: 'S&OP consensus favours activating +15% demand plan for PET range in April.', impact: '+46K cases output, +?2.8L OT cost, service improvement +3.2%', approver: 'Vikrant Hole' },
   ]
   const filtered = type ? allApprovals.filter(a => a.type === type) : allApprovals
   return c.json(filtered)
@@ -1883,14 +1883,14 @@ app.post('/api/approvals/:id/action', async (c) => {
   } catch { return c.json({ success: false }) }
 })
 
-// ── NOTIFICATIONS (live badge count) ──────────────────────────────────
+// â”€â”€ NOTIFICATIONS (live badge count) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/notifications', async (c) => {
   const user = getUser(c)
   // Role-based notifications
   const base = [
-    { id: 1, type: 'critical', title: 'MUM-L2 Overloaded', message: '98% capacity – approve overtime', module: 'production', time: '5m ago', read: false, action_url: '/production/rccp', for_role: 'Supply Chain Director' },
+    { id: 1, type: 'critical', title: 'MUM-L2 Overloaded', message: '98% capacity ? approve overtime', module: 'production', time: '5m ago', read: false, action_url: '/production/rccp', for_role: 'Supply Chain Director' },
     { id: 2, type: 'critical', title: 'Orange Concentrate Critical', message: 'Stock 2.1MT vs 4.8MT required', module: 'mrp', time: '12m ago', read: false, action_url: '/mrp/shortage-alerts', for_role: 'both' },
-    { id: 3, type: 'warning', title: 'SHP-0317-006 Delay Risk', message: '2.5hr delay predicted on Delhi→Lucknow', module: 'deployment', time: '18m ago', read: false, action_url: '/deployment/workbench', for_role: 'SC Technology Consultant' },
+    { id: 3, type: 'warning', title: 'SHP-0317-006 Delay Risk', message: '2.5hr delay predicted on Delhi?Lucknow', module: 'deployment', time: '18m ago', read: false, action_url: '/deployment/workbench', for_role: 'SC Technology Consultant' },
     { id: 4, type: 'warning', title: 'ATP Negative W3', message: 'SKU-1L-PET shortfall 2,800 cases', module: 'production', time: '35m ago', read: false, action_url: '/production/atp', for_role: 'both' },
     { id: 5, type: 'info', title: 'New Scenario Ready', message: 'Demand Upside +15% awaiting review', module: 'sop', time: '1hr ago', read: true, action_url: '/sop/scenarios', for_role: 'Supply Chain Director' },
     { id: 6, type: 'info', title: 'ML Model Retrained', message: 'Demand Forecaster MAPE improved 4.6%', module: 'production', time: '2hr ago', read: true, action_url: '/production/ml-models', for_role: 'SC Technology Consultant' },
@@ -1899,7 +1899,7 @@ app.get('/api/notifications', async (c) => {
   return c.json({ notifications: userNotifs, unread_count: userNotifs.filter(n => !n.read).length })
 })
 
-// ── S&OP: Seasonality Calendar ─────────────────────────────────────────
+// â”€â”€ S&OP: Seasonality Calendar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/sop/seasonality', async (c) => {
   return c.json([
     { month: 'Jan', index: 0.85, events: ['Post-holiday slowdown'], forecast_adj_pct: -15 },
@@ -1908,7 +1908,7 @@ app.get('/api/sop/seasonality', async (c) => {
     { month: 'Apr', index: 1.15, events: ['Summer onset','IPL Season'], forecast_adj_pct: +15 },
     { month: 'May', index: 1.35, events: ['Peak summer','School holidays'], forecast_adj_pct: +35 },
     { month: 'Jun', index: 1.28, events: ['Summer continues','Monsoon onset GT'], forecast_adj_pct: +28 },
-    { month: 'Jul', index: 0.98, events: ['Monsoon – reduced OOH','Indoor channels grow'], forecast_adj_pct: -2 },
+    { month: 'Jul', index: 0.98, events: ['Monsoon ? reduced OOH','Indoor channels grow'], forecast_adj_pct: -2 },
     { month: 'Aug', index: 1.05, events: ['Independence Day','Raksha Bandhan'], forecast_adj_pct: +5 },
     { month: 'Sep', index: 1.02, events: ['Post-monsoon recovery'], forecast_adj_pct: +2 },
     { month: 'Oct', index: 1.18, events: ['Navratri','Dussehra'], forecast_adj_pct: +18 },
@@ -1917,7 +1917,7 @@ app.get('/api/sop/seasonality', async (c) => {
   ])
 })
 
-// ── PACK-SIZE MASTER ───────────────────────────────────────────────────
+// â”€â”€ PACK-SIZE MASTER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/master/pack-sizes', async (c) => {
   return c.json([
     { sku: 'SKU-500-PET', sku_name: 'PET 500ml Regular', cases_per_pallet: 64, bottles_per_case: 24, cases_per_truck_22ft: 320, cases_per_truck_32ft: 520, weight_per_case_kg: 14.2, volume_per_case_cbm: 0.018 },
@@ -1928,7 +1928,7 @@ app.get('/api/master/pack-sizes', async (c) => {
   ])
 })
 
-// ── CSV EXPORT ENDPOINT ────────────────────────────────────────────────
+// â”€â”€ CSV EXPORT ENDPOINT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/export/:resource', async (c) => {
   const resource = c.req.param('resource')
   const format = c.req.query('format') || 'csv'
@@ -1977,7 +1977,7 @@ app.get('/api/export/:resource', async (c) => {
   return c.body(csv)
 })
 
-// ── PRODUCTION: Firm Order via API ─────────────────────────────────────
+// â”€â”€ PRODUCTION: Firm Order via API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.post('/api/production/firm-order', async (c) => {
   try {
     const body = await c.req.json()
@@ -1987,15 +1987,15 @@ app.post('/api/production/firm-order', async (c) => {
   } catch { return c.json({ success: false }) }
 })
 
-// ── PRODUCTION: AI Sequence Optimizer ─────────────────────────────────
+// â”€â”€ PRODUCTION: AI Sequence Optimizer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.post('/api/production/ai-sequence', async (c) => {
   try {
     const body = await c.req.json()
     const { line = 'MUM-L1', jobs = [] } = body
     const optimizedSequence = [
-      { job_id: 'JOB-2026-001', sku: 'SKU-500-PET', qty: 18000, start: '06:00', end: '14:00', changeover_before_hrs: 0, rationale: 'First run of shift – no changeover' },
-      { job_id: 'JOB-2026-003', sku: 'SKU-1L-PET', qty: 12000, start: '16:30', end: '22:00', changeover_before_hrs: 2.5, rationale: 'PET→PET family switch – minimal CIP' },
-      { job_id: 'JOB-2026-008', sku: 'SKU-200-MANGO', qty: 8000, start: '06:00', end: '12:00', changeover_before_hrs: 4.0, rationale: 'Overnight CIP – mango needs full sanitization' },
+      { job_id: 'JOB-2026-001', sku: 'SKU-500-PET', qty: 18000, start: '06:00', end: '14:00', changeover_before_hrs: 0, rationale: 'First run of shift ? no changeover' },
+      { job_id: 'JOB-2026-003', sku: 'SKU-1L-PET', qty: 12000, start: '16:30', end: '22:00', changeover_before_hrs: 2.5, rationale: 'PET?PET family switch ? minimal CIP' },
+      { job_id: 'JOB-2026-008', sku: 'SKU-200-MANGO', qty: 8000, start: '06:00', end: '12:00', changeover_before_hrs: 4.0, rationale: 'Overnight CIP ? mango needs full sanitization' },
     ]
     return c.json({
       line,
@@ -2010,7 +2010,7 @@ app.post('/api/production/ai-sequence', async (c) => {
   } catch { return c.json({ success: false }) }
 })
 
-// ── DEPLOYMENT: Approve/Action Shipment ───────────────────────────────
+// â”€â”€ DEPLOYMENT: Approve/Action Shipment â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.post('/api/deployment/shipment-action', async (c) => {
   try {
     const body = await c.req.json()
@@ -2026,7 +2026,7 @@ app.post('/api/deployment/shipment-action', async (c) => {
   } catch { return c.json({ success: false }) }
 })
 
-// ── DEPLOYMENT: Load Consolidation ────────────────────────────────────
+// â”€â”€ DEPLOYMENT: Load Consolidation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.post('/api/deployment/consolidate', async (c) => {
   try {
     const body = await c.req.json()
@@ -2045,21 +2045,21 @@ app.post('/api/deployment/consolidate', async (c) => {
   } catch { return c.json({ success: false }) }
 })
 
-// ── SUPPLY CHAIN EXCEPTION ENGINE ─────────────────────────────────────
+// â”€â”€ SUPPLY CHAIN EXCEPTION ENGINE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/exceptions', async (c) => {
   const severity = c.req.query('severity')
   const allExceptions = [
-    { id: 'EXC-001', severity: 'critical', module: 'production', type: 'capacity_overload', title: 'MUM-L2 Capacity Breach', description: 'Week 1 & 2 load 95–98% exceeding max sustainable 90%', affected_qty: 18700, financial_impact_inr: 342000, detected_at: '2026-03-17 05:45', resolution_options: [{ action: 'Approve weekend overtime', impact: '+8K cases, +₹48K cost' }, { action: 'Shift 8K cases to DEL-L1', impact: 'Zero cost, 3d lead time increase' }], status: 'open', assigned_to: 'Sankar Mamidela' },
-    { id: 'EXC-002', severity: 'critical', module: 'mrp', type: 'material_shortage', title: 'Orange Concentrate Stockout Risk', description: 'Current 2.1MT stock; W2 Mango run requires 4.8MT. 2.7MT gap.', affected_qty: 27000, financial_impact_inr: 486000, detected_at: '2026-03-17 06:10', resolution_options: [{ action: 'Emergency PO SUP-003', impact: '+₹32K premium, 5d lead' }, { action: 'Defer Mango W2 by 1wk', impact: 'Zero cost, ATP impact' }], status: 'open', assigned_to: 'Vikrant Hole' },
-    { id: 'EXC-003', severity: 'high', module: 'deployment', type: 'delay_risk', title: 'Lucknow Shipment Delay Risk', description: 'SHP-0317-006 82% OTD risk, predicted 2.5hr delay due to NH-30 congestion', affected_qty: 1120, financial_impact_inr: 88000, detected_at: '2026-03-17 08:30', resolution_options: [{ action: 'Switch to BlueDart', impact: '+₹8.2K, recover delay' }, { action: 'Accept delay & notify customer', impact: 'Zero cost, OTD impact' }], status: 'open', assigned_to: 'Vikrant Hole' },
+    { id: 'EXC-001', severity: 'critical', module: 'production', type: 'capacity_overload', title: 'MUM-L2 Capacity Breach', description: 'Week 1 & 2 load 95?98% exceeding max sustainable 90%', affected_qty: 18700, financial_impact_inr: 342000, detected_at: '2026-03-17 05:45', resolution_options: [{ action: 'Approve weekend overtime', impact: '+8K cases, +?48K cost' }, { action: 'Shift 8K cases to DEL-L1', impact: 'Zero cost, 3d lead time increase' }], status: 'open', assigned_to: 'Sankar Mamidela' },
+    { id: 'EXC-002', severity: 'critical', module: 'mrp', type: 'material_shortage', title: 'Orange Concentrate Stockout Risk', description: 'Current 2.1MT stock; W2 Mango run requires 4.8MT. 2.7MT gap.', affected_qty: 27000, financial_impact_inr: 486000, detected_at: '2026-03-17 06:10', resolution_options: [{ action: 'Emergency PO SUP-003', impact: '+?32K premium, 5d lead' }, { action: 'Defer Mango W2 by 1wk', impact: 'Zero cost, ATP impact' }], status: 'open', assigned_to: 'Vikrant Hole' },
+    { id: 'EXC-003', severity: 'high', module: 'deployment', type: 'delay_risk', title: 'Lucknow Shipment Delay Risk', description: 'SHP-0317-006 82% OTD risk, predicted 2.5hr delay due to NH-30 congestion', affected_qty: 1120, financial_impact_inr: 88000, detected_at: '2026-03-17 08:30', resolution_options: [{ action: 'Switch to BlueDart', impact: '+?8.2K, recover delay' }, { action: 'Accept delay & notify customer', impact: 'Zero cost, OTD impact' }], status: 'open', assigned_to: 'Vikrant Hole' },
     { id: 'EXC-004', severity: 'high', module: 'inventory', type: 'safety_stock_breach', title: 'Lucknow DC Safety Stock Breach', description: 'Current 1,600 cases vs safety stock 2,800. 1,200 case shortfall.', affected_qty: 1200, financial_impact_inr: 156000, detected_at: '2026-03-17 07:15', resolution_options: [{ action: 'Deploy 1,760 cases from Delhi', impact: 'Restore 7d SS coverage' }], status: 'open', assigned_to: 'Sankar Mamidela' },
-    { id: 'EXC-005', severity: 'medium', module: 'production', type: 'fefo_risk', title: 'PET 500ml Batch BAT-005 Near Expiry', description: '1,200 cases at Bangalore WH expiring Apr 30 (44 days). Must deploy before expiry.', affected_qty: 1200, financial_impact_inr: 72000, detected_at: '2026-03-17 06:00', resolution_options: [{ action: 'Priority dispatch to Hyderabad MT', impact: 'Prevent ₹72K write-off' }], status: 'in_progress', assigned_to: 'Vikrant Hole' },
+    { id: 'EXC-005', severity: 'medium', module: 'production', type: 'fefo_risk', title: 'PET 500ml Batch BAT-005 Near Expiry', description: '1,200 cases at Bangalore WH expiring Apr 30 (44 days). Must deploy before expiry.', affected_qty: 1200, financial_impact_inr: 72000, detected_at: '2026-03-17 06:00', resolution_options: [{ action: 'Priority dispatch to Hyderabad MT', impact: 'Prevent ?72K write-off' }], status: 'in_progress', assigned_to: 'Vikrant Hole' },
   ]
   const filtered = severity ? allExceptions.filter(e => e.severity === severity) : allExceptions
   return c.json(filtered)
 })
 
-// ── SCENARIO: What-If Solver ───────────────────────────────────────────
+// â”€â”€ SCENARIO: What-If Solver â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.post('/api/scenario/solve', async (c) => {
   try {
     const body = await c.req.json()
@@ -2172,7 +2172,7 @@ async function initHome() {
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
             <span class="badge badge-\${sc}" style="font-size:10px">\${h.issues} issue\${h.issues!==1?'s':''}</span>
-            <a href="\${cfg.url}" style="font-size:12px;color:#2563EB;text-decoration:none;font-weight:600">Open →</a>
+            <a href="\${cfg.url}" style="font-size:12px;color:#2563EB;text-decoration:none;font-weight:600">Open ?</a>
           </div>
         </div>
       </div>\`;
@@ -2181,7 +2181,7 @@ async function initHome() {
     const alertsList = document.getElementById('alerts-list');
     alertsList.innerHTML = alerts.slice(0,5).map(a => \`<div class="alert alert-\${a.severity==='critical'?'critical':a.severity==='high'?'critical':'warning'}">
       <i class="fas fa-\${a.severity==='critical'?'times-circle':'exclamation-triangle'}"></i>
-      <div><strong>\${a.alert_type}:</strong> \${a.message} <a href="/mrp/shortage-alerts" style="color:#2563EB;font-size:12px">→ View</a></div>
+      <div><strong>\${a.alert_type}:</strong> \${a.message} <a href="/mrp/shortage-alerts" style="color:#2563EB;font-size:12px">? View</a></div>
     </div>\`).join('') || '<p class="text-muted text-sm">No open alerts</p>';
 
     const recsList = document.getElementById('recs-list');
@@ -2195,7 +2195,7 @@ async function initHome() {
       <div>
         <span class="status-dot \${a.priority==='critical'?'critical':a.priority==='high'?'warning':'healthy'}"></span>
         <strong style="font-size:13px">\${a.title}</strong>
-        <div style="font-size:11px;color:#64748B;margin-top:2px">\${a.owner} · Due: \${a.due_date}</div>
+        <div style="font-size:11px;color:#64748B;margin-top:2px">\${a.owner} ? Due: \${a.due_date}</div>
       </div>
       <span class="badge badge-\${a.priority==='critical'?'critical':a.priority==='high'?'warning':'neutral'}" style="font-size:10px">\${a.priority}</span>
     </div>\`).join('') || '<p class="text-muted text-sm">No open actions</p>';
@@ -2251,12 +2251,12 @@ async function initHome() {
 
     // Ticker
     const tickers = [
-      'SANKAR: Mumbai L2 at 97% — approve overtime or shift load NOW',
-      'VIKRANT: 6 open MRP alerts — orange concentrate critical shortage',
-      'SANKAR: CHN-L1 sequence reorder saves 38 min/cycle — action pending',
-      'VIKRANT: SUP005 credit hold — activate AlterCans immediately',
-      'SANKAR: March S&OP gap 180K cases — consensus meeting required',
-      'VIKRANT: DEL-L1 PM overdue 72hrs — schedule weekend maintenance',
+      'SANKAR: Mumbai L2 at 97% ? approve overtime or shift load NOW',
+      'VIKRANT: 6 open MRP alerts ? orange concentrate critical shortage',
+      'SANKAR: CHN-L1 sequence reorder saves 38 min/cycle ? action pending',
+      'VIKRANT: SUP005 credit hold ? activate AlterCans immediately',
+      'SANKAR: March S&OP gap 180K cases ? consensus meeting required',
+      'VIKRANT: DEL-L1 PM overdue 72hrs ? schedule weekend maintenance',
     ];
     let ti = 0;
     const ticker = document.getElementById('exec-ticker');
@@ -2299,7 +2299,7 @@ document.addEventListener('DOMContentLoaded', initHome);
         <div class="page-icon" style="background:linear-gradient(135deg,#1E3A8A,#3B82F6)"><i class="fas fa-home"></i></div>
         <div>
           <div class="page-title">Supply Chain Intelligence Dashboard</div>
-          <div class="page-subtitle">Welcome, {_userName} · Real-time visibility across all 9 planning modules</div>
+          <div class="page-subtitle">Welcome, {_userName} ? Real-time visibility across all 9 planning modules</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -2328,34 +2328,34 @@ document.addEventListener('DOMContentLoaded', initHome);
     <div class="kpi-grid" style="grid-template-columns:repeat(6,1fr)">
       <div class="kpi-card info">
         <div class="kpi-label"><i class="fas fa-building" style="margin-right:4px"></i>Active Plants</div>
-        <div class="kpi-value" id="stat-plants">—</div>
+        <div class="kpi-value" id="stat-plants">?</div>
       </div>
       <div class="kpi-card info">
         <div class="kpi-label"><i class="fas fa-industry" style="margin-right:4px"></i>Prod. Lines</div>
-        <div class="kpi-value" id="stat-lines">—</div>
+        <div class="kpi-value" id="stat-lines">?</div>
       </div>
       <div class="kpi-card critical">
         <div class="kpi-label"><i class="fas fa-bell" style="margin-right:4px"></i>Open Alerts</div>
-        <div class="kpi-value critical" id="stat-alerts">—</div>
+        <div class="kpi-value critical" id="stat-alerts">?</div>
       </div>
       <div class="kpi-card info">
         <div class="kpi-label"><i class="fas fa-play" style="margin-right:4px"></i>Active Jobs</div>
-        <div class="kpi-value" id="stat-jobs">—</div>
+        <div class="kpi-value" id="stat-jobs">?</div>
       </div>
       <div class="kpi-card warning">
         <div class="kpi-label"><i class="fas fa-exclamation-triangle" style="margin-right:4px"></i>Bottlenecks</div>
-        <div class="kpi-value warning" id="stat-bns">—</div>
+        <div class="kpi-value warning" id="stat-bns">?</div>
       </div>
       <div class="kpi-card warning">
         <div class="kpi-label"><i class="fas fa-lightbulb" style="margin-right:4px"></i>Open Recs.</div>
-        <div class="kpi-value warning" id="stat-recs">—</div>
+        <div class="kpi-value warning" id="stat-recs">?</div>
       </div>
     </div>
 
     {/* Module Grid */}
     <div class="card mb-6">
       <div class="card-header">
-        <span class="card-title"><i class="fas fa-th-large"></i> Planning Modules — Health Overview</span>
+        <span class="card-title"><i class="fas fa-th-large"></i> Planning Modules ? Health Overview</span>
       </div>
       <div class="card-body">
         <style>{`.module-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow);transition:transform 0.15s,box-shadow 0.15s}.module-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}.module-card-top{padding:20px;display:flex;align-items:center;justify-content:space-between;min-height:80px}.module-card-body{padding:14px 16px}.module-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px}.module-kpis{display:grid;grid-template-columns:1fr 1fr;gap:6px}.module-kpi-item{font-size:12px;color:var(--text);background:#F8FAFC;padding:6px 8px;border-radius:6px}#module-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}`}</style>
@@ -2368,7 +2368,7 @@ document.addEventListener('DOMContentLoaded', initHome);
     <div class="grid-2" style="grid-template-columns:1fr 320px;margin-bottom:16px">
       <div class="card">
         <div class="card-header">
-          <span class="card-title"><i class="fas fa-chart-line"></i> Supply Chain Performance — Last 7 Days</span>
+          <span class="card-title"><i class="fas fa-chart-line"></i> Supply Chain Performance ? Last 7 Days</span>
           <span class="badge badge-info">Live Trend</span>
         </div>
         <div class="card-body" style="height:200px"><canvas id="perf-chart"></canvas></div>
@@ -2436,7 +2436,7 @@ document.addEventListener('DOMContentLoaded', initHome);
     <div style="margin-top:20px;background:linear-gradient(135deg,#0F172A,#1E3A8A,#312E81);border-radius:14px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
       <div>
         <div style="color:white;font-size:17px;font-weight:700;margin-bottom:4px"><i class="fas fa-satellite-dish" style="color:#60A5FA;margin-right:8px"></i>Enterprise Command Center</div>
-        <div style="color:#93C5FD;font-size:13px">Control Tower · Network Map · Scenario Lab · Demand Intelligence · Planner Workbench · KPI Benchmarking</div>
+        <div style="color:#93C5FD;font-size:13px">Control Tower ? Network Map ? Scenario Lab ? Demand Intelligence ? Planner Workbench ? KPI Benchmarking</div>
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
         <a href="/control-tower" style="background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:6px"><i class="fas fa-satellite-dish"></i> Control Tower</a>
@@ -2578,14 +2578,14 @@ async function init() {
     });
   } catch(e) { console.error(e); }
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Capacity – Executive" activeModule="capacity-executive" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Capacity ? Executive" activeModule="capacity-executive" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#1E3A8A,#3B82F6)"><i class="fas fa-chart-pie"></i></div>
         <div>
-          <div class="page-title">Capacity — Executive Dashboard</div>
+          <div class="page-title">Capacity ? Executive Dashboard</div>
           <div class="page-subtitle">Senior leadership view: utilization, service levels, financial impact</div>
         </div>
       </div>
@@ -2601,13 +2601,13 @@ document.addEventListener('DOMContentLoaded', init);
     </div>
     <div class="grid-2">
       <div class="card"><div class="card-header"><span class="card-title"><i class="fas fa-lightbulb"></i> Key Insights</span></div><div class="card-body">
-        <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>Mumbai L2 at 97% utilization</strong> — 5 consecutive days above threshold. Immediate intervention required.</div></div>
-        <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>OTIF at 92.1%</strong> — 2.9pp below target. HoReCa channel most impacted (88%).</div></div>
-        <div class="alert alert-success"><i class="fas fa-check-circle"></i><div><strong>E-Commerce at 98% service level</strong> — meeting all commitments this week.</div></div>
+        <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>Mumbai L2 at 97% utilization</strong> ? 5 consecutive days above threshold. Immediate intervention required.</div></div>
+        <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>OTIF at 92.1%</strong> ? 2.9pp below target. HoReCa channel most impacted (88%).</div></div>
+        <div class="alert alert-success"><i class="fas fa-check-circle"></i><div><strong>E-Commerce at 98% service level</strong> ? meeting all commitments this week.</div></div>
       </div></div>
       <div class="card"><div class="card-header"><span class="card-title"><i class="fas fa-rupee-sign"></i> Financial Impact</span></div><div class="card-body">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-          {[['Lost Revenue (Bottleneck)', '₹12.4L', 'critical'],['Overtime Cost', '₹8.2L', 'warning'],['Changeover Loss', '₹4.6L', 'warning'],['Potential Saving', '₹18.8L', 'healthy']].map(([l,v,s]) =>
+          {[['Lost Revenue (Bottleneck)', '?12.4L', 'critical'],['Overtime Cost', '?8.2L', 'warning'],['Changeover Loss', '?4.6L', 'warning'],['Potential Saving', '?18.8L', 'healthy']].map(([l,v,s]) =>
             <div key={l} style={`background:#F8FAFC;padding:14px;border-radius:10px;border-left:3px solid ${s==='critical'?'#DC2626':s==='warning'?'#D97706':'#059669'}`}>
               <div style="font-size:11px;color:#64748B">{l}</div>
               <div style={`font-size:20px;font-weight:700;color:${s==='critical'?'#DC2626':s==='warning'?'#D97706':'#059669'}`}>{v}</div>
@@ -2657,14 +2657,14 @@ async function init() {
     }
   } catch(e) { console.error(e); }
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Capacity – Operations" activeModule="capacity-operations" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Capacity ? Operations" activeModule="capacity-operations" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#1E3A8A,#3B82F6)"><i class="fas fa-tachometer-alt"></i></div>
         <div>
-          <div class="page-title">Capacity — Operations Center</div>
+          <div class="page-title">Capacity ? Operations Center</div>
           <div class="page-subtitle">Real-time line status, OEE, bottleneck resolution & actions</div>
         </div>
       </div>
@@ -2689,7 +2689,7 @@ document.addEventListener('DOMContentLoaded', init);
     <div class="card">
       <div class="card-header">
         <span class="card-title"><i class="fas fa-tachometer-alt"></i> OEE by Line (Today)</span>
-        <span class="badge badge-info">Availability × Performance × Quality</span>
+        <span class="badge badge-info">Availability Ã— Performance Ã— Quality</span>
       </div>
       <div class="card-body compact">
         <table class="data-table">
@@ -2721,7 +2721,7 @@ async function runOpt() {
         \${[['Cost Reduction',r.cost_reduction+'%','healthy'],['Util Gain','+'+r.utilization_gain+'%','healthy'],['OTD Improvement','+'+r.otd_improvement+'%','healthy'],['Bottlenecks Cleared',r.bottlenecks_cleared,'healthy'],['Changeover Saved','-'+r.changeover_reduction+'min','healthy']].map(([l,v,s]) =>
         \`<div class="kpi-card \${s}"><div class="kpi-label">\${l}</div><div class="kpi-value \${s}">\${v}</div></div>\`).join('')}
       </div>
-      <div class="alert alert-success" style="margin-top:12px"><i class="fas fa-check-circle"></i><div><strong>Optimization complete in \${r.run_time_ms}ms</strong>. Estimated annual saving: ₹\${(r.savings_inr/100000).toFixed(1)}L<br/>Recommended sequence: \${r.recommended_sequence.join(' → ')}</div></div>
+      <div class="alert alert-success" style="margin-top:12px"><i class="fas fa-check-circle"></i><div><strong>Optimization complete in \${r.run_time_ms}ms</strong>. Estimated annual saving: ?\${(r.savings_inr/100000).toFixed(1)}L<br/>Recommended sequence: \${r.recommended_sequence.join(' ? ')}</div></div>
     \`;
     switchTab('results');
   } catch(e) { window.showToast('Optimization failed: '+(e.message||e),'error'); }
@@ -2730,12 +2730,12 @@ async function runOpt() {
 }
 document.addEventListener('DOMContentLoaded', () => switchTab('objectives'));
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Capacity – Optimization" activeModule="capacity-optimization" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Capacity ? Optimization" activeModule="capacity-optimization" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-sliders-h"></i></div>
         <div>
-          <div class="page-title">Capacity — Optimization Workbench</div>
+          <div class="page-title">Capacity ? Optimization Workbench</div>
           <div class="page-subtitle">Configure objectives, constraints and run capacity optimization engine</div>
         </div>
       </div>
@@ -2751,7 +2751,7 @@ document.addEventListener('DOMContentLoaded', () => switchTab('objectives'));
     <div class="tab-content" id="tab-objectives">
       <div class="card"><div class="card-body">
         <h3 style="margin-bottom:16px;font-size:15px">Select Optimization Objectives</h3>
-        {[['≥98% Order Fill Rate','Demand Fulfillment','Ensure demand is met across regions and channels'],['75–90% Line Utilization','Capacity Utilization','Optimize asset utilization, reduce idle and overloaded capacity'],['≥10–15% Overtime Cost Reduction','Cost Optimization','Minimize overtime, expediting and co-packer premium costs'],['≥90% Plan Adherence','Planning Accuracy','Align demand and capacity plans, reduce last-minute changes'],['≥15–20% Changeover Reduction','Operational Efficiency','Optimize SKU sequencing to reduce changeover losses']].map(([target, label, desc], i) =>
+        {[['â‰¥98% Order Fill Rate','Demand Fulfillment','Ensure demand is met across regions and channels'],['75?90% Line Utilization','Capacity Utilization','Optimize asset utilization, reduce idle and overloaded capacity'],['â‰¥10?15% Overtime Cost Reduction','Cost Optimization','Minimize overtime, expediting and co-packer premium costs'],['â‰¥90% Plan Adherence','Planning Accuracy','Align demand and capacity plans, reduce last-minute changes'],['â‰¥15?20% Changeover Reduction','Operational Efficiency','Optimize SKU sequencing to reduce changeover losses']].map(([target, label, desc], i) =>
           <div key={label} style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px">
             <input type="checkbox" defaultChecked={i < 3} style="width:16px;height:16px" />
             <div style="flex:1"><strong style="font-size:13px">{label}</strong><div style="font-size:12px;color:#64748B">{desc}</div></div>
@@ -2764,7 +2764,7 @@ document.addEventListener('DOMContentLoaded', () => switchTab('objectives'));
     <div class="tab-content" id="tab-constraints">
       <div class="card"><div class="card-body">
         <h3 style="margin-bottom:16px;font-size:15px">Optimization Constraints</h3>
-        {[['Max Line Utilization','90','%'],['Min Safety Buffer','10','%'],['Overtime Cap','40','hrs/week'],['Min Batch Size','5000','cases'],['Changeover Window','Weekends Only',''],['Shift Structure','3 shifts/day',''],['Allergen Sequencing','Enabled',''],['Co-packer Spend Cap','₹50L','per month']].map(([label, val, unit]) =>
+        {[['Max Line Utilization','90','%'],['Min Safety Buffer','10','%'],['Overtime Cap','40','hrs/week'],['Min Batch Size','5000','cases'],['Changeover Window','Weekends Only',''],['Shift Structure','3 shifts/day',''],['Allergen Sequencing','Enabled',''],['Co-packer Spend Cap','?50L','per month']].map(([label, val, unit]) =>
           <div key={label} style="display:flex;align-items:center;gap:12px;padding:10px;border-bottom:1px solid var(--border)">
             <span style="flex:1;font-size:13px">{label}</span>
             <input type="text" class="form-input" style="width:140px" defaultValue={val} />
@@ -2779,17 +2779,17 @@ document.addEventListener('DOMContentLoaded', () => switchTab('objectives'));
     <div class="tab-content" id="tab-scenarios">
       <div class="card"><div class="card-body">
         <h3 style="margin-bottom:4px;font-size:15px"><i class="fas fa-layer-group" style="color:#7C3AED;margin-right:6px"></i>Scenario Comparison</h3>
-        <p style="font-size:12px;color:#64748B;margin-bottom:16px">Compare capacity outcomes across planning scenarios from Excel (S01–S10)</p>
+        <p style="font-size:12px;color:#64748B;margin-bottom:16px">Compare capacity outcomes across planning scenarios from Excel (S01?S10)</p>
         <table class="data-table">
           <thead><tr><th>Scenario</th><th>Driver</th><th>Line Util%</th><th>Overtime hrs</th><th>Changeovers</th><th>Fill Rate</th><th>Cost Impact</th><th>Risk</th></tr></thead>
           <tbody>
-            {[['S01 – Baseline','Current State','78%','120','42','96%','₹0','Low'],['S02 – Demand +20%','Demand Surge','94%','320','58','91%','+₹18L','High'],['S03 – Peak Season','Summer Surge','97%','480','65','88%','+₹32L','Critical'],['S04 – Line Breakdown','Line 2 Down','85%','260','38','82%','+₹12L','High'],['S05 – New SKU Launch','NPD Launch','88%','180','71','94%','+₹8L','Medium'],['S06 – SKU Rationalization','SKU Reduction','72%','40','28','98%','-₹15L','Low']].map(([sc,dr,lu,ot,co,fr,ci,ri]) =>
+            {[['S01 ? Baseline','Current State','78%','120','42','96%','?0','Low'],['S02 ? Demand +20%','Demand Surge','94%','320','58','91%','+?18L','High'],['S03 ? Peak Season','Summer Surge','97%','480','65','88%','+?32L','Critical'],['S04 ? Line Breakdown','Line 2 Down','85%','260','38','82%','+?12L','High'],['S05 ? New SKU Launch','NPD Launch','88%','180','71','94%','+?8L','Medium'],['S06 ? SKU Rationalization','SKU Reduction','72%','40','28','98%','-?15L','Low']].map(([sc,dr,lu,ot,co,fr,ci,ri]) =>
               <tr key={sc}>
                 <td><strong>{sc}</strong></td><td style="font-size:12px;color:#64748B">{dr}</td>
                 <td><span class="badge badge-{Number(lu.replace('%',''))>=90?'critical':Number(lu.replace('%',''))>=80?'warning':'success'}">{lu}</span></td>
                 <td>{ot}</td><td>{co}</td>
                 <td><span class="badge badge-{Number(fr.replace('%',''))>=95?'success':Number(fr.replace('%',''))>=88?'warning':'critical'}">{fr}</span></td>
-                <td style="color:{ci.startsWith('-')?'#059669':'ci==='+₹0'?'':'#DC2626'}">{ci}</td>
+                <td style="color:{ci.startsWith('-')?'#059669':'ci==='+?0'?'':'#DC2626'}">{ci}</td>
                 <td><span class="badge badge-{ri==='Critical'?'critical':ri==='High'?'warning':ri==='Low'?'success':'info'}">{ri}</span></td>
               </tr>
             )}
@@ -2836,7 +2836,7 @@ function viewCapScenario(name) {
   window.showToast('Loading scenario "' + name + '" details... Line utilization: 82.4%, OEE: 71.8%, Fill Rate: 94.8%.', 'info');
 }
 function compareCapScenario(name) {
-  window.showToast('"' + name + '" vs Baseline: Output +4.2%, Cost -₹3.1L, Utilization 78% vs 72%.', 'success');
+  window.showToast('"' + name + '" vs Baseline: Output +4.2%, Cost -?3.1L, Utilization 78% vs 72%.', 'success');
 }
 function activateCapScenario(btn, name) {
   if (confirm('Set "' + name + '" as the active capacity plan?')) {
@@ -2844,13 +2844,13 @@ function activateCapScenario(btn, name) {
     if (btn) { btn.disabled = true; btn.textContent = 'Active'; }
   }
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Capacity – Scenarios" activeModule="capacity-scenarios" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Capacity ? Scenarios" activeModule="capacity-scenarios" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#059669,#34D399)"><i class="fas fa-sitemap"></i></div>
-        <div><div class="page-title">Capacity — Scenario Builder</div><div class="page-subtitle">Create and compare capacity planning scenarios</div></div>
+        <div><div class="page-title">Capacity ? Scenario Builder</div><div class="page-subtitle">Create and compare capacity planning scenarios</div></div>
       </div>
       <div class="page-header-right">
         <button class="btn btn-primary" onclick="document.getElementById('new-sc').style.display='block'"><i class="fas fa-plus"></i> New Scenario</button>
@@ -2903,13 +2903,13 @@ async function init() {
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right'}}}
   });
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Capacity – Analytics" activeModule="capacity-analytics" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Capacity ? Analytics" activeModule="capacity-analytics" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#22D3EE)"><i class="fas fa-chart-bar"></i></div>
-        <div><div class="page-title">Capacity — Analytics & OEE</div><div class="page-subtitle">Downtime, OEE waterfall, utilization trends and loss analysis</div></div>
+        <div><div class="page-title">Capacity ? Analytics & OEE</div><div class="page-subtitle">Downtime, OEE waterfall, utilization trends and loss analysis</div></div>
       </div>
       <div class="page-header-right">
         <span class="badge badge-live">Live</span>
@@ -2923,7 +2923,7 @@ document.addEventListener('DOMContentLoaded', init);
     <div class="grid-2">
       <div class="card"><div class="card-header"><span class="card-title"><i class="fas fa-pie-chart"></i> Loss Analysis Breakdown</span></div><div class="card-body" style="height:220px"><canvas id="loss-chart"></canvas></div></div>
       <div class="card"><div class="card-header"><span class="card-title"><i class="fas fa-table"></i> Business Impact</span></div><div class="card-body">
-        {[['Annual Savings Potential','₹24.6L','+18%','healthy'],['OTD Improvement','+12%','94.2% achieved','healthy'],['Labour Efficiency','+8%','450 hrs saved/mo','healthy'],['Changeover Reduction','-35 min/shift','Annual: ₹8.4L','warning']].map(([l,v,sub,s]) =>
+        {[['Annual Savings Potential','?24.6L','+18%','healthy'],['OTD Improvement','+12%','94.2% achieved','healthy'],['Labour Efficiency','+8%','450 hrs saved/mo','healthy'],['Changeover Reduction','-35 min/shift','Annual: ?8.4L','warning']].map(([l,v,sub,s]) =>
           <div key={l} style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #F1F5F9">
             <span style="font-size:13px">{l}</span>
             <div style="text-align:right">
@@ -2944,7 +2944,7 @@ async function init() {
   const el = document.getElementById('rca-list');
   const RCA_DATA = [
     {line:'MUM-L2',type:'Over-utilization',severity:'critical',causes:['Peak season demand surge +22%','DEL-L2 scheduled downtime routing excess volume','Shift change delay +15min average'],actions:['Redistribute 15% to MUM-L1','Approve 2hr overtime Sat-Sun','Defer 3 C-class jobs to next week']},
-    {line:'CHN-L1',type:'Changeover Loss',severity:'medium',causes:['Suboptimal flavour run sequence (MANGO→WATER→ORANGE)','No parallel pre-staging of materials','Operators not trained on quick changeover'],actions:['Resequence: WATER→MANGO→ORANGE saves 38min','Implement 2-person changeover team','Schedule SMED training for operators']},
+    {line:'CHN-L1',type:'Changeover Loss',severity:'medium',causes:['Suboptimal flavour run sequence (MANGO?WATER?ORANGE)','No parallel pre-staging of materials','Operators not trained on quick changeover'],actions:['Resequence: WATER?MANGO?ORANGE saves 38min','Implement 2-person changeover team','Schedule SMED training for operators']},
     {line:'DEL-L1',type:'Under-utilization',severity:'medium',causes:['Demand plan shortfall vs forecast (-15%)','SKU rationalisation removed 2 key SKUs','Maintenance window extended by 2hrs'],actions:['Shift overflow volume from KOL-L1','Review demand plan with commercial team','Schedule makeup production on weekend']},
   ];
   el.innerHTML = RCA_DATA.map(r => \`<div class="card" style="margin-bottom:14px">
@@ -2967,13 +2967,13 @@ async function init() {
     </div>
   </div>\`).join('');
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Capacity – Root Cause" activeModule="capacity-rootcause" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Capacity ? Root Cause" activeModule="capacity-rootcause" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#DC2626,#F87171)"><i class="fas fa-search"></i></div>
-        <div><div class="page-title">Capacity — Root Cause Analyzer</div><div class="page-subtitle">Structured root cause analysis with corrective action tracking</div></div>
+        <div><div class="page-title">Capacity ? Root Cause Analyzer</div><div class="page-subtitle">Structured root cause analysis with corrective action tracking</div></div>
       </div>
     </div>
     <div id="rca-list"><div class="spinner"></div></div>
@@ -3168,7 +3168,7 @@ async function init() {
       new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: sm.slice(0,8).map(s => (s.from_sku_name||'').slice(0,10) + '→' + (s.to_sku_name||'').slice(0,8)),
+          labels: sm.slice(0,8).map(s => (s.from_sku_name||'').slice(0,10) + '?' + (s.to_sku_name||'').slice(0,8)),
           datasets: [{ label:'Setup Time (min)', data: sm.slice(0,8).map(s=>s.setup_time_minutes),
             backgroundColor: sm.slice(0,8).map(s => s.setup_time_minutes > 60 ? '#DC2626' : s.setup_time_minutes > 30 ? '#D97706' : '#059669'),
             borderRadius: 4 }]
@@ -3179,13 +3179,13 @@ async function init() {
     }
   }
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing – Gantt Planner" activeModule="seq-gantt" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing ? Gantt Planner" activeModule="seq-gantt" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-bars-staggered"></i></div>
-        <div><div class="page-title">Gantt Planner</div><div class="page-subtitle">Visual 36-hour production schedule · Live job tracking · Changeover analysis</div></div>
+        <div><div class="page-title">Gantt Planner</div><div class="page-subtitle">Visual 36-hour production schedule ? Live job tracking ? Changeover analysis</div></div>
       </div>
       <div class="page-header-right">
         <span class="badge badge-live">Live</span>
@@ -3196,15 +3196,15 @@ document.addEventListener('DOMContentLoaded', init);
     </div>
 
     <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px">
-      <div class="kpi-card"><div class="kpi-label">Total Jobs</div><div class="kpi-value" id="gantt-stat-total">—</div></div>
-      <div class="kpi-card warning"><div class="kpi-label">In Progress</div><div class="kpi-value warning" id="gantt-stat-inprog">—</div></div>
-      <div class="kpi-card critical"><div class="kpi-label">Delayed Jobs</div><div class="kpi-value critical" id="gantt-stat-delayed">—</div></div>
-      <div class="kpi-card"><div class="kpi-label">Avg Delay</div><div class="kpi-value" id="gantt-stat-avgdel">—</div></div>
+      <div class="kpi-card"><div class="kpi-label">Total Jobs</div><div class="kpi-value" id="gantt-stat-total">?</div></div>
+      <div class="kpi-card warning"><div class="kpi-label">In Progress</div><div class="kpi-value warning" id="gantt-stat-inprog">?</div></div>
+      <div class="kpi-card critical"><div class="kpi-label">Delayed Jobs</div><div class="kpi-value critical" id="gantt-stat-delayed">?</div></div>
+      <div class="kpi-card"><div class="kpi-label">Avg Delay</div><div class="kpi-value" id="gantt-stat-avgdel">?</div></div>
     </div>
 
     <div class="card mb-4" style="overflow:hidden">
       <div class="card-header">
-        <span class="card-title"><i class="fas fa-calendar-alt"></i> Production Schedule — 36hr View (Feb 25–26, 2026)</span>
+        <span class="card-title"><i class="fas fa-calendar-alt"></i> Production Schedule ? 36hr View (Feb 25?26, 2026)</span>
         <div style="display:flex;align-items:center;gap:8px">
           {[['in_progress','#2563EB'],['scheduled','#7C3AED'],['pending','#D97706'],['completed','#059669'],['delayed','#DC2626']].map(([s,c]) =>
             <span key={s} style={`background:${c};color:white;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600`}>{s}</span>
@@ -3270,17 +3270,17 @@ async function init() {
       <strong>\${j.job_number}: \${j.sku_name}</strong>
       <span class="badge badge-info">\${j.status}</span>
     </div>
-    <div style="font-size:12px;color:#64748B;margin-top:4px">\${j.line_name||'—'} · Qty: \${j.quantity?.toLocaleString()} cases · Due: \${j.due_date}</div>
+    <div style="font-size:12px;color:#64748B;margin-top:4px">\${j.line_name||'?'} ? Qty: \${j.quantity?.toLocaleString()} cases ? Due: \${j.due_date}</div>
     \${j.delay_minutes > 0 ? '<span class="badge badge-critical" style="font-size:10px;margin-top:4px">+'+j.delay_minutes+'min delay</span>' : '<span class="badge badge-success" style="font-size:10px;margin-top:4px">On Schedule</span>'}
   </div>\`).join('') || '<p class="text-muted text-sm">No jobs currently in progress</p>';
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing – Execution" activeModule="seq-execution" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing ? Execution" activeModule="seq-execution" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-play-circle"></i></div>
-        <div><div class="page-title">Sequencing — Execution Dashboard</div><div class="page-subtitle">Live job execution, schedule adherence and exception management</div></div>
+        <div><div class="page-title">Sequencing ? Execution Dashboard</div><div class="page-subtitle">Live job execution, schedule adherence and exception management</div></div>
       </div>
       <div class="page-header-right"><span class="badge badge-live">Live</span></div>
     </div>
@@ -3300,7 +3300,7 @@ async function init() {
   if (el) el.innerHTML = bns.map(b => \`<div class="alert alert-\${b.severity==='critical'?'critical':'warning'}">
     <i class="fas fa-\${b.severity==='critical'?'times-circle':'exclamation-triangle'}"></i>
     <div>
-      <strong>\${b.line_name} (\${b.line_code})</strong> — \${b.plant_name}
+      <strong>\${b.line_name} (\${b.line_code})</strong> ? \${b.plant_name}
       <span class="badge badge-\${b.severity}" style="margin-left:6px;font-size:10px">\${b.severity.toUpperCase()}</span>
       <div style="font-size:12px;color:#64748B;margin-top:3px">\${b.description}</div>
       <div style="margin-top:8px;display:flex;gap:8px">
@@ -3316,9 +3316,9 @@ async function init() {
     options:{responsive:true,maintainAspectRatio:false,scales:{y:{min:40,max:105,ticks:{callback:v=>v+'%'}}},plugins:{legend:{display:false}}}
   });
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing – Bottleneck" activeModule="seq-bottleneck" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing ? Bottleneck" activeModule="seq-bottleneck" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#DC2626,#F87171)"><i class="fas fa-exclamation-triangle"></i></div>
@@ -3363,7 +3363,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('kpi-grid').innerHTML = kpis.map(k => \`<div class="kpi-card \${k.status}"><div class="kpi-label">\${k.name}</div><div class="kpi-value \${k.status}">\${k.value}</div></div>\`).join('');
 });
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing – AI Copilot" activeModule="seq-copilot" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing ? AI Copilot" activeModule="seq-copilot" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#A855F7)"><i class="fas fa-robot"></i></div>
@@ -3378,10 +3378,10 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="chat-msg assistant">
           Hello Sankar & Vikrant! I'm your AI Scheduling Copilot with access to live production data.<br/><br/>
           I can help with:<br/>
-          • <strong>Schedule analysis</strong> — "Why is Line 3 delayed?"<br/>
-          • <strong>Sequence optimization</strong> — "What's the optimal job sequence for MUM-L1?"<br/>
-          • <strong>Bottleneck resolution</strong> — "How to fix the Mumbai capacity issue?"<br/>
-          • <strong>MRP alerts</strong> — "What materials are at shortage risk?"
+          â€¢ <strong>Schedule analysis</strong> ? "Why is Line 3 delayed?"<br/>
+          â€¢ <strong>Sequence optimization</strong> ? "What's the optimal job sequence for MUM-L1?"<br/>
+          â€¢ <strong>Bottleneck resolution</strong> ? "How to fix the Mumbai capacity issue?"<br/>
+          â€¢ <strong>MRP alerts</strong> ? "What materials are at shortage risk?"
         </div>
       </div>
       <div class="chat-input-area">
@@ -3394,15 +3394,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Remaining sequencing sub-routes
 app.get('/sequencing/rca', (c) => {
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing – RCA" activeModule="seq-rca">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing ? RCA" activeModule="seq-rca">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-search"></i></div>
-        <div><div class="page-title">Sequencing — Root Cause Analysis</div><div class="page-subtitle">Identify root causes of schedule deviations and delays</div></div>
+        <div><div class="page-title">Sequencing ? Root Cause Analysis</div><div class="page-subtitle">Identify root causes of schedule deviations and delays</div></div>
       </div>
     </div>
     <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>3 unresolved delay events this week.</strong> Click on a line below to investigate.</div></div>
-    {[['CHN-L1','Changeover Loss','4.2 hrs lost today','Suboptimal sequence + no pre-staging'],['MUM-L2','Over-utilization','Avg 97% → OT required','Demand surge + DEL-L2 downtime routing'],['KOL-L2','Capacity Limit','2 jobs deferred','Can line at 100% — no flex capacity']].map(([line, type, impact, cause]) =>
+    {[['CHN-L1','Changeover Loss','4.2 hrs lost today','Suboptimal sequence + no pre-staging'],['MUM-L2','Over-utilization','Avg 97% ? OT required','Demand surge + DEL-L2 downtime routing'],['KOL-L2','Capacity Limit','2 jobs deferred','Can line at 100% ? no flex capacity']].map(([line, type, impact, cause]) =>
       <div class="card mb-4" key={line}>
         <div class="card-body">
           <div class="flex items-center gap-2 mb-4">
@@ -3427,7 +3427,7 @@ async function init() {
   if (tbody) tbody.innerHTML = jobs.map((j,i) => \`<tr>
     <td><strong>\${j.job_number}</strong></td>
     <td>\${j.sku_name}</td>
-    <td>\${j.line_name||'—'}</td>
+    <td>\${j.line_name||'?'}</td>
     <td>\${j.quantity?.toLocaleString()}</td>
     <td>\${j.priority}</td>
     <td>\${j.due_date}</td>
@@ -3441,9 +3441,9 @@ async function init() {
   </tr>\`).join('') || '<tr><td colspan="8" style="text-align:center">No jobs</td></tr>';
 }
 function moveJob(id, dir) { window.showToast('Job ' + id + ' sequence adjusted: ' + dir,'info'); }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing – Planner" activeModule="seq-planner" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing ? Planner" activeModule="seq-planner" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-drafting-compass"></i></div>
@@ -3466,7 +3466,7 @@ document.addEventListener('DOMContentLoaded', init);
 })
 
 app.get('/sequencing/scenarios', (c) => {
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing – Scenarios" activeModule="seq-scenarios">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing ? Scenarios" activeModule="seq-scenarios">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#059669,#34D399)"><i class="fas fa-layer-group"></i></div>
@@ -3475,9 +3475,9 @@ app.get('/sequencing/scenarios', (c) => {
       <div class="page-header-right"><button class="btn btn-primary" onclick="addSequencingScenario(this)"><i class="fas fa-plus"></i> New Scenario</button></div>
     </div>
     <div class="grid-3">
-      {[{name:'Base Plan',cost:'₹45,200',lateness:'12%',util:'78.5%',baseline:true},
-        {name:'Cost Optimal',cost:'₹38,900',lateness:'18%',util:'82.3%',baseline:false},
-        {name:'OTD Maximized',cost:'₹52,100',lateness:'3%',util:'75.2%',baseline:false}
+      {[{name:'Base Plan',cost:'?45,200',lateness:'12%',util:'78.5%',baseline:true},
+        {name:'Cost Optimal',cost:'?38,900',lateness:'18%',util:'82.3%',baseline:false},
+        {name:'OTD Maximized',cost:'?52,100',lateness:'3%',util:'75.2%',baseline:false}
       ].map(s =>
         <div class="card" key={s.name}>
           <div class="card-body">
@@ -3524,7 +3524,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing – Analytics" activeModule="seq-analytics" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing ? Analytics" activeModule="seq-analytics" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#22D3EE)"><i class="fas fa-heartbeat"></i></div>
@@ -3547,7 +3547,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <a href="/capacity/analytics" class="btn btn-sm btn-secondary"><i class="fas fa-external-link-alt"></i> Full OEE in Capacity</a>
         </div>
         <div class="card-body">
-          <div class="alert alert-info"><i class="fas fa-info-circle"></i><div>OEE detail (waterfall, trend, downtime root cause) is owned by <strong>Capacity Planning → Analytics & OEE</strong>. Current avg: <strong>74.4%</strong> (target 78%). <a href="/capacity/analytics" style="color:#0284C7;font-weight:600">View Full OEE Analysis →</a></div></div>
+          <div class="alert alert-info"><i class="fas fa-info-circle"></i><div>OEE detail (waterfall, trend, downtime root cause) is owned by <strong>Capacity Planning ? Analytics & OEE</strong>. Current avg: <strong>74.4%</strong> (target 78%). <a href="/capacity/analytics" style="color:#0284C7;font-weight:600">View Full OEE Analysis ?</a></div></div>
           <table class="data-table" style="font-size:12px;margin-top:8px">
             <thead><tr><th>Line</th><th>OEE</th><th>Availability</th><th>Performance</th><th>Quality</th></tr></thead>
             <tbody>
@@ -3654,52 +3654,77 @@ app.get('/mrp', async (c) => {
 app.get('/mrp/dashboard', async (c) => c.redirect('/mrp'))
 
 app.get('/mrp/explosion', async (c) => {
+  const initialRows = MOCK_EXPLOSION
+  const explTableHtml = initialRows.map(e => {
+    const poButton = e.net_requirement > 0
+      ? '<button class="btn btn-sm btn-primary" onclick="raisePOExpl(' + JSON.stringify(String(e.material_name)) + ',' + Number(e.net_requirement) + ')">Raise PO</button>'
+      : ''
+    return '<tr>' +
+      '<td><strong>' + e.job_number + '</strong></td>' +
+      '<td>' + e.sku_name + '</td>' +
+      '<td>' + e.material_code + '</td>' +
+      '<td>' + e.material_name + '</td>' +
+      '<td>' + Number(e.gross_requirement).toLocaleString() + '</td>' +
+      '<td>' + Number(e.current_stock).toLocaleString() + '</td>' +
+      '<td><strong class="' + (e.net_requirement > 0 ? 'critical' : 'healthy') + '">' + Number(e.net_requirement).toLocaleString() + '</strong></td>' +
+      '<td><span class="badge badge-' + (e.status === 'critical' ? 'critical' : e.status === 'shortage' ? 'warning' : 'success') + '">' + e.status + '</span></td>' +
+      '<td>' + (e.lead_time_days || 7) + 'd</td>' +
+      '<td>' + poButton + '</td>' +
+    '</tr>'
+  }).join('')
   const scripts = `
+const runWhenReady = (fn) => { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn); else fn(); };
+const asArray = (v) => Array.isArray(v) ? v : (Array.isArray(v?.rows) ? v.rows : []);
+const fallbackRows = ${JSON.stringify(MOCK_EXPLOSION)};
 async function init() {
-  const [exploRes, skuRes] = await Promise.allSettled([axios.get('/api/mrp/explosion'), axios.get('/api/skus')]);
-  const explRaw = exploRes.status==='fulfilled' ? exploRes.value.data : [];
-  const skuRaw = skuRes.status==='fulfilled' ? skuRes.value.data : [];
-  const expl = Array.isArray(explRaw) ? explRaw : (Array.isArray(explRaw?.rows) ? explRaw.rows : []);
-  const skus = Array.isArray(skuRaw) ? skuRaw : (Array.isArray(skuRaw?.data) ? skuRaw.data : []);
-  const skuSel = document.getElementById('sku-select');
-  if (skuSel) skuSel.innerHTML = '<option value="">All SKUs</option>' + skus.map(s => \`<option value="\${s.id}">\${s.sku_name}</option>\`).join('');
-  renderExpl(expl);
+  try {
+    const [exploRes, skuRes] = await Promise.allSettled([axios.get('/api/mrp/explosion'), axios.get('/api/skus')]);
+    const explRaw = exploRes.status === 'fulfilled' ? exploRes.value.data : [];
+    const skuRaw = skuRes.status === 'fulfilled' ? skuRes.value.data : [];
+    const expl = asArray(explRaw).length ? asArray(explRaw) : fallbackRows;
+    const skus = asArray(skuRaw);
+    const skuSel = document.getElementById('sku-select');
+    if (skuSel) skuSel.innerHTML = '<option value="">All SKUs</option>' + skus.map(s => '<option value="' + s.id + '">' + s.sku_name + '</option>').join('');
+    renderExpl(expl);
+  } catch (e) {
+    renderExpl(fallbackRows);
+  }
 }
 function renderExpl(expl) {
   const tbody = document.getElementById('expl-table');
   if (!tbody) return;
   const list = Array.isArray(expl) ? expl : [];
-  tbody.innerHTML = list.map(e => \`<tr>
-    <td><strong>\${e.job_number}</strong></td>
-    <td>\${e.sku_name}</td>
-    <td>\${e.material_code}</td>
-    <td>\${e.material_name}</td>
-    <td>\${e.gross_requirement?.toLocaleString()}</td>
-    <td>\${e.current_stock?.toLocaleString()}</td>
-    <td><strong class="\${e.net_requirement>0?'critical':'healthy'}">\${e.net_requirement?.toLocaleString()}</strong></td>
-    <td><span class="badge badge-\${e.status==='critical'?'critical':e.status==='shortage'?'warning':'success'}">\${e.status}</span></td>
-    <td>\${e.lead_time_days||7}d</td>
-    <td>\${e.net_requirement>0?'<button class="btn btn-sm btn-primary" onclick="raisePOExpl(\''+e.material_name+'\','+e.net_requirement+')">Raise PO</button>':''}</td>
-  </tr>\`).join('') || '<tr><td colspan="10" style="text-align:center;color:#64748B">No explosion data available. Run MRP or review source data.</td></tr>';
+  tbody.innerHTML = list.map(e => '<tr>' +
+    '<td><strong>' + e.job_number + '</strong></td>' +
+    '<td>' + e.sku_name + '</td>' +
+    '<td>' + e.material_code + '</td>' +
+    '<td>' + e.material_name + '</td>' +
+    '<td>' + (e.gross_requirement?.toLocaleString() || '') + '</td>' +
+    '<td>' + (e.current_stock?.toLocaleString() || '') + '</td>' +
+    '<td><strong class="' + (e.net_requirement > 0 ? 'critical' : 'healthy') + '">' + (e.net_requirement?.toLocaleString() || '') + '</strong></td>' +
+    '<td><span class="badge badge-' + (e.status === 'critical' ? 'critical' : e.status === 'shortage' ? 'warning' : 'success') + '">' + e.status + '</span></td>' +
+    '<td>' + (e.lead_time_days || 7) + 'd</td>' +
+    '<td>' + (e.net_requirement > 0 ? '<button class="btn btn-sm btn-primary" onclick="raisePOExpl(' + JSON.stringify(String(e.material_name)) + ',' + Number(e.net_requirement) + ')">Raise PO</button>' : '') + '</td>' +
+  '</tr>').join('') || '<tr><td colspan="10" style="text-align:center;color:#64748B">No explosion data available. Run MRP or review source data.</td></tr>';
 }
 function raisePOExpl(material, qty) {
-  const poNum = 'PO-EXP-' + String(Math.floor(Math.random()*9000)+1000);
+  const poNum = 'PO-EXP-' + String(Math.floor(Math.random() * 9000) + 1000);
   if (window.showToast) window.showToast('PO ' + poNum + ' raised for ' + material + ': ' + Number(qty).toLocaleString() + ' units. Draft - pending approval.', 'success');
 }
 function recalcExplode(btn) {
   btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating...';
-  axios.get('/api/mrp/explosion').then(r => { renderExpl(Array.isArray(r.data) ? r.data : (Array.isArray(r.data?.rows) ? r.data.rows : [])); }).catch(()=>{ renderExpl([]); }).finally(() => {
+  axios.get('/api/mrp/explosion').then(r => { renderExpl(asArray(r.data).length ? asArray(r.data) : fallbackRows); }).catch(() => { renderExpl(fallbackRows); }).finally(() => {
     btn.disabled = false; btn.innerHTML = '<i class="fas fa-play"></i> Recalculate';
     if (window.showToast) window.showToast('MRP Explosion recalculated. Net requirements updated.', 'success');
   });
 }
-document.addEventListener('DOMContentLoaded', init);
+runWhenReady(init);
   `.trim()
   const _u = getUser(c); return c.html(<Layout user={_u} title="MRP Explosion" activeModule="mrp-explosion" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#22D3EE)"><i class="fas fa-project-diagram"></i></div>
-        <div><div class="page-title">MRP Explosion — Net Requirements</div><div class="page-subtitle">Gross requirements → Stock → Net requirements → PO triggers</div></div>
+        <div class="page-subtitle">Gross requirements → Stock → Net requirements → PO triggers</div>
       </div>
       <div class="page-header-right">
         <select class="form-input form-select" id="sku-select" style="width:200px"><option>All SKUs</option></select>
@@ -3710,7 +3735,7 @@ document.addEventListener('DOMContentLoaded', init);
       <div class="card-body compact">
         <table class="data-table">
           <thead><tr><th>Job</th><th>SKU</th><th>Material Code</th><th>Material</th><th>Gross Req.</th><th>On Hand</th><th>Net Req.</th><th>Status</th><th>Lead Time</th><th>Action</th></tr></thead>
-          <tbody id="expl-table"><tr><td colspan={10} style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
+          <tbody id="expl-table" dangerouslySetInnerHTML={{ __html: explTableHtml }}></tbody>
         </table>
       </div>
     </div>
@@ -3718,52 +3743,72 @@ document.addEventListener('DOMContentLoaded', init);
 })
 
 app.get('/mrp/bom', async (c) => {
+  const initialRows = MOCK_BOM
+  const bomTableHtml = initialRows.map(b => {
+    return '<tr>' +
+      '<td><strong>' + b.sku_name + '</strong></td>' +
+      '<td>' + b.material_code + '</td>' +
+      '<td>' + b.material_name + '</td>' +
+      '<td>' + b.quantity_per_unit + ' ' + b.unit_of_measure + '</td>' +
+      '<td>' + b.waste_percentage + '%</td>' +
+      '<td>' + (b.version || 'v1') + '</td>' +
+      '<td><span class="badge badge-' + (b.current_stock <= b.reorder_point ? 'critical' : 'success') + '">' + (b.current_stock <= b.reorder_point ? 'Below ROP' : 'OK') + '</span></td>' +
+      '<td><button class="btn btn-sm btn-secondary" onclick="window.showToast(\'BOM row moved to draft edit mode\',\'info\')">Edit</button></td>' +
+    '</tr>'
+  }).join('')
   const scripts = `
+const runWhenReady = (fn) => { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn); else fn(); };
+const asArray = (v) => Array.isArray(v) ? v : (Array.isArray(v?.rows) ? v.rows : []);
+const fallbackRows = ${JSON.stringify(MOCK_BOM)};
 async function init() {
-  const [bomRes, skuRes] = await Promise.allSettled([axios.get('/api/mrp/bom'), axios.get('/api/skus')]);
-  const bom = bomRes.status==='fulfilled' ? bomRes.value.data : [];
-  const skus = skuRes.status==='fulfilled' ? skuRes.value.data : [];
-  const sel = document.getElementById('sku-filter');
-  if (sel) sel.innerHTML = '<option value="">All SKUs</option>' + skus.map(s => \`<option value="\${s.id}">\${s.sku_name}</option>\`).join('');
-  renderBOM(bom);
+  try {
+    const [bomRes, skuRes] = await Promise.allSettled([axios.get('/api/mrp/bom'), axios.get('/api/skus')]);
+    const bom = bomRes.status === 'fulfilled' ? bomRes.value.data : [];
+    const skus = skuRes.status === 'fulfilled' ? skuRes.value.data : [];
+    const sel = document.getElementById('sku-filter');
+    if (sel) sel.innerHTML = '<option value="">All SKUs</option>' + skus.map(s => '<option value="' + s.id + '">' + s.sku_name + '</option>').join('');
+    renderBOM(asArray(bom).length ? asArray(bom) : fallbackRows);
+  } catch (e) {
+    renderBOM(fallbackRows);
+  }
 }
 function renderBOM(bom) {
   const tbody = document.getElementById('bom-table');
-  tbody.innerHTML = bom.map(b => \`<tr>
-    <td><strong>\${b.sku_name}</strong></td>
-    <td>\${b.material_code}</td>
-    <td>\${b.material_name}</td>
-    <td>\${b.quantity_per_unit} \${b.unit_of_measure}</td>
-    <td>\${b.waste_percentage}%</td>
-    <td>\${b.version||'v1'}</td>
-    <td><span class="badge badge-\${b.current_stock<=b.reorder_point?'critical':'success'}">\${b.current_stock<=b.reorder_point?'Below ROP':'OK'}</span></td>
-    <td><button class="btn btn-sm btn-secondary" onclick="window.showToast(\'BOM row moved to draft edit mode\',\'info\')">Edit</button></td>
-  </tr>\`).join('') || '<tr><td colspan="8" style="text-align:center">No BOM data</td></tr>';
+  if (!tbody) return;
+  const rows = Array.isArray(bom) ? bom : [];
+  tbody.innerHTML = rows.map(b => '<tr>' +
+    '<td><strong>' + b.sku_name + '</strong></td>' +
+    '<td>' + b.material_code + '</td>' +
+    '<td>' + b.material_name + '</td>' +
+    '<td>' + b.quantity_per_unit + ' ' + b.unit_of_measure + '</td>' +
+    '<td>' + b.waste_percentage + '%</td>' +
+    '<td>' + (b.version || 'v1') + '</td>' +
+    '<td><span class="badge badge-' + (b.current_stock <= b.reorder_point ? 'critical' : 'success') + '">' + (b.current_stock <= b.reorder_point ? 'Below ROP' : 'OK') + '</span></td>' +
+    '<td><button class="btn btn-sm btn-secondary" onclick="window.showToast(\'BOM row moved to draft edit mode\',\'info\')">Edit</button></td>' +
+  '</tr>').join('') || '<tr><td colspan="8" style="text-align:center">No BOM data</td></tr>';
 }
 async function filterBOM() {
   const skuId = document.getElementById('sku-filter').value;
-  const url = skuId ? '/api/mrp/bom?sku_id='+skuId : '/api/mrp/bom';
-  const bom = await axios.get(url).then(r=>r.data).catch(()=>[]);
-  renderBOM(bom);
+  const url = skuId ? '/api/mrp/bom?sku_id=' + skuId : '/api/mrp/bom';
+  const bom = await axios.get(url).then(r => r.data).catch(() => []);
+  renderBOM(asArray(bom).length ? asArray(bom) : fallbackRows);
 }
 function addBOMComponent() {
   const sku = prompt('SKU Name (e.g., PET 500ml Regular):') || 'PET 500ml Regular';
   const material = prompt('Material Name (e.g., PET Resin):') || 'PET Resin';
   const qty = prompt('Quantity per unit (e.g., 0.025):') || '0.025';
   const waste = prompt('Waste % (e.g., 2.5):') || '2.5';
-  if (sku && material) {
-    const tbody = document.getElementById('bom-table');
-    if (tbody) {
-      const tr = document.createElement('tr');
-      tr.innerHTML = '<td><strong>' + sku + '</strong></td><td>MAT-NEW-' + Math.floor(Math.random()*900+100) + '</td><td>' + material + '</td><td>' + qty + ' kg</td><td>' + waste + '%</td><td>v1</td><td><span class="badge badge-success">OK</span></td><td><button class="btn btn-sm btn-secondary" onclick="window.showToast(\'BOM row moved to draft edit mode\',\'info\')">Edit</button></td>';
-      tbody.insertBefore(tr, tbody.firstChild);
-      if (window.showToast) window.showToast('BOM component added: ' + material + ' for ' + sku + '. Saved to draft — approve to activate.', 'success');
-    }
+  const tbody = document.getElementById('bom-table');
+  if (sku && material && tbody) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td><strong>' + sku + '</strong></td><td>MAT-NEW-' + Math.floor(Math.random() * 900 + 100) + '</td><td>' + material + '</td><td>' + qty + ' kg</td><td>' + waste + '%</td><td>v1</td><td><span class="badge badge-success">OK</span></td><td><button class="btn btn-sm btn-secondary" onclick="window.showToast(\'BOM row moved to draft edit mode\',\'info\')">Edit</button></td>';
+    tbody.insertBefore(tr, tbody.firstChild);
+    if (window.showToast) window.showToast('BOM component added: ' + material + ' for ' + sku + '. Saved to draft ? approve to activate.', 'success');
   }
 }
-document.addEventListener('DOMContentLoaded', init);
+runWhenReady(init);
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="MRP – BOM" activeModule="mrp-bom" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="MRP ? BOM" activeModule="mrp-bom" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#22D3EE)"><i class="fas fa-sitemap"></i></div>
@@ -3778,7 +3823,7 @@ document.addEventListener('DOMContentLoaded', init);
       <div class="card-body compact">
         <table class="data-table">
           <thead><tr><th>SKU</th><th>Material Code</th><th>Material</th><th>Qty/Unit</th><th>Waste%</th><th>Version</th><th>Stock Status</th><th>Action</th></tr></thead>
-          <tbody id="bom-table"><tr><td colspan={8} style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
+          <tbody id="bom-table" dangerouslySetInnerHTML={{ __html: bomTableHtml }}></tbody>
         </table>
       </div>
     </div>
@@ -3786,1253 +3831,53 @@ document.addEventListener('DOMContentLoaded', init);
 })
 
 app.get('/mrp/purchase-orders', async (c) => {
+  const initialRows = mrpPurchaseOrders
+  const poTableHtml = initialRows.map(p => {
+    const poNum = String(p.id).startsWith('PO-') ? String(p.id) : 'PO-' + String(p.id).padStart(4, '0')
+    const statusBadge = p.status === 'Confirmed' || p.status === 'approved' ? 'success' : p.status === 'Planned' || p.status === 'draft' ? 'warning' : 'info'
+    const approveBtn = p.status === 'Planned' || p.status === 'draft' ? '<button class="btn btn-sm btn-success" onclick="approvePO(this)">Approve</button>' : ''
+    return '<tr>' +
+      '<td><strong>' + poNum + '</strong></td>' +
+      '<td>' + (p.material_name || p.rmName || p.rmSKU || 'Material') + '</td>' +
+      '<td>' + (p.supplier_name || p.supplier || 'Supplier') + '</td>' +
+      '<td>' + Number(p.planned_qty ?? p.qty ?? 0).toLocaleString() + ' units</td>' +
+      '<td>₹' + ((Number(p.planned_cost ?? p.cost ?? 0) / 100000).toFixed(1)) + 'L</td>' +
+      '<td>' + (p.delivery_date || p.expectedDelivery || p.period || '?') + '</td>' +
+      '<td><span class="badge badge-' + statusBadge + '">' + p.status + '</span></td>' +
+      '<td><div style="display:flex;gap:6px">' + approveBtn + '<button class="btn btn-sm btn-secondary" onclick="viewProcPO(' + JSON.stringify(poNum) + ')">View</button></div></td>' +
+    '</tr>'
+  }).join('')
   const scripts = `
+const runWhenReady = (fn) => { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn); else fn(); };
+const asArray = (v) => Array.isArray(v) ? v : (Array.isArray(v?.rows) ? v.rows : []);
+const fallbackRows = ${JSON.stringify(mrpPurchaseOrders)};
 async function init() {
-  const plans = await axios.get('/api/procurement/plans').then(r=>r.data).catch(()=>[]);
-  const tbody = document.getElementById('po-table');
-  if (tbody) tbody.innerHTML = plans.map(p => \`<tr>
-    <td><strong>PO-\${String(p.id).padStart(4,'0')}</strong></td>
-    <td>\${p.material_name}</td>
-    <td>\${p.supplier_name}</td>
-    <td>\${p.planned_qty?.toLocaleString()} units</td>
-    <td>₹\${(p.planned_cost/100000).toFixed(1)}L</td>
-    <td>\${p.delivery_date||p.period}</td>
-    <td><span class="badge badge-\${p.status==='approved'?'success':p.status==='draft'?'warning':'info'}">\${p.status}</span></td>
-    <td><div style="display:flex;gap:6px">
-      \${p.status==='draft'?'<button class="btn btn-sm btn-success" onclick="approvePO(this)">Approve</button>':''}
-      <button class="btn btn-sm btn-secondary" onclick="window.showToast(\'Opening PO details\',\'info\')">View</button>
-    </div></td>
-  </tr>\`).join('') || '<tr><td colspan="8" style="text-align:center">No POs</td></tr>';
-}
-function openCreatePOModal() {
-  const mat = prompt('Material name (e.g., PET Resin 500ml):') || 'PET Resin 500ml';
-  const qty = prompt('Quantity (units):') || '50000';
-  const supplier = prompt('Supplier name:') || 'PetroPlastics Ltd';
-  if (mat && qty) {
-    const poNum = 'PO-' + new Date().toISOString().slice(2,10).replace(/-/g,'') + '-' + String(Math.floor(Math.random()*900)+100);
-    if (window.showToast) window.showToast('PO ' + poNum + ' created: ' + mat + ' x ' + Number(qty).toLocaleString() + ' units from ' + supplier + '. Status: Draft — awaiting approval.', 'success');
-    // Append row to table
-    const tbody = document.getElementById('po-table');
-    if (tbody && tbody.innerHTML.includes('No POs') === false) {
-      const tr = document.createElement('tr');
-      tr.innerHTML = '<td><strong>' + poNum + '</strong></td><td>' + mat + '</td><td>' + supplier + '</td><td>' + Number(qty).toLocaleString() + ' units</td><td>₹' + (Number(qty)*0.00018).toFixed(1) + 'L</td><td>' + new Date(Date.now()+7*86400000).toISOString().slice(0,10) + '</td><td><span class="badge badge-warning">draft</span></td><td><div style="display:flex;gap:6px"><button class="btn btn-sm btn-success" onclick="approvePO(this)">Approve</button><button class="btn btn-sm btn-secondary" onclick="window.showToast(\'Opening PO details\',\'info\')">View</button></div></td>';
-      tbody.insertBefore(tr, tbody.firstChild);
-    }
-  }
-}
-function approvePO(btn) {
-  const row = btn.closest('tr');
-  const poNum = row ? row.cells[0].textContent.trim() : 'PO';
-  btn.remove();
-  if (row) row.cells[6].innerHTML = '<span class="badge badge-success">approved</span>';
-  if (window.showToast) window.showToast(poNum + ' approved and sent to supplier. ERP updated.', 'success');
-}
-document.addEventListener('DOMContentLoaded', init);
-  `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="MRP – Purchase Orders" activeModule="mrp-po" scripts={scripts}>
-    <div class="page-header">
-      <div class="page-header-left">
-        <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#22D3EE)"><i class="fas fa-file-invoice"></i></div>
-        <div><div class="page-title">Purchase Orders</div><div class="page-subtitle">PO lifecycle: Draft → Approved → Sent → Confirmed → Received</div></div>
-      </div>
-      <div class="page-header-right">
-        <button class="btn btn-primary" onclick="openCreatePOModal()"><i class="fas fa-plus"></i> Create PO</button>
-        <button class="btn btn-secondary" onclick="location.href='/api/mrp/export/purchase-orders'"><i class="fas fa-download"></i> Export</button>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-body compact">
-        <table class="data-table">
-          <thead><tr><th>PO Number</th><th>Material</th><th>Supplier</th><th>Qty</th><th>Value</th><th>Delivery</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody id="po-table"><tr><td colspan={8} style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
-        </table>
-      </div>
-    </div>
-  </Layout>)
-})
-
-app.get('/mrp/shortage-alerts', async (c) => {
-  const scripts = `
-async function init() {
-  const alerts = await axios.get('/api/mrp/alerts').then(r=>r.data).catch(()=>[]);
-  const el = document.getElementById('alerts-list');
-  el.innerHTML = alerts.map(a => \`<div class="alert alert-\${a.severity==='critical'?'critical':a.severity==='high'?'critical':'warning'}" style="margin-bottom:12px">
-    <i class="fas fa-\${a.severity==='critical'?'times-circle':'exclamation-triangle'}"></i>
-    <div style="flex:1">
-      <div class="flex items-center justify-between">
-        <strong>\${a.alert_type}</strong>
-        <span class="badge badge-\${a.severity}" style="font-size:10px">\${a.severity.toUpperCase()}</span>
-      </div>
-      <div style="margin-top:4px">\${a.message}</div>
-      \${a.material_name ? '<div style="font-size:11px;color:#64748B;margin-top:3px">Material: '+a.material_name+'</div>' : ''}
-      \${a.sku_name ? '<div style="font-size:11px;color:#64748B">SKU: '+a.sku_name+'</div>' : ''}
-      <div style="margin-top:8px;padding:8px;background:rgba(0,0,0,0.04);border-radius:6px;font-size:12px">
-        <strong>Recommended Action:</strong> \${a.recommended_action}
-      </div>
-      <div style="margin-top:8px;display:flex;gap:8px">
-        <button class="btn btn-sm btn-primary" onclick="takeAlertAction(this,'\${a.id}','\${a.material_name||a.sku_name||'item'}')">Take Action</button>
-        <button class="btn btn-sm btn-secondary" onclick="dismissAlert(this,'\${a.id}')">Dismiss</button>
-      </div>
-    </div>
-  </div>\`).join('') || '<div class="alert alert-success"><i class="fas fa-check-circle"></i><div>No open shortage alerts.</div></div>';
-}
-function takeAlertAction(btn, id, material) {
-  btn.innerHTML = '<i class="fas fa-check"></i> Action Logged';
-  btn.disabled = true; btn.className = 'btn btn-sm btn-success';
-  const sibBtn = btn.nextElementSibling;
-  if (sibBtn) sibBtn.style.display = 'none';
-  if (window.showToast) window.showToast('Action logged for alert on ' + material + '. Assigned to procurement team. Expected resolution: 48 hrs.', 'success');
-}
-function dismissAlert(btn, id) {
-  const alertEl = btn.closest('.alert');
-  if (alertEl) { alertEl.style.opacity = '0.4'; alertEl.style.pointerEvents = 'none'; }
-  if (window.showToast) window.showToast('Alert dismissed. Acknowledged in system.', 'info');
-}
-document.addEventListener('DOMContentLoaded', init);
-  `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="MRP – Shortage Alerts" activeModule="mrp-alerts" scripts={scripts}>
-    <div class="page-header">
-      <div class="page-header-left">
-        <div class="page-icon" style="background:linear-gradient(135deg,#DC2626,#F87171)"><i class="fas fa-bell"></i></div>
-        <div><div class="page-title">Shortage Alerts</div><div class="page-subtitle">Critical material shortages requiring immediate action</div></div>
-      </div>
-      <div class="page-header-right"><span class="badge badge-live">Live</span></div>
-    </div>
-    <div id="alerts-list"><div class="spinner"></div></div>
-  </Layout>)
-})
-
-app.get('/mrp/analytics', (c) => {
-  const scripts = `
-function filterSKUTable(query) {
-  const q = String(query || '').trim().toLowerCase();
-  const rows = document.querySelectorAll('#sku-master-table tbody tr');
-  rows.forEach(row => {
-    row.style.display = !q || row.textContent.toLowerCase().includes(q) ? '' : 'none';
-  });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  new Chart(document.getElementById('coverage-chart'), {
-    type:'bar',data:{labels:['PET Resin','Mango Conc.','Orange Conc.','HDPE Cap','Label Film','Secondary Carton'],
-      datasets:[{label:'Days of Coverage',data:[22.5,12.9,5.5,28.3,15.0,21.3],backgroundColor:data=>[22.5,12.9,5.5,28.3,15.0,21.3].map(v=>v<10?'#DC2626':v<15?'#D97706':'#059669')}]},
-    options:{responsive:true,maintainAspectRatio:false,scales:{y:{title:{display:true,text:'Days'}}},plugins:{legend:{display:false}}}
-  });
-});
-  `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="MRP Analytics" activeModule="mrp-analytics" scripts={scripts}>
-    <div class="page-header">
-      <div class="page-header-left">
-        <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#22D3EE)"><i class="fas fa-chart-line"></i></div>
-        <div><div class="page-title">MRP Analytics</div><div class="page-subtitle">Material coverage, procurement performance, supplier reliability</div></div>
-      </div>
-    </div>
-    <div class="card"><div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> Material Coverage Days</span></div><div class="card-body" style="height:250px"><canvas id="coverage-chart"></canvas></div></div>
-  </Layout>)
-})
-
-// ── Optimization Workbench (new consolidated page) ───────────────────────────
-app.get('/mrp/optimization-workbench', async (c) => {
-  const scripts = `
-// ── Workbench state ──────────────────────────────────────────
-let wbState = {
-  objectives: [], constraints: {}, scenarios: [], optResults: null,
-  charts: { radar: null, donut: null, scAvail: null, scCost: null, scInv: null, scSvc: null }
-};
-let wbCurrentTab = 'objectives';
-
-// ── Tab switcher ─────────────────────────────────────────────
-function switchWbTab(tab) {
-  wbCurrentTab = tab;
-  document.querySelectorAll('.wb-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-  document.querySelectorAll('.wb-panel').forEach(p => p.style.display = p.dataset.panel === tab ? 'block' : 'none');
-  if (tab === 'optresults' && !wbState.optResults) runOptimization();
-  if (tab === 'scenarios') renderScenarioCharts();
-}
-
-// ── Load objectives ──────────────────────────────────────────
-async function loadObjectives() {
-  const res = await axios.get('/api/mrp/objectives').catch(() => ({data:[]}));
-  wbState.objectives = res.data;
-  const grid = document.getElementById('wb-obj-grid');
-  if (!grid) return;
-  const colors = ['#2563EB','#7C3AED','#059669','#D97706','#DC2626'];
-  grid.innerHTML = wbState.objectives.map((o, i) => \`
-    <div style="background:#fff;border-radius:12px;padding:20px;border:1px solid #E2E8F0;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-        <div style="width:36px;height:36px;border-radius:50%;background:\${colors[i%colors.length]};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.875rem">\${i+1}</div>
-        <div>
-          <div style="font-weight:700;color:#1E293B;font-size:0.9rem">\${o.name}</div>
-          <div style="font-size:0.75rem;color:#64748B">\${o.category}</div>
-        </div>
-        <span class="badge badge-\${o.status==='Below Target'?'critical':o.status==='Not Started'?'warning':'success'}" style="margin-left:auto">\${o.status}</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:0.82rem">
-        <span style="color:#64748B">Current: <strong>\${o.current}</strong></span>
-        <span style="color:#059669">Target: <strong>\${o.target}</strong></span>
-      </div>
-      <div style="background:#F1F5F9;border-radius:6px;height:6px;overflow:hidden">
-        <div style="height:100%;border-radius:6px;background:\${colors[i%colors.length]};width:\${o.weight*3.33}%"></div>
-      </div>
-      <div style="font-size:11px;color:#94A3B8;margin-top:6px">Weight: \${o.weight}%</div>
-    </div>
-  \`).join('');
-}
-
-// ── Load constraints ──────────────────────────────────────────
-async function loadConstraints() {
-  const res = await axios.get('/api/mrp/constraints').catch(() => ({data:{}}));
-  wbState.constraints = res.data;
-  // Capacity table
-  const capTbody = document.getElementById('wb-cap-table');
-  if (capTbody && res.data.capacity) {
-    capTbody.innerHTML = res.data.capacity.map(c => \`<tr>
-      <td><strong>\${c.line}</strong></td>
-      <td>\${c.plant}</td>
-      <td>\${c.shiftCapacity.toLocaleString()}</td>
-      <td>\${c.shiftsPerWeek}</td>
-      <td>\${c.maxWeekly.toLocaleString()}</td>
-      <td><span class="badge badge-\${c.utilization>=90?'critical':c.utilization>=80?'warning':'success'}">\${c.utilization}%</span></td>
-    </tr>\`).join('');
-  }
-  // Lead time table
-  const ltTbody = document.getElementById('wb-lt-table');
-  if (ltTbody && res.data.leadTime) {
-    ltTbody.innerHTML = res.data.leadTime.map(l => \`<tr>
-      <td><strong>\${l.supplier}</strong></td>
-      <td>\${l.material}</td>
-      <td>\${l.minDays}d</td>
-      <td>\${l.maxDays}d</td>
-      <td><strong>\${l.avgDays}d</strong></td>
-      <td style="color:#64748B">\${l.variability}</td>
-    </tr>\`).join('');
-  }
-  // Supplier table
-  const supTbody = document.getElementById('wb-sup-table');
-  if (supTbody && res.data.supplier) {
-    supTbody.innerHTML = res.data.supplier.map(s => \`<tr>
-      <td><strong>\${s.supplier}</strong></td>
-      <td>\${s.name}</td>
-      <td><span class="badge badge-\${s.reliability>=95?'success':s.reliability>=90?'warning':'critical'}">\${s.reliability}%</span></td>
-      <td>\${s.moq.toLocaleString()} \${s.unit}</td>
-      <td>\${s.maxMonthly.toLocaleString()}</td>
-      <td><span class="badge badge-\${s.contractStatus==='Active'?'success':s.contractStatus==='Under Review'?'warning':'info'}">\${s.contractStatus}</span></td>
-    </tr>\`).join('');
-  }
-  // Inventory policy table
-  const invTbody = document.getElementById('wb-inv-table');
-  if (invTbody && res.data.inventoryPolicy) {
-    invTbody.innerHTML = res.data.inventoryPolicy.map(p => \`<tr>
-      <td><strong>\${p.sku}</strong></td>
-      <td><span class="badge badge-info">\${p.method}</span></td>
-      <td>\${p.minStock.toLocaleString()}</td>
-      <td>\${p.maxStock.toLocaleString()}</td>
-      <td>\${p.reorderPoint.toLocaleString()}</td>
-      <td>\${p.safetyStock.toLocaleString()}</td>
-    </tr>\`).join('');
-  }
-}
-
-// ── Run Optimization ──────────────────────────────────────────
-async function runOptimization() {
-  const btn = document.getElementById('wb-opt-btn');
-  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Optimizing...'; }
-  const res = await axios.post('/api/mrp/optimize', { scenarioId: 'S2' }).catch(() => ({data:{}}));
-  wbState.optResults = res.data;
-  if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-magic"></i> Run Optimization'; }
-  renderOptResults();
-}
-
-function renderOptResults() {
-  const r = wbState.optResults;
-  if (!r || !r.scenario) return;
-  const sc = r.scenario;
-  // KPI cards
-  const kpiEl = document.getElementById('wb-opt-kpis');
-  if (kpiEl) {
-    const kpis = [
-      { label: 'Material Availability', val: sc.kpis.materialAvailability + '%', color: '#059669', icon: 'fa-boxes', base: '94.2%' },
-      { label: 'Service Level', val: sc.kpis.serviceLevel + '%', color: '#2563EB', icon: 'fa-star', base: '93.5%' },
-      { label: 'Plan Adherence', val: sc.kpis.planAdherence + '%', color: '#7C3AED', icon: 'fa-check-circle', base: '88.5%' },
-      { label: 'Inventory Reduction', val: sc.kpis.inventoryReduction + '%', color: '#D97706', icon: 'fa-warehouse', base: '0%' },
-      { label: 'Cost Reduction', val: sc.kpis.costReduction + '%', color: '#DC2626', icon: 'fa-rupee-sign', base: '0%' },
-    ];
-    kpiEl.innerHTML = kpis.map(k => \`<div style="background:#fff;border-radius:10px;padding:16px;border:1px solid #E2E8F0;text-align:center">
-      <i class="fas \${k.icon}" style="color:\${k.color};font-size:1.4rem;margin-bottom:8px;display:block"></i>
-      <div style="font-size:1.5rem;font-weight:800;color:\${k.color}">\${k.val}</div>
-      <div style="font-size:0.75rem;font-weight:600;color:#374151;margin-top:2px">\${k.label}</div>
-      <div style="font-size:0.7rem;color:#94A3B8;margin-top:4px">Baseline: \${k.base}</div>
-    </div>\`).join('');
-  }
-  // Recommendations
-  const recEl = document.getElementById('wb-recommendations');
-  if (recEl && r.recommendations) {
-    const pColors = { High: '#DC2626', Medium: '#D97706', Low: '#059669' };
-    recEl.innerHTML = r.recommendations.map((rec, i) => \`
-      <div style="display:flex;align-items:flex-start;gap:14px;padding:16px;background:#fff;border-radius:10px;border:1px solid #E2E8F0;border-left:4px solid \${pColors[rec.priority]||'#64748B'}">
-        <div style="width:28px;height:28px;border-radius:50%;background:\${pColors[rec.priority]||'#64748B'};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;flex-shrink:0">\${i+1}</div>
-        <div style="flex:1">
-          <div style="font-weight:600;color:#1E293B;font-size:0.875rem">\${rec.action}</div>
-          <div style="font-size:0.78rem;color:#059669;margin-top:4px"><i class="fas fa-arrow-up"></i> \${rec.impact}</div>
-        </div>
-        <span class="badge badge-\${rec.priority==='High'?'critical':rec.priority==='Medium'?'warning':'success'}">\${rec.priority}</span>
-      </div>
-    \`).join('');
-  }
-  // Render radar chart
-  renderRadarChart(sc);
-}
-
-function renderRadarChart(sc) {
-  const ctx = document.getElementById('wb-radar-chart');
-  if (!ctx) return;
-  if (wbState.charts.radar) wbState.charts.radar.destroy();
-  wbState.charts.radar = new Chart(ctx, {
-    type: 'radar',
-    data: {
-      labels: ['Material Avail.', 'Service Level', 'Plan Adherence', 'Supplier OTIF', 'Cost Efficiency'],
-      datasets: [
-        { label: 'Baseline', data: [94.2, 93.5, 88.5, 89.0, 85], borderColor: '#94A3B8', backgroundColor: 'rgba(148,163,184,0.1)', borderWidth: 2, pointRadius: 4 },
-        { label: sc.name, data: [sc.kpis.materialAvailability, sc.kpis.serviceLevel, sc.kpis.planAdherence, sc.kpis.supplierOTIF, (100-sc.kpis.shortage)], borderColor: '#7C3AED', backgroundColor: 'rgba(124,58,237,0.1)', borderWidth: 2.5, pointRadius: 5 }
-      ]
-    },
-    options: { responsive: true, maintainAspectRatio: false, scales: { r: { beginAtZero: false, min: 70, max: 100, ticks: { font: { size: 10 } }, grid: { color: 'rgba(0,0,0,0.08)' } } }, plugins: { legend: { position: 'top', labels: { font: { size: 11 }, boxWidth: 12 } } } }
-  });
-}
-
-// ── Scenario Comparison ──────────────────────────────────────
-async function loadScenarios() {
-  const res = await axios.get('/api/mrp/scenarios').catch(() => ({data:[]}));
-  wbState.scenarios = res.data;
-  // Cards
-  const cardsEl = document.getElementById('wb-scenario-cards');
-  if (cardsEl) {
-    cardsEl.innerHTML = res.data.map(s => \`
-      <div style="background:#fff;border-radius:12px;padding:18px;border:2px solid \${s.active?'#7C3AED':'#E2E8F0'};position:relative">
-        \${s.active ? '<span style="position:absolute;top:10px;right:10px;background:#7C3AED;color:#fff;font-size:10px;padding:2px 8px;border-radius:999px;font-weight:600">ACTIVE</span>' : ''}
-        <div style="font-weight:700;color:#1E293B;margin-bottom:4px">\${s.name}</div>
-        <div style="font-size:0.75rem;color:#64748B;margin-bottom:12px">\${s.description}</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div style="font-size:0.78rem"><span style="color:#64748B">Availability:</span> <strong style="color:\${s.kpis.materialAvailability>=99?'#059669':'#DC2626'}">\${s.kpis.materialAvailability}%</strong></div>
-          <div style="font-size:0.78rem"><span style="color:#64748B">Service:</span> <strong>\${s.kpis.serviceLevel}%</strong></div>
-          <div style="font-size:0.78rem"><span style="color:#64748B">Adherence:</span> <strong>\${s.kpis.planAdherence}%</strong></div>
-          <div style="font-size:0.78rem"><span style="color:#64748B">OTIF:</span> <strong>\${s.kpis.supplierOTIF}%</strong></div>
-        </div>
-      </div>
-    \`).join('');
-  }
-  // Delta table
-  const deltaEl = document.getElementById('wb-delta-table');
-  if (deltaEl && res.data.length > 1) {
-    const base = res.data[0];
-    deltaEl.innerHTML = res.data.map(s => {
-      const da = (s.kpis.materialAvailability - base.kpis.materialAvailability).toFixed(1);
-      const ds = (s.kpis.serviceLevel - base.kpis.serviceLevel).toFixed(1);
-      const dp = (s.kpis.planAdherence - base.kpis.planAdherence).toFixed(1);
-      const dc = s.kpis.costReduction.toFixed(1);
-      const dv = ((base.kpis.totalCost - s.kpis.totalCost)/1000).toFixed(0);
-      return \`<tr>
-        <td><strong>\${s.id}</strong></td>
-        <td>\${s.name}</td>
-        <td class="\${Number(da)>0?'healthy':Number(da)<0?'critical':''}">\${Number(da)>0?'+':''}\${da}%</td>
-        <td class="\${Number(ds)>0?'healthy':Number(ds)<0?'critical':''}">\${Number(ds)>0?'+':''}\${ds}%</td>
-        <td class="\${Number(dp)>0?'healthy':Number(dp)<0?'critical':''}">\${Number(dp)>0?'+':''}\${dp}%</td>
-        <td class="\${Number(dc)>0?'healthy':Number(dc)<0?'critical':''}">\${Number(dc)>0?'+':''}\${dc}%</td>
-        <td class="\${Number(dv)>0?'healthy':Number(dv)<0?'critical':''}">\${Number(dv)>0?'Saves ₹':'Adds ₹'}\${Math.abs(Number(dv))}K</td>
-        <td><span class="badge badge-\${s.active?'success':'info'}">\${s.active?'Active':'Compare'}</span></td>
-      </tr>\`;
-    }).join('');
-  }
-}
-
-function renderScenarioCharts() {
-  if (!wbState.scenarios.length) return;
-  const sc = wbState.scenarios;
-  const labels = sc.map(s => s.id);
-  const avail = sc.map(s => s.kpis.materialAvailability);
-  const svc = sc.map(s => s.kpis.serviceLevel);
-  const cost = sc.map(s => s.kpis.totalCost / 1000);
-  const inv = sc.map(s => s.kpis.inventoryReduction);
-
-  const draw = (id, type, datasets, yLabel) => {
-    const ctx = document.getElementById(id);
-    if (!ctx) return;
-    if (ctx._chart) ctx._chart.destroy();
-    ctx._chart = new Chart(ctx, {
-      type,
-      data: { labels, datasets },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { font: { size: 11 }, boxWidth: 12 } } }, scales: { y: { title: { display: true, text: yLabel }, grid: { color: 'rgba(0,0,0,0.05)' } }, x: { ticks: { font: { size: 10 } } } } }
-    });
-  };
-
-  draw('wb-sc-avail', 'bar', [{ label: 'Material Availability %', data: avail, backgroundColor: avail.map(v => v >= 99 ? '#059669' : v >= 95 ? '#D97706' : '#DC2626'), borderRadius: 5 }], '%');
-  draw('wb-sc-cost', 'bar', [{ label: 'Total Cost (₹K)', data: cost, backgroundColor: 'rgba(124,58,237,0.75)', borderRadius: 5 }], '₹ Thousands');
-  draw('wb-sc-inv', 'bar', [{ label: 'Inventory Reduction %', data: inv, backgroundColor: inv.map(v => v > 0 ? '#059669' : '#DC2626'), borderRadius: 5 }], '% Change');
-  draw('wb-sc-svc', 'line', [
-    { label: 'Service Level %', data: svc, borderColor: '#2563EB', backgroundColor: 'rgba(37,99,235,0.08)', fill: true, tension: 0.35, borderWidth: 2.5, pointRadius: 5 },
-    { label: 'Material Avail. %', data: avail, borderColor: '#059669', backgroundColor: 'transparent', fill: false, tension: 0.35, borderWidth: 2, pointRadius: 4 }
-  ], '%');
-}
-
-// ── Export ────────────────────────────────────────────────────
-function exportWb(type) {
-  window.location.href = '/api/mrp/export/' + type;
-}
-
-// ── Init ─────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', async () => {
-  await Promise.all([loadObjectives(), loadConstraints(), loadScenarios()]);
-  switchWbTab('objectives');
-});
-  `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="MRP – Optimization Workbench" activeModule="mrp-workbench" scripts={scripts}>
-    <style>{`
-      .wb-tab-btn { padding:10px 20px;border:none;background:transparent;cursor:pointer;font-size:0.875rem;font-weight:600;color:#64748B;border-bottom:3px solid transparent;transition:all .2s;display:flex;align-items:center;gap:8px }
-      .wb-tab-btn.active { color:#7C3AED;border-bottom-color:#7C3AED }
-      .wb-tab-btn:hover:not(.active) { color:#374151;background:#F8FAFC }
-      .wb-tab-bar { display:flex;border-bottom:1px solid #E2E8F0;background:#fff;border-radius:12px 12px 0 0;overflow:hidden }
-      .wb-panel { display:none }
-      .wb-sub-tab { padding:8px 16px;border:1px solid #E2E8F0;border-radius:8px;background:transparent;cursor:pointer;font-size:0.8rem;font-weight:600;color:#64748B;transition:all .15s }
-      .wb-sub-tab.active { background:#0891B2;color:#fff;border-color:#0891B2 }
-      .healthy { color:#059669 } .critical { color:#DC2626 }
-    `}</style>
-    {/* Page Header */}
-    <div class="page-header">
-      <div class="page-header-left">
-        <div class="page-icon" style="background:linear-gradient(135deg,#6D28D9,#A78BFA)"><i class="fas fa-sliders-h"></i></div>
-        <div>
-          <div class="page-title">Optimization Workbench</div>
-          <div class="page-subtitle">End-to-end MRP optimization — Objectives · Constraints · Results · Scenario Comparison</div>
-        </div>
-      </div>
-      <div class="page-header-right">
-        <span class="badge badge-live">Live</span>
-        <button class="btn btn-primary" id="wb-opt-btn" onclick="runOptimization()"><i class="fas fa-magic"></i> Run Optimization</button>
-        <div style="position:relative;display:inline-block">
-          <button class="btn btn-secondary" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">
-            <i class="fas fa-download"></i> Export
-          </button>
-          <div style="display:none;position:absolute;right:0;top:100%;background:#fff;border:1px solid #E2E8F0;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.12);min-width:200px;z-index:50;padding:4px 0">
-            <button onclick="exportWb('net-requirements')" style="width:100%;text-align:left;padding:10px 16px;border:none;background:transparent;cursor:pointer;font-size:0.85rem;color:#374151"><i class="fas fa-table" style="width:16px;margin-right:8px;color:#64748B"></i>Net Requirements CSV</button>
-            <button onclick="exportWb('purchase-orders')" style="width:100%;text-align:left;padding:10px 16px;border:none;background:transparent;cursor:pointer;font-size:0.85rem;color:#374151"><i class="fas fa-file-invoice" style="width:16px;margin-right:8px;color:#64748B"></i>Purchase Orders CSV</button>
-            <button onclick="exportWb('inventory')" style="width:100%;text-align:left;padding:10px 16px;border:none;background:transparent;cursor:pointer;font-size:0.85rem;color:#374151"><i class="fas fa-warehouse" style="width:16px;margin-right:8px;color:#64748B"></i>Inventory CSV</button>
-            <button onclick="exportWb('scenarios')" style="width:100%;text-align:left;padding:10px 16px;border:none;background:transparent;cursor:pointer;font-size:0.85rem;color:#374151"><i class="fas fa-sitemap" style="width:16px;margin-right:8px;color:#64748B"></i>Scenario Comparison CSV</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {/* Tab Bar */}
-    <div style="background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06);margin-bottom:20px;overflow:hidden">
-      <div class="wb-tab-bar">
-        <button class="wb-tab-btn active" data-tab="objectives" onclick="switchWbTab('objectives')">
-          <i class="fas fa-bullseye"></i> <span>1. Objectives</span>
-        </button>
-        <button class="wb-tab-btn" data-tab="constraints" onclick="switchWbTab('constraints')">
-          <i class="fas fa-lock"></i> <span>2. Constraints</span>
-        </button>
-        <button class="wb-tab-btn" data-tab="optresults" onclick="switchWbTab('optresults')">
-          <i class="fas fa-chart-line"></i> <span>3. Optimization Results</span>
-        </button>
-        <button class="wb-tab-btn" data-tab="scenarios" onclick="switchWbTab('scenarios')">
-          <i class="fas fa-layer-group"></i> <span>4. Scenario Comparison</span>
-        </button>
-      </div>
-
-      {/* ── OBJECTIVES PANEL ── */}
-      <div class="wb-panel" data-panel="objectives" style="padding:24px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-          <div>
-            <div style="font-weight:700;color:#1E293B;font-size:1.05rem"><i class="fas fa-bullseye" style="color:#7C3AED;margin-right:8px"></i>Planning Objectives</div>
-            <div style="font-size:0.8rem;color:#64748B;margin-top:2px">Define optimization goals and KPI targets for the MRP run</div>
-          </div>
-        </div>
-        <div id="wb-obj-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px">
-          <div style="text-align:center;padding:40px;color:#64748B"><div class="spinner"></div></div>
-        </div>
-      </div>
-
-      {/* ── CONSTRAINTS PANEL ── */}
-      <div class="wb-panel" data-panel="constraints" style="padding:24px">
-        <div style="margin-bottom:20px">
-          <div style="font-weight:700;color:#1E293B;font-size:1.05rem"><i class="fas fa-lock" style="color:#0891B2;margin-right:8px"></i>Planning Constraints</div>
-          <div style="font-size:0.8rem;color:#64748B;margin-top:2px">System boundaries, capacities, lead times and supplier limits</div>
-        </div>
-        {/* Sub-tabs */}
-        <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
-          <button class="wb-sub-tab active" id="ct-cap" onclick="showConstraintTab('cap')">Capacity</button>
-          <button class="wb-sub-tab" id="ct-lt" onclick="showConstraintTab('lt')">Lead Times</button>
-          <button class="wb-sub-tab" id="ct-sup" onclick="showConstraintTab('sup')">Suppliers / MOQ</button>
-          <button class="wb-sub-tab" id="ct-inv" onclick="showConstraintTab('inv')">Inventory Policy</button>
-        </div>
-        {/* Capacity */}
-        <div id="cp-cap">
-          <table class="data-table">
-            <thead><tr><th>Production Line</th><th>Plant</th><th>Shift Capacity</th><th>Shifts/Week</th><th>Max Weekly</th><th>Utilization</th></tr></thead>
-            <tbody id="wb-cap-table"><tr><td colspan="6" style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
-          </table>
-        </div>
-        {/* Lead Times */}
-        <div id="cp-lt" style="display:none">
-          <table class="data-table">
-            <thead><tr><th>Supplier</th><th>Material</th><th>Min Days</th><th>Max Days</th><th>Avg Days</th><th>Variability</th></tr></thead>
-            <tbody id="wb-lt-table"></tbody>
-          </table>
-        </div>
-        {/* Suppliers */}
-        <div id="cp-sup" style="display:none">
-          <table class="data-table">
-            <thead><tr><th>Supplier</th><th>Name</th><th>Reliability</th><th>MOQ</th><th>Max Monthly</th><th>Contract</th></tr></thead>
-            <tbody id="wb-sup-table"></tbody>
-          </table>
-        </div>
-        {/* Inventory Policy */}
-        <div id="cp-inv" style="display:none">
-          <table class="data-table">
-            <thead><tr><th>SKU</th><th>Method</th><th>Min Stock</th><th>Max Stock</th><th>Reorder Point</th><th>Safety Stock</th></tr></thead>
-            <tbody id="wb-inv-table"></tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* ── OPT RESULTS PANEL ── */}
-      <div class="wb-panel" data-panel="optresults" style="padding:24px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-          <div>
-            <div style="font-weight:700;color:#1E293B;font-size:1.05rem"><i class="fas fa-chart-line" style="color:#7C3AED;margin-right:8px"></i>Optimization Results</div>
-            <div style="font-size:0.8rem;color:#64748B;margin-top:2px">Optimized scenario KPIs vs baseline, recommendations and charts</div>
-          </div>
-          <button class="btn btn-primary" onclick="runOptimization()"><i class="fas fa-sync-alt"></i> Re-optimize</button>
-        </div>
-        <div id="wb-opt-kpis" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:24px">
-          <div style="text-align:center;padding:40px;color:#64748B;grid-column:1/-1"><div class="spinner"></div></div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
-          <div class="card" style="margin:0">
-            <div class="card-header"><span class="card-title"><i class="fas fa-radar-chart"></i> Baseline vs Optimized (Radar)</span></div>
-            <div class="card-body" style="height:260px"><canvas id="wb-radar-chart"></canvas></div>
-          </div>
-          <div class="card" style="margin:0">
-            <div class="card-header"><span class="card-title"><i class="fas fa-list-ol"></i> Top Recommendations</span></div>
-            <div class="card-body" style="overflow-y:auto;max-height:280px">
-              <div id="wb-recommendations" style="display:flex;flex-direction:column;gap:10px">
-                <div style="text-align:center;color:#64748B;padding:20px"><div class="spinner"></div></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ── SCENARIOS PANEL ── */}
-      <div class="wb-panel" data-panel="scenarios" style="padding:24px">
-        <div style="margin-bottom:20px">
-          <div style="font-weight:700;color:#1E293B;font-size:1.05rem"><i class="fas fa-layer-group" style="color:#0891B2;margin-right:8px"></i>Scenario Comparison</div>
-          <div style="font-size:0.8rem;color:#64748B;margin-top:2px">Compare all planning scenarios across key performance metrics</div>
-        </div>
-        {/* Scenario cards */}
-        <div id="wb-scenario-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-bottom:24px">
-          <div style="text-align:center;padding:40px;color:#64748B;grid-column:1/-1"><div class="spinner"></div></div>
-        </div>
-        {/* Delta table */}
-        <div class="card" style="margin-bottom:24px">
-          <div class="card-header"><span class="card-title"><i class="fas fa-table"></i> Delta vs Baseline</span></div>
-          <div class="card-body compact">
-            <table class="data-table">
-              <thead><tr><th>ID</th><th>Scenario</th><th>Availability Δ</th><th>Service Δ</th><th>Adherence Δ</th><th>Cost Red. Δ</th><th>Cost Savings</th><th>Status</th></tr></thead>
-              <tbody id="wb-delta-table"></tbody>
-            </table>
-          </div>
-        </div>
-        {/* Charts 2×2 */}
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-          <div class="card" style="margin:0"><div class="card-header"><span class="card-title">Material Availability by Scenario</span></div><div class="card-body" style="height:220px"><canvas id="wb-sc-avail"></canvas></div></div>
-          <div class="card" style="margin:0"><div class="card-header"><span class="card-title">Total Cost by Scenario</span></div><div class="card-body" style="height:220px"><canvas id="wb-sc-cost"></canvas></div></div>
-          <div class="card" style="margin:0"><div class="card-header"><span class="card-title">Inventory Reduction %</span></div><div class="card-body" style="height:220px"><canvas id="wb-sc-inv"></canvas></div></div>
-          <div class="card" style="margin:0"><div class="card-header"><span class="card-title">Service Level vs Availability</span></div><div class="card-body" style="height:220px"><canvas id="wb-sc-svc"></canvas></div></div>
-        </div>
-      </div>
-    </div>
-
-    {/* Constraint sub-tab JS */}
-    <script>{`
-      function showConstraintTab(tab) {
-        ['cap','lt','sup','inv'].forEach(t => {
-          document.getElementById('cp-'+t).style.display = t===tab?'block':'none';
-          const btn = document.getElementById('ct-'+t);
-          if (btn) btn.classList.toggle('active', t===tab);
-        });
-      }
-    `}</script>
-  </Layout>)
-})
-
-
-// ============================================================
-// INVENTORY ROUTES
-// ============================================================
-
-app.get('/inventory', async (c) => {
-  const scripts = `// inventory-module.js handles this page
-  `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Inventory Planning" activeModule="inventory" scripts={scripts}>
-    <div class="page-header">
-      <div class="page-header-left">
-        <div class="page-icon" style="background:linear-gradient(135deg,#059669,#34D399)"><i class="fas fa-warehouse"></i></div>
-        <div>
-          <div class="page-title">Inventory Planning</div>
-          <div class="page-subtitle">Stock positions, safety stock, reorder points, ABC/XYZ classification</div>
-        </div>
-      </div>
-      <div class="page-header-right">
-        <span class="badge badge-live">Live</span>
-        <a href="/inventory/optimization" class="btn btn-primary"><i class="fas fa-sync-alt"></i> Replenishment</a>
-      </div>
-    </div>
-    <div class="kpi-grid" id="inv-kpi-grid"><div class="kpi-card"><div class="spinner"></div></div></div>
-
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-boxes"></i> Stock Positions vs Safety Stock</span></div>
-        <div class="card-body" style="height:240px"><canvas id="inv-stock-chart"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-calendar-alt"></i> Days of Supply by SKU</span></div>
-        <div class="card-body" style="height:240px"><canvas id="inv-dos-chart"></canvas></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title"><i class="fas fa-table"></i> SKU Stock Positions</span>
-        <a href="/inventory/operations" class="btn btn-sm btn-secondary">Full View</a>
-      </div>
-      <div class="card-body compact">
-        <table class="data-table">
-          <thead><tr><th>SKU</th><th>Plant</th><th>On Hand</th><th>Reserved</th><th>In Transit</th><th>Available</th><th>Safety Stock</th><th>Days of Supply</th><th>Fill %</th></tr></thead>
-          <tbody id="inv-stock-table"><tr><td colspan={9} style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="grid-3">
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-tag"></i> ABC Classification</span></div>
-        <div class="card-body" style="height:200px"><canvas id="inv-abc-chart"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-sync-alt"></i> Inventory Turns Trend</span></div>
-        <div class="card-body" style="height:200px"><canvas id="inv-turnover-chart"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-shield-alt"></i> Coverage vs Safety Stock</span></div>
-        <div class="card-body" style="height:200px"><canvas id="inv-coverage-chart"></canvas></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title"><i class="fas fa-truck-loading"></i> Replenishment Plan (6 Weeks)</span>
-        <a href="/inventory/optimization" class="btn btn-sm btn-primary"><i class="fas fa-cogs"></i> Run Replenishment</a>
-      </div>
-      <div class="card-body" style="height:240px"><canvas id="inv-replenishment-chart"></canvas></div>
-    </div>
-    <script src="/static/inventory-module.js"></script>
-  </Layout>)
-})
-
-app.get('/inventory/executive', (c) => c.redirect('/inventory'))
-app.get('/inventory/operations', async (c) => {
-  const scripts = `
-async function init() {
-  const stock = await axios.get('/api/inventory/stock').then(r=>r.data).catch(()=>[]);
-  const tbody = document.getElementById('stock-table');
-  if (tbody) tbody.innerHTML = stock.map(s => {
-    const dos = s.days_of_supply || 0;
-    const sc = dos < 7 ? 'critical' : dos < 14 ? 'warning' : 'healthy';
-    return \`<tr>
-      <td><strong>\${s.sku_code}</strong></td><td>\${s.sku_name}</td>
-      <td>\${s.plant_name}</td>
-      <td>\${s.on_hand_qty?.toLocaleString()}</td><td>\${s.reserved_qty?.toLocaleString()}</td>
-      <td>\${s.in_transit_qty?.toLocaleString()}</td><td>\${s.available_qty?.toLocaleString()}</td>
-      <td><strong class="\${sc}">\${dos?.toFixed(1)} days</strong></td>
-    </tr>\`;
-  }).join('');
-}
-document.addEventListener('DOMContentLoaded', init);
-  `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Inventory – Stock Positions" activeModule="inv-operations" scripts={scripts}>
-    <div class="page-header">
-      <div class="page-header-left">
-        <div class="page-icon" style="background:linear-gradient(135deg,#059669,#34D399)"><i class="fas fa-tachometer-alt"></i></div>
-        <div><div class="page-title">Stock Positions</div><div class="page-subtitle">Real-time on-hand, reserved, in-transit and available stock by location</div></div>
-      </div>
-    </div>
-    <div class="card"><div class="card-body compact">
-      <table class="data-table">
-        <thead><tr><th>Code</th><th>SKU</th><th>Plant</th><th>On Hand</th><th>Reserved</th><th>In Transit</th><th>Available</th><th>Days of Supply</th></tr></thead>
-        <tbody id="stock-table"><tr><td colspan={8} style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
-      </table>
-    </div></div>
-  </Layout>)
-})
-
-app.get('/inventory/optimization', (c) => {
-  const scripts = `
-function switchInvTab(tab) {
-  document.querySelectorAll('.inv-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab===tab));
-  document.querySelectorAll('.inv-panel').forEach(p => p.style.display = p.dataset.panel===tab?'block':'none');
-}
-async function init() {
-  switchInvTab('objectives');
-  const [ss, abcxyz] = await Promise.all([
-    axios.get('/api/inventory/safety-stock').then(r=>r.data).catch(()=>[]),
-    axios.get('/api/inventory/abc-xyz').then(r=>r.data).catch(()=>[]),
-  ]);
-  // SS table
-  const el = document.getElementById('ss-table');
-  if (el && ss.length) {
-    el.innerHTML = ss.map(s => \`<tr>
-      <td><strong>\${s.sku}</strong></td>
-      <td>\${s.level} – \${s.location}</td>
-      <td>\${s.current_ss?.toLocaleString()}</td>
-      <td style="font-weight:600;color:\${s.gap>0?'#DC2626':'#059669'}">\${s.optimal_ss?.toLocaleString()}</td>
-      <td style="font-weight:600;color:\${s.gap>0?'#DC2626':'#059669'}">\${s.gap>0?'+':''}\${s.gap}</td>
-      <td>\${(s.service_level_target*100||97.5).toFixed(1)}%</td>
-      <td style="font-size:11px">\${s.recommendation}</td>
-      <td>\${s.gap!==0?'<button class="btn btn-sm btn-primary" onclick="updateSS(\\'' + s.sku + '\\',\\'' + s.location + '\\',' + s.optimal_ss + ')">Update</button>':'<span class=\\"badge badge-success\\">Optimal</span>'}</td>
-    </tr>\`).join('');
-  }
-  // ABC-XYZ table
-  const el2 = document.getElementById('abcxyz-table');
-  if (el2 && abcxyz.length) {
-    el2.innerHTML = abcxyz.map(s => \`<tr>
-      <td><strong>\${s.sku}</strong><br/><span style="font-size:11px;color:#64748B">\${s.sku_name}</span></td>
-      <td><span class="badge badge-\${s.abc==='A'?'critical':s.abc==='B'?'warning':'neutral'}">\${s.abc}</span></td>
-      <td><span class="badge badge-\${s.xyz==='X'?'success':s.xyz==='Y'?'info':'warning'}">\${s.xyz}</span></td>
-      <td>\${s.revenue_pct}%</td>
-      <td>\${s.cv.toFixed(2)}</td>
-      <td style="font-size:11px">\${s.recommendation}</td>
-      <td><strong>\${s.policy}</strong></td>
-    </tr>\`).join('');
-  }
-  // ABC chart
-  const ctx = document.getElementById('abc-chart');
-  if (ctx && abcxyz.length) {
-    new Chart(ctx, {
-      type:'bar',
-      data:{labels:abcxyz.map(s=>s.sku),datasets:[
-        {label:'Revenue %',data:abcxyz.map(s=>s.revenue_pct),backgroundColor:abcxyz.map(s=>s.abc==='A'?'#DC2626':s.abc==='B'?'#D97706':'#059669'),borderRadius:4}
-      ]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{callback:v=>v+'%'}}}}
-    });
-  }
-}
-async function updateSS(sku, location, newSS) {
-  const btn = event.target;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-  btn.disabled = true;
-  await new Promise(r=>setTimeout(r,1000));
-  btn.innerHTML = '✓ Updated';
-  btn.className = 'btn btn-sm btn-success';
-}
-async function generateReplenishmentPlan() {
-  const btn = event.target;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating MEIO...';
-  btn.disabled = true;
-  await new Promise(r=>setTimeout(r,2000));
-  btn.innerHTML = '<i class="fas fa-rocket"></i> Generate Replenishment Plan';
-  btn.disabled = false;
-  window.showToast('MEIO plan generated: 6 SKUs reviewed, 4 safety stock adjustments. Working capital +₹8.4L, Service level +1.2pp.','success');
-}
-document.addEventListener('DOMContentLoaded', init);
-  `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Inventory – Optimization Workbench" activeModule="inv-optimization" scripts={scripts}>
-    <div class="page-header">
-      <div class="page-header-left">
-        <div class="page-icon" style="background:linear-gradient(135deg,#059669,#34D399)"><i class="fas fa-sliders-h"></i></div>
-        <div><div class="page-title">Inventory — Optimization Workbench</div><div class="page-subtitle">MEIO safety stock · ABC-XYZ · Replenishment optimization · Scenario comparison</div></div>
-      </div>
-      <div class="page-header-right">
-        <button class="btn btn-primary" onclick="generateReplenishmentPlan()"><i class="fas fa-rocket"></i> Generate Replenishment Plan</button>
-        <a href="/api/export/inventory?format=csv" class="btn btn-secondary"><i class="fas fa-download"></i> Export</a>
-      </div>
-    </div>
-    {/* Tab navigation */}
-    <div style="background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,0.06);margin-bottom:20px;overflow:hidden">
-      <div style="display:flex;border-bottom:1px solid #E2E8F0">
-        {[['objectives','1. Objectives','fa-bullseye'],['constraints','2. Constraints','fa-lock'],['results','3. Results','fa-chart-bar'],['scenarios','4. Scenario Comparison','fa-layer-group']].map(([tab,label,icon]) =>
-          <button key={tab} class="inv-tab-btn" data-tab={tab} onclick={`switchInvTab('${tab}')`}
-            style="padding:12px 20px;border:none;background:transparent;cursor:pointer;font-size:0.875rem;font-weight:600;color:#64748B;border-bottom:3px solid transparent;display:flex;align-items:center;gap:6px">
-            <i class={`fas ${icon}`}></i>{label}
-          </button>
-        )}
-      </div>
-      {/* Objectives panel */}
-      <div class="inv-panel" data-panel="objectives" style="padding:20px">
-        <p style="font-size:12px;color:#64748B;margin-bottom:16px">Inventory optimization objectives from Excel requirements</p>
-        {[['≥98% Fill Rate','Service Level','Ensure right product at right location and time'],['Inventory Turns ↑20–30%','Inventory Efficiency','Balance inventory across network, avoid excess and stockouts'],['Inventory Value ↓15–25%','Cost Optimization','Minimize capital locked in RM, WIP and FG inventory'],['Forecast Bias ±5%','Demand Alignment','Align inventory with demand, seasonality and promotions'],['Expiry Loss <0.5%','Freshness Control','Manage shelf-life-sensitive SKUs effectively'],['Safety Stock ↓15–20%','Network Optimization','Multi-echelon inventory optimization across nodes']].map(([target,label,desc],i) =>
-          <div key={label} style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid #E2E8F0;border-radius:8px;margin-bottom:8px">
-            <input type="checkbox" defaultChecked={i<4} style="width:16px;height:16px" />
-            <div style="flex:1"><strong style="font-size:13px">{label}</strong><div style="font-size:12px;color:#64748B">{desc}</div></div>
-            <span style="font-size:11px;background:#D1FAE5;color:#059669;padding:3px 8px;border-radius:6px;white-space:nowrap">{target}</span>
-            <select class="form-input form-select" style="width:120px"><option>High</option><option>Medium</option><option>Low</option></select>
-          </div>
-        )}
-      </div>
-      {/* Constraints panel */}
-      <div class="inv-panel" data-panel="constraints" style="padding:20px;display:none">
-        <p style="font-size:12px;color:#64748B;margin-bottom:16px">System constraints governing inventory optimization</p>
-        {[['Shelf Life Limit','SKU-specific','days'],['Min Order Quantity','500–50000','cases'],['Storage Capacity','80%','warehouse fill %'],['Replenishment Frequency','Weekly','cycle'],['Lead Time Variability','±20%','supplier variance'],['Forecast Accuracy Floor','70%','minimum acceptable MAPE']].map(([label,val,unit]) =>
-          <div key={label} style="display:flex;align-items:center;gap:12px;padding:10px;border-bottom:1px solid #F1F5F9">
-            <span style="flex:1;font-size:13px">{label}</span>
-            <input type="text" class="form-input" style="width:140px" defaultValue={val} />
-            <span style="font-size:12px;color:#64748B;width:80px">{unit}</span>
-          </div>
-        )}
-      </div>
-      {/* Results panel */}
-      <div class="inv-panel" data-panel="results" style="padding:20px;display:none">
-        <div class="card mb-4" style="margin:0 0 20px 0">
-          <div class="card-header"><span class="card-title"><i class="fas fa-calculator"></i> MEIO Safety Stock Optimization</span><span class="badge badge-info">Multi-Echelon Model</span></div>
-          <div class="card-body compact">
-            <table class="data-table"><thead><tr><th>SKU</th><th>Level / Location</th><th>Current SS</th><th>Optimal SS</th><th>Gap (cases)</th><th>SL Target</th><th>Recommendation</th><th>Action</th></tr></thead>
-              <tbody id="ss-table"><tr><td colspan={8} style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
-            </table>
-          </div>
-        </div>
-        <div class="grid-2">
-          <div class="card" style="margin:0">
-            <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> ABC-XYZ Classification</span></div>
-            <div class="card-body" style="height:220px"><canvas id="abc-chart"></canvas></div>
-          </div>
-          <div class="card" style="margin:0">
-            <div class="card-header"><span class="card-title"><i class="fas fa-table"></i> ABC-XYZ Matrix & Policies</span></div>
-            <div class="card-body compact">
-              <table class="data-table" style="font-size:12px"><thead><tr><th>SKU</th><th>ABC</th><th>XYZ</th><th>Revenue %</th><th>CV</th><th>Policy</th><th>Recommendation</th></tr></thead>
-                <tbody id="abcxyz-table"><tr><td colspan={7} style="text-align:center;padding:16px"><div class="spinner"></div></td></tr></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* Scenario Comparison panel */}
-      <div class="inv-panel" data-panel="scenarios" style="padding:20px;display:none">
-        <p style="font-size:12px;color:#64748B;margin-bottom:16px">Compare inventory outcomes across planning scenarios (Excel S1–S7)</p>
-        <table class="data-table">
-          <thead><tr><th>Scenario</th><th>Driver</th><th>Fill Rate</th><th>Inventory Turns</th><th>SS Change</th><th>Expiry Risk</th><th>Working Capital</th><th>Risk</th></tr></thead>
-          <tbody>
-            {[['S1 – Baseline','Current State','97.1%','18.2x','0%','0.4%','₹0','Low'],['S2 – Demand Surge','Summer Peak','89.5%','24.1x','+32%','0.2%','+₹22L','High'],['S3 – Promo Uplift','Promotion Event','92.3%','21.5x','+18%','0.3%','+₹14L','Medium'],['S4 – Shelf Life –30d','Quality Change','94.1%','22.8x','+8%','1.2%','+₹6L','High'],['S5 – SL Target 98%','Policy Change','98.0%','16.4x','+25%','0.3%','+₹18L','Medium'],['S6 – Lead Time +10d','Supplier Delay','93.2%','17.1x','+41%','0.5%','+₹28L','High'],['S7 – New SKU Launch','NPD Launch','95.5%','19.3x','+15%','0.6%','+₹10L','Medium']].map(([sc,dr,fr,it,ss,ex,wc,ri]) =>
-              <tr key={sc}><td><strong>{sc}</strong></td><td style="font-size:12px;color:#64748B">{dr}</td>
-                <td><span class="badge badge-{Number(fr.replace('%',''))>=97?'success':Number(fr.replace('%',''))>=93?'warning':'critical'}">{fr}</span></td>
-                <td>{it}</td><td style="color:{ss==='+0%'?'':'#DC2626'}">{ss}</td>
-                <td style="color:{Number(ex.replace('%',''))>0.5?'#DC2626':'#059669'}">{ex}</td>
-                <td style={`color:${wc==='₹0'?'inherit':wc.startsWith('-')?'#059669':'#DC2626'}`}>{wc}</td>
-                <td><span class="badge badge-{ri==='High'?'warning':ri==='Low'?'success':'info'}">{ri}</span></td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </Layout>)
-})
-
-app.get('/inventory/scenarios', (c) => {
-  const scripts = `
-async function applyInvRecommendation(btn) {
-  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Applying...';
   try {
-    await axios.post('/api/optimizer/run', {
-      module: 'inventory',
-      action: 'Apply Safety Stock Recommendation',
-      result_summary: 'Safety stock set to 7,200 cases. Service level target: 98.4%. Working capital impact: +₹8.4L.',
-      impact: '+1.3pp service level'
-    });
-    window.showToast('Recommendation applied! Safety stock updated to 7,200 cases. Action logged.','success');
-  } catch(e) {
-    window.showToast('Scenario applied to inventory policy','success');
-  }
-  btn.innerHTML = '<i class="fas fa-check"></i> Apply Recommendation'; btn.disabled = false;
-}
-function filterSKUTable(query) {
-  const q = String(query || '').trim().toLowerCase();
-  const rows = document.querySelectorAll('#sku-master-table tbody tr');
-  rows.forEach(row => {
-    row.style.display = !q || row.textContent.toLowerCase().includes(q) ? '' : 'none';
-  });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  // Service-level impact chart
-  new Chart(document.getElementById('svc-impact-chart'), {
-    type: 'bar',
-    data: {
-      labels: ['Base (SS=6K)', 'SS +10%', 'SS +20%', 'SS +30%', 'SS +50%'],
-      datasets: [
-        { label: 'Service Level %', data: [97.1, 97.8, 98.4, 98.9, 99.3], backgroundColor: 'rgba(5,150,105,0.75)', borderRadius: 5, yAxisID: 'y' },
-        { label: 'Carrying Cost (₹L/mo)', data: [12.4, 13.2, 14.1, 15.3, 17.8], type:'line', borderColor:'#D97706', backgroundColor:'transparent', tension:0.4, borderWidth:2.5, pointRadius:4, yAxisID: 'y1' }
-      ]
-    },
-    options: {
-      responsive:true, maintainAspectRatio:false,
-      interaction:{ mode:'index', intersect:false },
-      plugins: { legend:{ position:'top', labels:{ font:{size:11}, boxWidth:12 } } },
-      scales: {
-        y:  { position:'left',  min:96, max:100, ticks:{ callback:v=>v+'%' }, title:{ display:true, text:'Service Level %' }, grid:{ color:'rgba(0,0,0,0.04)' } },
-        y1: { position:'right', beginAtZero:false, title:{ display:true, text:'Carry Cost ₹L' }, grid:{ drawOnChartArea:false } }
-      }
-    }
-  });
-  // Lead-time sensitivity
-  new Chart(document.getElementById('lt-sens-chart'), {
-    type: 'line',
-    data: {
-      labels: ['LT 5d','LT 7d','LT 10d','LT 14d','LT 21d','LT 30d'],
-      datasets: [
-        { label: 'Reorder Point (cases)', data: [8500,10200,12800,16200,22000,31000], borderColor:'#2563EB', backgroundColor:'rgba(37,99,235,0.08)', fill:true, tension:0.4, borderWidth:2.5, pointRadius:4 },
-        { label: 'Safety Stock (cases)',  data: [4200, 5100,  6300, 8000, 10500,14800], borderColor:'#7C3AED', backgroundColor:'transparent', fill:false, tension:0.4, borderWidth:2, pointRadius:4 }
-      ]
-    },
-    options: {
-      responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ position:'top', labels:{ font:{size:11}, boxWidth:12 } } },
-      scales:{
-        y: { beginAtZero:false, title:{ display:true, text:'Cases' }, grid:{ color:'rgba(0,0,0,0.04)' } },
-        x: { ticks:{ font:{size:10} }, grid:{ display:false } }
-      }
-    }
-  });
-});
-  `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Inventory – Scenarios" activeModule="inv-scenarios" scripts={scripts}>
-    <div class="page-header">
-      <div class="page-header-left">
-        <div class="page-icon" style="background:linear-gradient(135deg,#059669,#34D399)"><i class="fas fa-sitemap"></i></div>
-        <div><div class="page-title">Inventory Scenarios</div><div class="page-subtitle">What-if analysis: safety stock, service level, lead time sensitivity</div></div>
-      </div>
-      <div class="page-header-right">
-        <button class="btn btn-primary" onclick="window.showToast('Running scenario analysis...','success')"><i class="fas fa-play"></i> Run Scenario</button>
-      </div>
-    </div>
-
-    {/* Scenario parameters card */}
-    <div class="grid-2" style="align-items:start">
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-sliders-h"></i> Scenario Parameters</span></div>
-        <div class="card-body">
-          {[
-            ['Base Safety Stock Multiplier', '1.5×', 'Range: 1.0×–3.0×'],
-            ['Demand Variability (CV)', '0.28', 'Target: ≤ 0.20'],
-            ['Service Level Target', '98%',  'Current: 97.1%'],
-            ['Lead Time (days)', '10–14d', 'Category average'],
-            ['Review Period', 'Weekly', 'Fixed cycle'],
-          ].map(([l,v,h]) =>
-            <div key={l} style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid #F1F5F9">
-              <div>
-                <div style="font-size:13px;color:#1E293B;font-weight:500">{l}</div>
-                <div style="font-size:11px;color:#94A3B8">{h}</div>
-              </div>
-              <strong style="font-size:13px;color:#2563EB">{v}</strong>
-            </div>
-          )}
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-check-circle"></i> Scenario Results — Best Fit</span></div>
-        <div class="card-body">
-          {[
-            ['Recommended Safety Stock', '7,200 cases', 'healthy'],
-            ['Projected Service Level', '98.4%', 'healthy'],
-            ['Projected DOS', '15.2 days', 'healthy'],
-            ['Additional Carrying Cost', '+₹1.7L/mo', 'warning'],
-            ['Stockout Risk Reduction', '−65%', 'healthy'],
-          ].map(([l,v,s]) =>
-            <div key={l} style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #F1F5F9">
-              <span style="font-size:13px;color:#475569">{l}</span>
-              <span class={`badge badge-${s}`}>{v}</span>
-            </div>
-          )}
-          <button class="btn btn-primary" style="width:100%;margin-top:12px" onclick="applyInvRecommendation(this)"><i class="fas fa-check"></i> Apply Recommendation</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-balance-scale"></i> Safety Stock vs Service Level vs Cost</span></div>
-        <div class="card-body" style="height:240px"><canvas id="svc-impact-chart"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-clock"></i> Lead Time Sensitivity Analysis</span></div>
-        <div class="card-body" style="height:240px"><canvas id="lt-sens-chart"></canvas></div>
-      </div>
-    </div>
-
-    {/* SKU-level scenario table */}
-    <div class="card">
-      <div class="card-header"><span class="card-title"><i class="fas fa-table"></i> SKU-Level Scenario Comparison</span></div>
-      <div class="card-body compact">
-        <table class="data-table">
-          <thead><tr><th>SKU</th><th>Current SS</th><th>Scenario SS</th><th>Current DOS</th><th>Target DOS</th><th>Δ Carry Cost</th><th>Service Level</th><th>Risk</th></tr></thead>
-          <tbody>
-            {[
-              ['AquaPure 500ml',    '6,000','7,200','21.3d','15d','+₹0.4L','98.4%','healthy'],
-              ['FruitBurst Orange', '3,000','4,200','10.0d','15d','+₹0.5L','97.8%','warning'],
-              ['CoolSip Lemon',     '2,500','3,800','11.0d','15d','+₹0.4L','97.5%','warning'],
-              ['SportZone Energy',  '2,000','3,000','12.5d','15d','+₹0.3L','97.2%','warning'],
-              ['MintFresh Water',   '1,800','2,600','14.8d','15d','+₹0.2L','98.1%','healthy'],
-            ].map(([sku,ss,nss,dos,tdos,dc,svc,risk]) =>
-              <tr key={sku}>
-                <td><strong>{sku}</strong></td>
-                <td>{ss}</td>
-                <td style="font-weight:600;color:#059669">{nss}</td>
-                <td>{dos}</td>
-                <td>{tdos}</td>
-                <td style="color:#D97706;font-weight:500">{dc}</td>
-                <td><span class={`badge badge-${risk}`}>{svc}</span></td>
-                <td><span class={`badge badge-${risk}`}>{risk}</span></td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </Layout>)
-})
-
-app.get('/inventory/analytics', (c) => {
-  const scripts = `
-function filterSKUTable(query) {
-  const q = String(query || '').trim().toLowerCase();
-  const rows = document.querySelectorAll('#sku-master-table tbody tr');
-  rows.forEach(row => {
-    row.style.display = !q || row.textContent.toLowerCase().includes(q) ? '' : 'none';
-  });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  new Chart(document.getElementById('abc-chart'), {
-    type:'pie',data:{labels:['A-Class (4 SKUs)','B-Class (4 SKUs)','C-Class (4 SKUs)'],
-      datasets:[{data:[65,25,10],backgroundColor:['#DC2626','#D97706','#64748B']}]},
-    options:{responsive:true,maintainAspectRatio:false}
-  });
-});
-  `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Inventory Analytics" activeModule="inv-analytics" scripts={scripts}>
-    <div class="page-header">
-      <div class="page-header-left">
-        <div class="page-icon" style="background:linear-gradient(135deg,#059669,#34D399)"><i class="fas fa-chart-bar"></i></div>
-        <div><div class="page-title">Inventory Analytics</div><div class="page-subtitle">ABC/XYZ analysis, aging, turns and inventory efficiency metrics</div></div>
-      </div>
-    </div>
-    <div class="grid-2">
-      <div class="card"><div class="card-header"><span class="card-title"><i class="fas fa-chart-pie"></i> ABC Classification (by Revenue)</span></div><div class="card-body" style="height:220px"><canvas id="abc-chart"></canvas></div></div>
-      <div class="card"><div class="card-header"><span class="card-title"><i class="fas fa-table"></i> Inventory Metrics</span></div><div class="card-body">
-        {[['Inventory Turnover','18.2x/year'],['Carrying Cost','₹12.4L/month'],['Dead Stock','2 SKUs (1,800 cases)'],['Excess Stock','2 SKUs (8,000 cases)'],['Fill Rate','97.1%']].map(([l,v]) =>
-          <div key={l} style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #F1F5F9">
-            <span style="font-size:13px;color:#64748B">{l}</span>
-            <strong style="font-size:13px">{v}</strong>
-          </div>
-        )}
-      </div></div>
-    </div>
-  </Layout>)
-})
-
-app.get('/inventory/master', (c) => {
-  const scripts = `
-function filterSKUTable(query) {
-  const q = String(query || '').trim().toLowerCase();
-  const rows = document.querySelectorAll('#sku-master-table tbody tr');
-  rows.forEach(row => {
-    row.style.display = !q || row.textContent.toLowerCase().includes(q) ? '' : 'none';
-  });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  // ABC pie chart
-  new Chart(document.getElementById('abc-policy-chart'), {
-    type: 'doughnut',
-    data: {
-      labels: ['A-Class (Critical)', 'B-Class (Monitor)', 'C-Class (Review)'],
-      datasets: [{ data:[4,4,4], backgroundColor:['#DC2626','#D97706','#64748B'], hoverOffset:6, borderWidth:2, borderColor:'#fff' }]
-    },
-    options: { responsive:true, maintainAspectRatio:false, cutout:'65%',
-      plugins:{ legend:{ position:'right', labels:{ font:{size:11}, boxWidth:12, padding:10 } } } }
-  });
-});
-  `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Inventory – Master Data" activeModule="inv-master" scripts={scripts}>
-    <div class="page-header">
-      <div class="page-header-left">
-        <div class="page-icon" style="background:linear-gradient(135deg,#059669,#34D399)"><i class="fas fa-database"></i></div>
-        <div><div class="page-title">Inventory Master Data</div><div class="page-subtitle">SKU master, storage locations, ABC classification, inventory policies</div></div>
-      </div>
-      <div class="page-header-right">
-        <a href="/pack-size-master" class="btn btn-secondary"><i class="fas fa-ruler"></i> Pack-Size Master</a>
-        <a href="/api/export/inventory?format=csv" class="btn btn-secondary"><i class="fas fa-download"></i> Export CSV</a>
-      </div>
-    </div>
-
-    <div class="grid-2" style="align-items:start">
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-chart-pie"></i> SKU ABC Classification</span></div>
-        <div class="card-body" style="height:200px"><canvas id="abc-policy-chart"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-cog"></i> Global Inventory Policies</span></div>
-        <div class="card-body">
-          {[
-            ['A-Class Review Cycle', 'Weekly', 'Critical items'],
-            ['B-Class Review Cycle', 'Bi-weekly', 'Monitor items'],
-            ['C-Class Review Cycle', 'Monthly', 'Slow movers'],
-            ['Service Level Target (A)', '99.0%', 'Customer-facing SKUs'],
-            ['Service Level Target (B)', '97.5%', 'Standard'],
-            ['Min Shelf Life on Receipt', '70%', 'FEFO policy'],
-          ].map(([l,v,h]) =>
-            <div key={l} style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F1F5F9">
-              <div><div style="font-size:13px;color:#1E293B">{l}</div><div style="font-size:11px;color:#94A3B8">{h}</div></div>
-              <strong style="font-size:13px;color:#2563EB">{v}</strong>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title"><i class="fas fa-boxes"></i> SKU Master Table</span>
-        <div style="display:flex;gap:8px">
-          <input id="sku-master-search" class="form-input" style="width:200px;padding:5px 10px;font-size:12px" placeholder="Search SKU..." oninput="filterSKUTable(this.value)" />
-          <button class="btn btn-sm btn-secondary" onclick="filterSKUTable(document.getElementById('sku-master-search').value)"><i class="fas fa-filter"></i> Filter</button>
-        </div>
-      </div>
-      <div class="card-body compact">
-        <table class="data-table" id="sku-master-table">
-          <thead><tr><th>SKU Code</th><th>SKU Name</th><th>Category</th><th>ABC</th><th>UoM</th><th>Safety Stock</th><th>Reorder Pt.</th><th>Lead Time</th><th>Location</th><th>Status</th></tr></thead>
-          <tbody>
-            {[
-              ['SKU-001','AquaPure 500ml','PET Water','A','Cases','6,000','15,000','7d','WH-MUM-A1','active'],
-              ['SKU-002','FruitBurst Orange 1L','Juice','A','Cases','3,000','12,000','10d','WH-MUM-B2','active'],
-              ['SKU-003','CoolSip Lemon 250ml','Nimbu Pani','A','Cases','2,500','10,000','7d','WH-DEL-A1','active'],
-              ['SKU-004','SportZone Energy 500ml','Sports Drink','B','Cases','2,000','8,000','14d','WH-MUM-C3','active'],
-              ['SKU-005','MintFresh Water 1L','Mint Water','B','Cases','1,800','7,200','7d','WH-DEL-B2','active'],
-              ['SKU-006','TropicBlast Mango','Juice','B','Cases','1,500','6,000','10d','WH-CHN-A1','active'],
-              ['SKU-007','ZestUp Grapefruit','Functional','C','Cases','1,200','5,000','21d','WH-MUM-D4','active'],
-              ['SKU-008','PureH2O Alkaline','Premium Water','C','Cases','1,000','4,000','14d','WH-DEL-C3','active'],
-            ].map(([code,name,cat,abc,uom,ss,rop,lt,loc,status]) =>
-              <tr key={code}>
-                <td><strong style="font-size:0.8rem">{code}</strong></td>
-                <td>{name}</td>
-                <td><span class="badge badge-neutral">{cat}</span></td>
-                <td><span class={`badge badge-${abc==='A'?'critical':abc==='B'?'warning':'neutral'}`}>{abc}</span></td>
-                <td>{uom}</td>
-                <td>{ss}</td>
-                <td>{rop}</td>
-                <td>{lt}</td>
-                <td style="font-size:11px;color:#64748B">{loc}</td>
-                <td><span class="badge badge-healthy">{status}</span></td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </Layout>)
-})
-
-// ============================================================
-// PROCUREMENT ROUTES
-// ============================================================
-
-app.get('/procurement', async (c) => {
-  const scripts = `// procurement-module.js handles this page
-  `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Procurement Planning" activeModule="procurement" scripts={scripts}>
-    <div class="page-header">
-      <div class="page-header-left">
-        <div class="page-icon" style="background:linear-gradient(135deg,#D97706,#F59E0B)"><i class="fas fa-handshake"></i></div>
-        <div>
-          <div class="page-title">Procurement Planning</div>
-          <div class="page-subtitle">Supplier management, PO lifecycle, contract management and spend analytics</div>
-        </div>
-      </div>
-      <div class="page-header-right">
-        <span class="badge badge-live">Live</span>
-        <a href="/procurement/operational" class="btn btn-primary"><i class="fas fa-clipboard-list"></i> PO Workbench</a>
-        <a href="/procurement/suppliers" class="btn btn-secondary"><i class="fas fa-star"></i> Scorecards</a>
-      </div>
-    </div>
-    <div class="kpi-grid" id="proc-kpi-grid"><div class="kpi-card"><div class="spinner"></div></div></div>
-
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-spider"></i> Supplier Performance Scorecard</span><a href="/procurement/suppliers" class="btn btn-sm btn-secondary">All Suppliers</a></div>
-        <div class="card-body" style="height:240px"><canvas id="proc-supplier-chart"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-file-invoice"></i> PO Status Distribution</span></div>
-        <div class="card-body" style="height:240px"><canvas id="proc-po-status-chart"></canvas></div>
-      </div>
-    </div>
-
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-rupee-sign"></i> Monthly Spend by Category</span></div>
-        <div class="card-body" style="height:220px"><canvas id="proc-spend-chart"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-shipping-fast"></i> Lead Time by Supplier</span></div>
-        <div class="card-body" style="height:220px"><canvas id="proc-lead-time-chart"></canvas></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title"><i class="fas fa-truck"></i> Supplier Risk Matrix</span>
-        <a href="/procurement/operational" class="btn btn-sm btn-primary"><i class="fas fa-clipboard-list"></i> PO Workbench</a>
-      </div>
-      <div id="proc-risk-matrix"><div class="spinner" style="padding:20px;text-align:center"></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title"><i class="fas fa-list-alt"></i> Purchase Orders</span>
-      </div>
-      <div class="card-body compact">
-        <table class="data-table">
-          <thead><tr><th>PO Number</th><th>Material</th><th>Supplier</th><th>Qty</th><th>Cost</th><th>Period</th><th>Status</th><th>Action</th></tr></thead>
-          <tbody id="proc-po-table"><tr><td colspan={8} style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header"><span class="card-title"><i class="fas fa-chart-line"></i> Supplier OTIF Trend</span></div>
-      <div class="card-body" style="height:220px"><canvas id="proc-otif-trend"></canvas></div>
-    </div>
-    <script src="/static/procurement-module.js"></script>
-  </Layout>)
-})
-
-app.get('/procurement/operational', async (c) => {
-  const scripts = `
-async function init() {
-  const plans = await axios.get('/api/procurement/plans').then(r=>r.data).catch(()=>[]);
-  const tbody = document.getElementById('po-table');
-  if (tbody) tbody.innerHTML = plans.map(p => \`<tr>
-    <td><strong>PO-\${String(p.id).padStart(4,'0')}</strong></td>
-    <td>\${p.material_name}</td>
-    <td>\${p.supplier_name}</td>
-    <td>\${p.planned_qty?.toLocaleString()}</td>
-    <td>₹\${(p.planned_cost/100000).toFixed(1)}L</td>
-    <td>\${p.delivery_date||p.period}</td>
-    <td><span class="badge badge-\${p.status==='approved'?'success':p.status==='draft'?'warning':'info'}">\${p.status}</span></td>
-    <td><div style="display:flex;gap:6px">
-      \${p.status==='draft'?'<button class="btn btn-sm btn-success" onclick="approveProcPO(this,\\'PO-'+String(p.id).padStart(4,'0')+'\\')">Approve</button>':''}
-      <button class="btn btn-sm btn-secondary" onclick="viewProcPO('PO-'+String(p.id).padStart(4,'0'))">Details</button>
-    </div></td>
-  </tr>\`).join('') || '<tr><td colspan="8" style="text-align:center">No POs</td></tr>';
+    const plansRaw = await axios.get('/api/mrp/purchase-orders').then(r => r.data).catch(() => []);
+    const plans = asArray(plansRaw).length ? asArray(plansRaw) : fallbackRows;
+    const tbody = document.getElementById('po-table');
+    if (tbody) tbody.innerHTML = plans.map(p => '<tr>' +
+      '<td><strong>' + (String(p.id).startsWith('PO-') ? p.id : 'PO-' + String(p.id).padStart(4, '0')) + '</strong></td>' +
+      '<td>' + (p.material_name || p.rmName || p.rmSKU || 'Material') + '</td>' +
+      '<td>' + (p.supplier_name || p.supplier || 'Supplier') + '</td>' +
+      '<td>' + (p.planned_qty ?? p.qty ?? 0).toLocaleString() + ' units</td>' +
+      '<td>\u20B9' + ((p.planned_cost ?? p.cost ?? 0) / 100000).toFixed(1) + 'L</td>' +
+      '<td>' + (p.delivery_date || p.expectedDelivery || p.period || '?') + '</td>' +
+      '<td><span class="badge badge-' + (p.status === 'approved' ? 'success' : p.status === 'draft' ? 'warning' : 'info') + '">' + p.status + '</span></td>' +
+      '<td><div style="display:flex;gap:6px">' + (p.status === 'draft' ? '<button class="btn btn-sm btn-success" onclick="approvePO(this)">Approve</button>' : '') + '<button class="btn btn-sm btn-secondary" onclick="viewProcPO(' + JSON.stringify(String(String(p.id).startsWith('PO-') ? p.id : 'PO-' + String(p.id).padStart(4, '0'))) + ')">View</button></div></td>' +
+    '</tr>').join('') || '<tr><td colspan="8" style="text-align:center">No POs</td></tr>';
+  } catch (e) {
+    const tbody = document.getElementById('po-table');
+    if (tbody) tbody.innerHTML = fallbackRows.map(p => '<tr>' +
+      '<td><strong>' + (String(p.id).startsWith('PO-') ? p.id : 'PO-' + String(p.id).padStart(4, '0')) + '</strong></td>' +
+      '<td>' + p.rmName + '</td>' +
+      '<td>' + p.supplier + '</td>' +
+      '<td>' + Number(p.qty).toLocaleString() + ' units</td>' +
+      '<td>?' + (Number(p.cost) / 100000).toFixed(1) + 'L</td>' +
+      '<td>' + p.expectedDelivery + '</td>' +
+      '<td><span class="badge badge-' + (p.status === 'Confirmed' ? 'success' : p.status === 'Planned' ? 'warning' : 'info') + '">' + p.status + '</span></td>' +
+      '<td><div style="display:flex;gap:6px">' + (p.status === 'Planned' ? '<button class="btn btn-sm btn-success" onclick="approvePO(this)">Approve</button>' : '') + '<button class="btn btn-sm btn-secondary" onclick="viewProcPO(' + JSON.stringify(String(String(p.id).startsWith('PO-') ? p.id : 'PO-' + String(p.id).padStart(4, '0'))) + ')">View</button></div></td>' +
+    '</tr>').join('');
 }
 function approveProcPO(btn, poNum) {
   const row = btn.closest('tr');
@@ -5040,12 +3885,17 @@ function approveProcPO(btn, poNum) {
   btn.remove();
   if (window.showToast) window.showToast(poNum + ' approved and sent to supplier. ERP updated. Expected delivery logged.', 'success');
 }
+function approvePO(btn) {
+  const row = btn.closest('tr');
+  const poNum = row && row.cells && row.cells[0] ? row.cells[0].innerText.trim() : 'PO';
+  approveProcPO(btn, poNum);
+}
 function viewProcPO(poNum) {
   if (window.showToast) window.showToast('Opening details for ' + poNum + '...', 'info');
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Procurement – PO Workbench" activeModule="proc-workbench" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Procurement — PO Workbench" activeModule="proc-workbench" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#D97706,#F59E0B)"><i class="fas fa-clipboard-list"></i></div>
@@ -5056,11 +3906,122 @@ document.addEventListener('DOMContentLoaded', init);
     <div class="card"><div class="card-body compact">
       <table class="data-table">
         <thead><tr><th>PO #</th><th>Material</th><th>Supplier</th><th>Qty</th><th>Value</th><th>Delivery</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody id="po-table"><tr><td colspan={8} style="text-align:center;padding:20px"><div class="spinner"></div></td></tr></tbody>
+        <tbody id="po-table" dangerouslySetInnerHTML={{ __html: poTableHtml }}></tbody>
       </table>
     </div></div>
   </Layout>)
 })
+
+app.get('/mrp/optimization-workbench', async (c) => {
+  const primaryScenario = mrpScenarios.find(s => s.id === 'S2') ?? mrpScenarios[0]
+  const scripts = `
+const mrpTabs = ['objectives', 'constraints', 'results', 'scenarios'];
+function mrpWbTab(tab) {
+  mrpTabs.forEach(t => {
+    const btn = document.querySelector('.mrpwb-tab[data-tab="' + t + '"]');
+    const panel = document.querySelector('.mrpwb-panel[data-panel="' + t + '"]');
+    if (btn) btn.classList.toggle('active', t === tab);
+    if (panel) panel.style.display = t === tab ? 'block' : 'none';
+  });
+}
+function renderMrpResults(payload) {
+  const target = document.getElementById('mrpwb-results');
+  if (!target) return;
+  const scen = payload && payload.scenario ? payload.scenario : ${JSON.stringify({ id: 'S2', name: 'Demand Surge', driver: 'Volume spike / service protection', description: 'Shortage-avoidance scenario with higher inventory buffers and PO acceleration.', active: true, kpis: { materialAvailability: 98.4, inventoryReduction: 6.8, costReduction: 8.4, planAdherence: 96.1, serviceLevel: 97.2, supplierOTIF: 94.6, totalCost: 845000, holdingCost: 215000, orderingCost: 46000, shortage: 0 } })};
+  const recs = Array.isArray(payload && payload.recommendations) && payload.recommendations.length ? payload.recommendations : [
+    { action: 'Rebalance safety stock for Orange Concentrate', impact: 'Reduce holding cost by 12%', priority: 'High' },
+    { action: 'Split Aluminium Can PO across 2 suppliers', impact: 'Reduce supply risk by 35%', priority: 'High' },
+    { action: 'Increase Line-4 to 3 shifts during W03-W05', impact: 'Eliminate 5.3% capacity gap', priority: 'Medium' }
+  ];
+  const kpis = [
+    ['Material Availability', scen.kpis.materialAvailability + '%', 'healthy'],
+    ['Inventory Reduction', scen.kpis.inventoryReduction + '%', 'healthy'],
+    ['Cost Reduction', scen.kpis.costReduction + '%', 'healthy'],
+    ['Service Level', scen.kpis.serviceLevel + '%', 'healthy'],
+    ['Supplier OTIF', scen.kpis.supplierOTIF + '%', 'healthy']
+  ];
+  target.innerHTML = '<div class="kpi-grid" style="grid-template-columns:repeat(5,1fr)">' +
+    kpis.map(([l,v,s]) => '<div class="kpi-card ' + s + '"><div class="kpi-label">' + l + '</div><div class="kpi-value ' + s + '">' + v + '</div></div>').join('') +
+    '</div>' +
+    '<div class="alert alert-success" style="margin-top:12px"><i class="fas fa-check-circle"></i><div><strong>MRP optimization complete.</strong> Scenario <strong>' + scen.name + '</strong> applied. Target material availability ' + scen.kpis.materialAvailability + '%. Savings opportunity: ?' + (scen.kpis.totalCost / 100000).toFixed(1) + 'L.</div></div>' +
+    '<div class="card" style="margin-top:16px"><div class="card-body"><div class="card-title" style="margin-bottom:12px">Recommended Actions</div>' +
+    recs.map(r => '<div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #F1F5F9"><i class="fas fa-lightbulb" style="color:#7C3AED;margin-top:2px"></i><div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:4px">' + r.action + '</div><div style="font-size:12px;color:#64748B">' + r.impact + '</div></div><span class="badge badge-' + (r.priority === 'High' ? 'critical' : r.priority === 'Medium' ? 'warning' : 'info') + '">' + r.priority + '</span></div>').join('') +
+    '</div></div>';
+}
+async function runMrpOpt() {
+  const btn = document.getElementById('mrpwb-run-btn');
+  if (!btn) return;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner" style="width:16px;height:16px"></span> Running...';
+  try {
+    const res = await axios.post('/api/mrp/optimize', { scenarioId: 'S2' });
+    renderMrpResults(res.data || {});
+  } catch (e) {
+    renderMrpResults({ scenario: primaryScenario, recommendations: [] });
+    if (window.showToast) window.showToast('MRP optimization completed with fallback results.', 'info');
+  }
+  mrpWbTab('results');
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fas fa-rocket"></i> Run Optimization';
+}
+document.addEventListener('DOMContentLoaded', function () { mrpWbTab('objectives'); });
+  `.trim()
+  const _u = getUser(c); return c.html(<Layout user={_u} title="MRP Optimization Workbench" activeModule="mrp-workbench" scripts={scripts}>
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#22D3EE)"><i class="fas fa-sliders-h"></i></div>
+        <div>
+          <div class="page-title">MRP Optimization Workbench</div>
+          <div class="page-subtitle">Optimize gross requirements, inventory buffers and PO release strategy</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <button class="btn btn-primary" id="mrpwb-run-btn" onclick="runMrpOpt()"><i class="fas fa-rocket"></i> Run Optimization</button>
+        <a href="/mrp/explosion" class="btn btn-secondary"><i class="fas fa-project-diagram"></i> Explosion View</a>
+      </div>
+    </div>
+    <div style="background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,0.06);margin-bottom:20px;overflow:hidden">
+      <div style="display:flex;border-bottom:1px solid #E2E8F0">
+        <button class="mrpwb-tab active" data-tab="objectives" onclick="mrpWbTab('objectives')" style="padding:12px 20px;border:none;background:transparent;cursor:pointer;font-size:0.875rem;font-weight:600;color:#64748B;border-bottom:3px solid transparent;display:flex;align-items:center;gap:6px"><i class="fas fa-bullseye"></i>1. Objectives</button>
+        <button class="mrpwb-tab" data-tab="constraints" onclick="mrpWbTab('constraints')" style="padding:12px 20px;border:none;background:transparent;cursor:pointer;font-size:0.875rem;font-weight:600;color:#64748B;border-bottom:3px solid transparent;display:flex;align-items:center;gap:6px"><i class="fas fa-lock"></i>2. Constraints</button>
+        <button class="mrpwb-tab" data-tab="results" onclick="mrpWbTab('results')" style="padding:12px 20px;border:none;background:transparent;cursor:pointer;font-size:0.875rem;font-weight:600;color:#64748B;border-bottom:3px solid transparent;display:flex;align-items:center;gap:6px"><i class="fas fa-chart-bar"></i>3. Results</button>
+        <button class="mrpwb-tab" data-tab="scenarios" onclick="mrpWbTab('scenarios')" style="padding:12px 20px;border:none;background:transparent;cursor:pointer;font-size:0.875rem;font-weight:600;color:#64748B;border-bottom:3px solid transparent;display:flex;align-items:center;gap:6px"><i class="fas fa-layer-group"></i>4. Scenario Comparison</button>
+      </div>
+      <div class="mrpwb-panel" data-panel="objectives" style="padding:20px">
+        <p style="font-size:12px;color:#64748B;margin-bottom:16px">Select MRP optimization objectives aligned to the current supply plan</p>
+        <div style="padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px"><strong>Service Level</strong><div style="font-size:12px;color:#64748B">Avoid shortages across W01-W06</div></div>
+        <div style="padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px"><strong>Cost Optimization</strong><div style="font-size:12px;color:#64748B">Reduce excess inventory while preserving service</div></div>
+        <div style="padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px"><strong>Planning Accuracy</strong><div style="font-size:12px;color:#64748B">Trigger purchase orders at the right week</div></div>
+        <div style="padding:12px;border:1px solid var(--border);border-radius:8px"><strong>Supplier Reliability</strong><div style="font-size:12px;color:#64748B">Prefer suppliers with stable lead times</div></div>
+      </div>
+      <div class="mrpwb-panel" data-panel="constraints" style="padding:20px;display:none">
+        <p style="font-size:12px;color:#64748B;margin-bottom:16px">Constraints governing MRP optimization</p>
+        <div style="padding:10px;border-bottom:1px solid var(--border)"><strong>Safety Stock</strong> <span style="float:right">SKU-specific</span></div>
+        <div style="padding:10px;border-bottom:1px solid var(--border)"><strong>MOQ</strong> <span style="float:right">Supplier-specific</span></div>
+        <div style="padding:10px;border-bottom:1px solid var(--border)"><strong>Shelf Life</strong> <span style="float:right">Material-specific</span></div>
+        <div style="padding:10px"><strong>Lead Time Buffer</strong> <span style="float:right">2 days</span></div>
+      </div>
+      <div class="mrpwb-panel" data-panel="results" style="padding:20px;display:none">
+        <div id="mrpwb-results"><div class="alert alert-info"><i class="fas fa-info-circle"></i><div>Run optimization to generate MRP recommendations.</div></div></div>
+      </div>
+      <div class="mrpwb-panel" data-panel="scenarios" style="padding:20px;display:none">
+        <table class="data-table">
+          <thead><tr><th>Scenario</th><th>Driver</th><th>Availability</th><th>Inventory Reduction</th><th>Service Level</th><th>Risk</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Baseline</strong></td><td>Current State</td><td><span class="badge badge-warning">94.2%</span></td><td>0%</td><td>94.2%</td><td><span class="badge badge-success">Baseline</span></td></tr>
+            <tr><td><strong>Demand Surge</strong></td><td>Volume spike</td><td><span class="badge badge-success">98.4%</span></td><td>6.8%</td><td>97.2%</td><td><span class="badge badge-warning">Optimized</span></td></tr>
+            <tr><td><strong>Supply Risk</strong></td><td>Supplier delay</td><td><span class="badge badge-critical">89.6%</span></td><td>-</td><td>88.1%</td><td><span class="badge badge-critical">High</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </Layout>)
+})
+
+app.get('/mrp/analytics', (c) => c.redirect('/mrp'))
+app.get('/mrp/shortage-alerts', (c) => c.redirect('/mrp/explosion'))
+app.get('/procurement', (c) => c.redirect('/procurement/optimization-workbench'))
+app.get('/procurement/operational', (c) => c.redirect('/procurement/optimization-workbench'))
 
 app.get('/procurement/suppliers', async (c) => {
   const scripts = `
@@ -5084,7 +4045,7 @@ async function init() {
     </div></div>\`;
   }).join('') || '<p class="text-muted">No suppliers</p>';
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
   const _u = getUser(c); return c.html(<Layout user={_u} title="Supplier Scorecards" activeModule="proc-suppliers" scripts={scripts}>
     <div class="page-header">
@@ -5098,7 +4059,7 @@ document.addEventListener('DOMContentLoaded', init);
 })
 
 app.get('/procurement/contracts', (c) => {
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Procurement – Contracts" activeModule="proc-contracts">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Procurement — PO Workbench" activeModule="proc-workbench" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#D97706,#F59E0B)"><i class="fas fa-file-contract"></i></div>
@@ -5106,9 +4067,9 @@ app.get('/procurement/contracts', (c) => {
       </div>
     </div>
     <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div>2 contracts expiring within 90 days. Action required.</div></div>
-    {[{supplier:'IndoPlast Industries',mat:'PET Resin',expiry:'2026-06-30',value:'₹1.8Cr',status:'active'},
-      {supplier:'Citrus India Ltd',mat:'Concentrates',expiry:'2026-03-31',value:'₹45L',status:'expiring'},
-      {supplier:'SweetSource Ltd',mat:'Sugar',expiry:'2026-09-30',value:'₹28L',status:'active'}
+    {[{supplier:'IndoPlast Industries',mat:'PET Resin',expiry:'2026-06-30',value:'?1.8Cr',status:'active'},
+      {supplier:'Citrus India Ltd',mat:'Concentrates',expiry:'2026-03-31',value:'?45L',status:'expiring'},
+      {supplier:'SweetSource Ltd',mat:'Sugar',expiry:'2026-09-30',value:'?28L',status:'active'}
     ].map(c =>
       <div class="card mb-4" key={c.supplier}>
         <div class="card-body">
@@ -5137,11 +4098,11 @@ async function runProcOptLegacy(btn) {
   try {
     await axios.post('/api/optimizer/run', {
       module:'procurement', action:'Supplier Allocation Optimization',
-      result_summary:'Rebalanced 5 suppliers. PolyPack India +3%, Hindustan Packaging −5%. Savings: ₹4.2L/mo.',
-      impact:'₹4.2L/mo'
+      result_summary:'Rebalanced 5 suppliers. PolyPack India +3%, Hindustan Packaging âˆ’5%. Savings: ?4.2L/mo.',
+      impact:'?4.2L/mo'
     });
-    window.showToast('Optimization complete — ₹4.2L savings identified. Actions logged!','success');
-  } catch(e) { window.showToast('Optimization complete — ₹4.2L savings identified','success'); }
+    window.showToast('Optimization complete ? ?4.2L savings identified. Actions logged!','success');
+  } catch(e) { window.showToast('Optimization complete ? ?4.2L savings identified','success'); }
   btn.innerHTML = '<i class="fas fa-rocket"></i> Run Optimizer'; btn.disabled = false;
 }
 function filterSKUTable(query) {
@@ -5193,7 +4154,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Procurement Optimization" activeModule="proc-optimization" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Procurement — PO Workbench" activeModule="proc-workbench" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#D97706,#F59E0B)"><i class="fas fa-sliders-h"></i></div>
@@ -5207,7 +4168,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {/* Savings summary */}
     <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
       {[
-        ['Potential Savings', '₹4.2L/mo', 'healthy'],
+        ['Potential Savings', '?4.2L/mo', 'healthy'],
         ['Consolidation Opp.', '3 SKUs', 'warning'],
         ['Dual-Source Risk', '2 Items', 'critical'],
         ['Contract Expiring', '4 in 30d', 'warning'],
@@ -5221,7 +4182,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     <div class="grid-2">
       <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-percentage"></i> Supplier Allocation — Current vs Optimized</span></div>
+        <div class="card-header"><span class="card-title"><i class="fas fa-percentage"></i> Supplier Allocation ? Current vs Optimized</span></div>
         <div class="card-body" style="height:250px"><canvas id="alloc-chart"></canvas></div>
       </div>
       <div class="card">
@@ -5234,10 +4195,10 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="card-header"><span class="card-title"><i class="fas fa-list-alt"></i> Optimization Recommendations</span></div>
       <div class="card-body">
         {[
-          ['Consolidate SKU-003 + SKU-005 orders at PolyPack India — bulk discount available','₹1.2L/mo','high','Increase allocation by 5%','critical'],
-          ['Switch SKU-007 from spot buy to 3-month contract with FreshSeal Corp','₹0.8L/mo','medium','Negotiate 90-day rolling contract','warning'],
+          ['Consolidate SKU-003 + SKU-005 orders at PolyPack India ? bulk discount available','?1.2L/mo','high','Increase allocation by 5%','critical'],
+          ['Switch SKU-007 from spot buy to 3-month contract with FreshSeal Corp','?0.8L/mo','medium','Negotiate 90-day rolling contract','warning'],
           ['Activate EcoWrap Ltd as dual-source for SKU-001 to reduce concentration risk','Risk Reduction','high','Onboard with 15% share','critical'],
-          ['Defer low-urgency C-class POs by 2 weeks to improve payment terms','₹0.4L/mo','low','Coordinate with finance','warning'],
+          ['Defer low-urgency C-class POs by 2 weeks to improve payment terms','?0.4L/mo','low','Coordinate with finance','warning'],
         ].map(([desc, saving, priority, action, s]) =>
           <div key={desc} style="display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #F1F5F9">
             <i class={`fas fa-lightbulb`} style={`color:${s==='critical'?'#DC2626':'#D97706'};margin-top:2px`}></i>
@@ -5273,7 +4234,7 @@ document.addEventListener('DOMContentLoaded', () => {
     data:{
       labels:['Packaging','Raw Mats','Chemicals','Transport','Utilities','Others'],
       datasets:[{
-        label:'Spend ₹L',
+        label:'Spend ?L',
         data:[42.5,28.3,12.1,9.8,4.2,6.3],
         backgroundColor:['#2563EB','#7C3AED','#0891B2','#D97706','#059669','#64748B'],
         borderRadius:5
@@ -5281,9 +4242,9 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     options:{
       responsive:true, maintainAspectRatio:false,
-      plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>'₹'+c.raw+'L'}}},
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>'?'+c.raw+'L'}}},
       scales:{
-        y:{title:{display:true,text:'₹ Lakh'},grid:{color:'rgba(0,0,0,0.04)'}},
+        y:{title:{display:true,text:'? Lakh'},grid:{color:'rgba(0,0,0,0.04)'}},
         x:{grid:{display:false}}
       }
     }
@@ -5336,16 +4297,16 @@ document.addEventListener('DOMContentLoaded', () => {
     options:{
       responsive:true, maintainAspectRatio:false,
       interaction:{mode:'index',intersect:false},
-      plugins:{legend:{position:'top',labels:{font:{size:11},boxWidth:12}},tooltip:{callbacks:{label:c=>' '+c.dataset.label+': ₹'+c.raw.toFixed(1)+'L'}}},
+      plugins:{legend:{position:'top',labels:{font:{size:11},boxWidth:12}},tooltip:{callbacks:{label:c=>' '+c.dataset.label+': ?'+c.raw.toFixed(1)+'L'}}},
       scales:{
-        y:{title:{display:true,text:'₹ Lakh'},grid:{color:'rgba(0,0,0,0.04)'}},
+        y:{title:{display:true,text:'? Lakh'},grid:{color:'rgba(0,0,0,0.04)'}},
         x:{grid:{display:false}}
       }
     }
   });
 });
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Procurement Analytics" activeModule="proc-analytics" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Procurement — PO Workbench" activeModule="proc-workbench" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#D97706,#F59E0B)"><i class="fas fa-chart-bar"></i></div>
@@ -5359,7 +4320,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {/* Summary KPIs */}
     <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
       {[
-        ['Total Spend (Mar)', '₹125.6L', 'warning'],
+        ['Total Spend (Mar)', '?125.6L', 'warning'],
         ['Budget Variance', '+4.7%', 'warning'],
         ['Top Supplier Conc.', '35%', 'warning'],
         ['Price Variance YTD', '+1.5%', 'warning'],
@@ -5373,7 +4334,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     <div class="grid-2">
       <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> Spend by Category (₹ Lakh)</span></div>
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> Spend by Category (? Lakh)</span></div>
         <div class="card-body" style="height:240px"><canvas id="spend-chart"></canvas></div>
       </div>
       <div class="card">
@@ -5388,7 +4349,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="card-body" style="height:220px"><canvas id="price-var-chart"></canvas></div>
       </div>
       <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-chart-line"></i> Monthly Spend vs Budget (₹ Lakh)</span></div>
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-line"></i> Monthly Spend vs Budget (? Lakh)</span></div>
         <div class="card-body" style="height:220px"><canvas id="spend-trend-chart"></canvas></div>
       </div>
     </div>
@@ -5400,12 +4361,12 @@ document.addEventListener('DOMContentLoaded', () => {
           <thead><tr><th>Category</th><th>This Month</th><th>Budget</th><th>Variance</th><th>YTD Spend</th><th>Top Supplier</th><th>Status</th></tr></thead>
           <tbody>
             {[
-              ['Packaging (Primary)','₹42.5L','₹40.0L','+6.3%','₹248.2L','Hindustan Packaging','warning'],
-              ['Raw Materials','₹28.3L','₹30.0L','−5.7%','₹168.8L','PolyPack India','healthy'],
-              ['Chemicals/CO₂','₹12.1L','₹11.5L','+5.2%','₹72.4L','FreshSeal Corp','warning'],
-              ['Transport/3PL','₹9.8L','₹9.0L','+8.9%','₹58.6L','FastFreight Ltd','critical'],
-              ['Utilities','₹4.2L','₹4.0L','+5.0%','₹25.1L','National Grid','warning'],
-              ['Others','₹6.3L','₹6.5L','−3.1%','₹37.8L','Various','healthy'],
+              ['Packaging (Primary)','?42.5L','?40.0L','+6.3%','?248.2L','Hindustan Packaging','warning'],
+              ['Raw Materials','?28.3L','?30.0L','âˆ’5.7%','?168.8L','PolyPack India','healthy'],
+              ['Chemicals/COâ‚‚','?12.1L','?11.5L','+5.2%','?72.4L','FreshSeal Corp','warning'],
+              ['Transport/3PL','?9.8L','?9.0L','+8.9%','?58.6L','FastFreight Ltd','critical'],
+              ['Utilities','?4.2L','?4.0L','+5.0%','?25.1L','National Grid','warning'],
+              ['Others','?6.3L','?6.5L','âˆ’3.1%','?37.8L','Various','healthy'],
             ].map(([cat,spend,bgt,var_,ytd,sup,s]) =>
               <tr key={cat}>
                 <td><strong>{cat}</strong></td>
@@ -5505,7 +4466,7 @@ app.get('/resource', async (c) => {
     <div class="card">
       <div class="card-header"><span class="card-title"><i class="fas fa-exclamation-triangle"></i> Workforce Risk Alerts</span></div>
       <div class="card-body">
-        {[['High attrition risk — Packaging Dept, Mumbai','critical'],['Skill gap: CIP Operators, Chennai — 2 positions','warning'],['Overtime threshold breached — Week 24, Mumbai','critical'],['Succession gap: Production Supervisor, Delhi','warning']].map(([msg, s]) =>
+        {[['High attrition risk ? Packaging Dept, Mumbai','critical'],['Skill gap: CIP Operators, Chennai ? 2 positions','warning'],['Overtime threshold breached ? Week 24, Mumbai','critical'],['Succession gap: Production Supervisor, Delhi','warning']].map(([msg, s]) =>
           <div class={`alert alert-${s}`} key={msg}>
             <i class={`fas fa-${s==='critical'?'times-circle':'exclamation-triangle'}`}></i>
             <div>{msg}</div>
@@ -5562,15 +4523,15 @@ async function init() {
     <td><a href="/resource" class="btn btn-sm btn-secondary" style="font-size:11px">View Details</a></td>
   </tr>\`).join('');
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Resource – Executive Summary" activeModule="res-executive" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Resource ? Executive Summary" activeModule="res-executive" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-chart-pie"></i></div>
         <div>
-          <div class="page-title">Resource Planning — Executive Summary</div>
-          <div class="page-subtitle">Workforce utilization · Overtime · Absenteeism · Plant-level breakdown · Mar 2026</div>
+          <div class="page-title">Resource Planning ? Executive Summary</div>
+          <div class="page-subtitle">Workforce utilization ? Overtime ? Absenteeism ? Plant-level breakdown ? Mar 2026</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -5596,10 +4557,10 @@ document.addEventListener('DOMContentLoaded', init);
       <div class="card">
         <div class="card-header"><span class="card-title"><i class="fas fa-exclamation-triangle"></i> Key Risks & Actions</span></div>
         <div class="card-body">
-          <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>Chennai OT Critical:</strong> 44 hrs/wk vs 40h limit. 3 operators need upskilling to absorb load. <a href="/resource/optimization" style="color:#DC2626;font-weight:600">Run Optimizer →</a></div></div>
-          <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>Cross-training Gap:</strong> Only 38% of workforce is multi-line certified. Target 60% by Q2 2026. <a href="/resource/skills" style="color:#D97706;font-weight:600">View Roster →</a></div></div>
+          <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>Chennai OT Critical:</strong> 44 hrs/wk vs 40h limit. 3 operators need upskilling to absorb load. <a href="/resource/optimization" style="color:#DC2626;font-weight:600">Run Optimizer ?</a></div></div>
+          <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>Cross-training Gap:</strong> Only 38% of workforce is multi-line certified. Target 60% by Q2 2026. <a href="/resource/skills" style="color:#D97706;font-weight:600">View Roster ?</a></div></div>
           <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>Absenteeism Spike:</strong> Chennai at 5.2% vs target 3%. Seasonal pattern detected. </div></div>
-          <div class="alert alert-info"><i class="fas fa-info-circle"></i><div><strong>Efficiency Strong:</strong> Mumbai at 93.1% efficiency — best practice to share across plants.</div></div>
+          <div class="alert alert-info"><i class="fas fa-info-circle"></i><div><strong>Efficiency Strong:</strong> Mumbai at 93.1% efficiency ? best practice to share across plants.</div></div>
         </div>
       </div>
     </div>
@@ -5613,7 +4574,7 @@ document.addEventListener('DOMContentLoaded', init);
         <table class="data-table">
           <thead><tr><th>Shift</th><th>Mumbai</th><th>Delhi</th><th>Chennai</th><th>Bangalore</th><th>Avg OT</th></tr></thead>
           <tbody>
-            {[['Shift A (06:00–14:00)','88%','85%','79%','74%','22h'],['Shift B (14:00–22:00)','81%','78%','76%','70%','18h'],['Shift C (22:00–06:00)','71%','68%','65%','62%','12h']].map(([s,m,d,ch,b,ot]) =>
+            {[['Shift A (06:00?14:00)','88%','85%','79%','74%','22h'],['Shift B (14:00?22:00)','81%','78%','76%','70%','18h'],['Shift C (22:00?06:00)','71%','68%','65%','62%','12h']].map(([s,m,d,ch,b,ot]) =>
               <tr key={s}><td><strong>{s}</strong></td><td>{m}</td><td>{d}</td><td>{ch}</td><td>{b}</td><td>{ot}</td></tr>
             )}
           </tbody>
@@ -5631,19 +4592,19 @@ async function init() {
   const ops = await axios.get('/api/resource/operators').then(r=>r.data).catch(()=>[]);
   const tbody = document.getElementById('skills-table');
   if (tbody) tbody.innerHTML = ops.map(o => \`<tr>
-    <td><strong>\${o.operator_name||'—'}</strong></td>
-    <td>\${o.plant_name||'—'}</td>
+    <td><strong>\${o.operator_name||'?'}</strong></td>
+    <td>\${o.plant_name||'?'}</td>
     <td>\${o.line_name||'All Lines'}</td>
     <td>\${o.skill_name||'Multi-line'}</td>
     <td><span class="badge badge-\${o.proficiency_level==='expert'||o.proficiency_level==='master'?'success':o.proficiency_level==='intermediate'?'info':'warning'}">\${o.proficiency_level||'beginner'}</span></td>
     <td>\${o.status||'active'}</td>
-    <td>\${o.certification_date||'—'}</td>
-    <td>\${o.expiry_date||'—'}</td>
+    <td>\${o.certification_date||'?'}</td>
+    <td>\${o.expiry_date||'?'}</td>
   </tr>\`).join('') || '<tr><td colspan="8" style="text-align:center">No operator data</td></tr>';
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Resource – Skills & Roster" activeModule="res-skills" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Resource ? Skills & Roster" activeModule="res-skills" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#DC2626,#F87171)"><i class="fas fa-id-badge"></i></div>
@@ -5668,13 +4629,13 @@ async function runResourceOptimizer(btn) {
     await axios.post('/api/optimizer/run', {
       module: 'resource',
       action: 'OT Reduction Optimization',
-      result_summary: 'Identified 44 hrs/wk OT reduction. Shift rebalance: −18h, Cross-training: −14h, Flex hire: −12h.',
-      impact: '₹4.8L/mo savings'
+      result_summary: 'Identified 44 hrs/wk OT reduction. Shift rebalance: âˆ’18h, Cross-training: âˆ’14h, Flex hire: âˆ’12h.',
+      impact: '?4.8L/mo savings'
     });
     document.getElementById('res-opt-result').style.display = 'flex';
-    window.showToast('Optimization complete — 44 hrs/wk OT reduction possible. Actions saved!','success');
+    window.showToast('Optimization complete ? 44 hrs/wk OT reduction possible. Actions saved!','success');
   } catch(e) {
-    window.showToast('Optimization complete — 44 hrs/wk OT reduction possible','success');
+    window.showToast('Optimization complete ? 44 hrs/wk OT reduction possible','success');
     document.getElementById('res-opt-result').style.display = 'flex';
   }
   btn.innerHTML = '<i class="fas fa-rocket"></i> Run Optimizer'; btn.disabled = false;
@@ -5746,7 +4707,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
       {[
         ['Current OT Hours', '142 hrs/wk', 'critical'],
-        ['OT Reduction Potential', '−44 hrs/wk', 'healthy'],
+        ['OT Reduction Potential', 'âˆ’44 hrs/wk', 'healthy'],
         ['Shift Imbalance Lines', '3 lines', 'warning'],
         ['Cross-training Gaps', '6 operators', 'warning'],
       ].map(([l,v,s]) =>
@@ -5772,10 +4733,10 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="card-header"><span class="card-title"><i class="fas fa-lightbulb"></i> Optimization Actions</span></div>
       <div class="card-body">
         {[
-          ['Rebalance Mumbai B-shift: Add 2 operators from Mumbai C (underutilized)','−18 hrs/wk OT','high','critical'],
-          ['Cross-train 4 packaging operators on CIP & quality checks to reduce skill gaps','−14 hrs/wk OT','medium','warning'],
-          ['Hire 2 flex operators for Chennai to cover weekly peak (Mon–Tue surge)','−12 hrs/wk OT','medium','warning'],
-          ['Rotate Delhi weekend shift volunteers to reduce mandatory overtime','−8 hrs/wk OT','low','healthy'],
+          ['Rebalance Mumbai B-shift: Add 2 operators from Mumbai C (underutilized)','âˆ’18 hrs/wk OT','high','critical'],
+          ['Cross-train 4 packaging operators on CIP & quality checks to reduce skill gaps','âˆ’14 hrs/wk OT','medium','warning'],
+          ['Hire 2 flex operators for Chennai to cover weekly peak (Mon?Tue surge)','âˆ’12 hrs/wk OT','medium','warning'],
+          ['Rotate Delhi weekend shift volunteers to reduce mandatory overtime','âˆ’8 hrs/wk OT','low','healthy'],
         ].map(([desc, impact, priority, s]) =>
           <div key={desc} style="display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #F1F5F9">
             <i class="fas fa-chevron-right" style={`color:${s==='critical'?'#DC2626':s==='warning'?'#D97706':'#059669'};margin-top:3px`}></i>
@@ -5840,10 +4801,10 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="card-body">
           {[
             ['Demand Growth Assumption', '+15%', 'vs base plan'],
-            ['New Shift Pattern', '3-shift × 6 days', 'Current: 3×5'],
-            ['Training Investment', '₹8L', 'Cross-skilling budget'],
+            ['New Shift Pattern', '3-shift Ã— 6 days', 'Current: 3Ã—5'],
+            ['Training Investment', '?8L', 'Cross-skilling budget'],
             ['Flex Hiring (contract)', '12 operators', 'Peak coverage'],
-            ['Automation Impact', '−8 manual jobs', 'Filling line upgrade'],
+            ['Automation Impact', 'âˆ’8 manual jobs', 'Filling line upgrade'],
           ].map(([l,v,h]) =>
             <div key={l} style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid #F1F5F9">
               <div><div style="font-size:13px;color:#1E293B;font-weight:500">{l}</div><div style="font-size:11px;color:#94A3B8">{h}</div></div>
@@ -5858,9 +4819,9 @@ document.addEventListener('DOMContentLoaded', () => {
           {[
             ['Net Headcount Change', '+14 operators', 'warning'],
             ['OT Hours (post scenario)', '98 hrs/wk', 'healthy'],
-            ['Training Cost', '₹8L one-time', 'neutral'],
-            ['Monthly Labour Cost Δ', '+₹6.4L/mo', 'warning'],
-            ['Risk Score Improvement', '−32%', 'healthy'],
+            ['Training Cost', '?8L one-time', 'neutral'],
+            ['Monthly Labour Cost Î”', '+?6.4L/mo', 'warning'],
+            ['Risk Score Improvement', 'âˆ’32%', 'healthy'],
           ].map(([l,v,s]) =>
             <div key={l} style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #F1F5F9">
               <span style="font-size:13px;color:#475569">{l}</span>
@@ -5881,14 +4842,14 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="card-header"><span class="card-title"><i class="fas fa-table"></i> Scenario Comparison Matrix</span></div>
       <div class="card-body compact">
         <table class="data-table">
-          <thead><tr><th>Scenario</th><th>Headcount Δ</th><th>OT Hrs/wk</th><th>Labour Cost Δ</th><th>Service Level</th><th>Risk Score</th><th>Feasibility</th></tr></thead>
+          <thead><tr><th>Scenario</th><th>Headcount Î”</th><th>OT Hrs/wk</th><th>Labour Cost Î”</th><th>Service Level</th><th>Risk Score</th><th>Feasibility</th></tr></thead>
           <tbody>
             {[
               ['Base Plan', '0', '142', 'Base', '92.1%', '72', 'healthy'],
-              ['Demand +15%', '+14', '98', '+₹6.4L/mo', '95.8%', '58', 'healthy'],
-              ['Demand +30%', '+30', '82', '+₹13.8L/mo', '97.2%', '44', 'warning'],
-              ['Plant Expansion', '+47', '76', '+₹21.6L/mo', '98.5%', '32', 'warning'],
-              ['New Product', '+34', '88', '+₹15.6L/mo', '96.1%', '51', 'warning'],
+              ['Demand +15%', '+14', '98', '+?6.4L/mo', '95.8%', '58', 'healthy'],
+              ['Demand +30%', '+30', '82', '+?13.8L/mo', '97.2%', '44', 'warning'],
+              ['Plant Expansion', '+47', '76', '+?21.6L/mo', '98.5%', '32', 'warning'],
+              ['New Product', '+34', '88', '+?15.6L/mo', '96.1%', '51', 'warning'],
             ].map(([sc,hc,ot,cost,svc,risk,f]) =>
               <tr key={sc}>
                 <td><strong>{sc}</strong></td>
@@ -5950,7 +4911,7 @@ app.get('/sop', async (c) => {
         <div class="page-icon" style="background:linear-gradient(135deg,#2563EB,#3B82F6)"><i class="fas fa-balance-scale"></i></div>
         <div>
           <div class="page-title">Sales &amp; Operations Planning</div>
-          <div class="page-subtitle">End-to-end demand-supply-inventory-financial integration · March 2026 Cycle</div>
+          <div class="page-subtitle">End-to-end demand-supply-inventory-financial integration ? March 2026 Cycle</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -6017,8 +4978,8 @@ app.get('/sop', async (c) => {
       <div class="card">
         <div class="card-header"><span class="card-title"><i class="fas fa-exclamation-triangle"></i> Supply Gap Alert</span></div>
         <div class="card-body">
-          <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>March 2026 Supply Gap: 180,000 cases</strong><br/>Demand Plan: 4.8M · Supply Plan: 4.62M · Shortfall: 3.8%</div></div>
-          <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>Mumbai constrained</strong> — Approve weekend overtime to close 120K gap</div></div>
+          <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>March 2026 Supply Gap: 180,000 cases</strong><br/>Demand Plan: 4.8M ? Supply Plan: 4.62M ? Shortfall: 3.8%</div></div>
+          <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>Mumbai constrained</strong> ? Approve weekend overtime to close 120K gap</div></div>
           <div class="alert alert-info"><i class="fas fa-info-circle"></i><div><strong>Options:</strong> Overtime (+120K), Defer B-class (+60K), Emergency co-pack (+80K)</div></div>
           <div style="margin-top:12px;display:flex;gap:8px">
             <button class="btn btn-primary btn-sm" id="sop-ot-btn" onclick="approveSopOvertime(this)"><i class="fas fa-check"></i> Approve Overtime</button>
@@ -6026,7 +4987,7 @@ app.get('/sop', async (c) => {
           </div>
           <div id="sop-ot-result" class="alert alert-success" style="display:none;margin-top:12px">
             <i class="fas fa-check-circle"></i>
-            <div><strong>Overtime approved!</strong> Mumbai weekend OT authorised for W1–W2. +120K cases added to supply plan. MRP and Capacity notified. Action logged to <a href="/action-items" style="color:#059669;font-weight:600">Action Items</a>.</div>
+            <div><strong>Overtime approved!</strong> Mumbai weekend OT authorised for W1?W2. +120K cases added to supply plan. MRP and Capacity notified. Action logged to <a href="/action-items" style="color:#059669;font-weight:600">Action Items</a>.</div>
           </div>
         </div>
       </div>
@@ -6038,7 +4999,7 @@ async function approveSopOvertime(btn) {
   try {
     await axios.post('/api/optimizer/run', {
       module: 'sop',
-      action: 'Approve Weekend Overtime — Mumbai W1-W2',
+      action: 'Approve Weekend Overtime ? Mumbai W1-W2',
       result_summary: 'Weekend OT approved. +120K cases added to supply plan. Gap reduced from 180K to 60K cases.',
       impact: 'Gap closure 67%'
     });
@@ -6073,9 +5034,9 @@ async function init() {
   const el = document.getElementById('sensing-list');
   if (el) {
     const mockSensing = sensing.length ? sensing : [
-      { sku:'SKU-500-PET Limca', location:'Mumbai MT', uplift_pct:8.2, driver:'Social media buzz – cricket season sales spike', action:'Increase W2 production by 8% on MUM-L1. Buffer 6,000 cases.' },
+      { sku:'SKU-500-PET Limca', location:'Mumbai MT', uplift_pct:8.2, driver:'Social media buzz ? cricket season sales spike', action:'Increase W2 production by 8% on MUM-L1. Buffer 6,000 cases.' },
       { sku:'SKU-CAN-330 Thums Up', location:'Delhi GT', uplift_pct:-4.1, driver:'Competitor promotion detected (Pepsi MTD deal)', action:'Hold promotion spend. Monitor weekly. Forecast revised down 4%.' },
-      { sku:'SKU-TETRA-200 Maaza', location:'Chennai HoReCa', uplift_pct:12.5, driver:'Summer season early onset – temperature index +2.1°C', action:'Advance W3 replenishment by 5 days. Alert logistics for cold chain capacity.' },
+      { sku:'SKU-TETRA-200 Maaza', location:'Chennai HoReCa', uplift_pct:12.5, driver:'Summer season early onset ? temperature index +2.1Â°C', action:'Advance W3 replenishment by 5 days. Alert logistics for cold chain capacity.' },
     ];
     el.innerHTML = mockSensing.map(s => \`<div style="padding:10px;border-left:3px solid \${s.uplift_pct>0?'#059669':'#DC2626'};background:\${s.uplift_pct>0?'#F0FDF4':'#FEF2F2'};border-radius:4px;margin-bottom:8px">
       <div style="display:flex;justify-content:space-between">
@@ -6148,13 +5109,13 @@ async function refreshForecast() {
   btn.disabled = false;
   window.showToast('Forecast refreshed! MAPE improved to 4.6%. 3 demand sensing signals detected.','success');
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="S&OP – Demand Review" activeModule="sop-demand" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="S&OP ? Demand Review" activeModule="sop-demand" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#2563EB,#3B82F6)"><i class="fas fa-chart-line"></i></div>
-        <div><div class="page-title">Demand Review</div><div class="page-subtitle">Statistical forecast (Holt-Winters + XGBoost) · Demand sensing · Seasonality calendar</div></div>
+        <div><div class="page-title">Demand Review</div><div class="page-subtitle">Statistical forecast (Holt-Winters + XGBoost) ? Demand sensing ? Seasonality calendar</div></div>
       </div>
       <div class="page-header-right">
         <button class="btn btn-primary" onclick="refreshForecast()"><i class="fas fa-sync"></i> Refresh Forecast</button>
@@ -6257,9 +5218,9 @@ async function init() {
     });
   }
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="S&OP – Supply Review" activeModule="sop-supply" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="S&OP ? Supply Review" activeModule="sop-supply" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#2563EB,#3B82F6)"><i class="fas fa-industry"></i></div>
@@ -6272,7 +5233,7 @@ document.addEventListener('DOMContentLoaded', init);
       <div class="card"><div class="card-header"><span class="card-title"><i class="fas fa-industry"></i> Plant Utilization</span></div><div class="card-body" style="height:220px"><canvas id="plant-util-chart"></canvas></div></div>
     </div>
     <div class="card"><div class="card-header"><span class="card-title"><i class="fas fa-table"></i> Supply Summary</span></div><div class="card-body">
-      {[['Demand Plan Mar-2026','4,800,000 cases',''],['Supply Plan','4,620,000 cases',''],['Gap','180,000 cases shortfall','color:#DC2626'],['Mumbai Capacity','Constrained — 97% utilization','color:#DC2626'],['Delhi Capacity','Available — 74% utilization','color:#059669'],['OTIF','92.1% (Target: 95%)','color:#D97706'],['MPS Adherence','94.2% (Target: 96%)','color:#D97706']].map(([l,v,s]) =>
+      {[['Demand Plan Mar-2026','4,800,000 cases',''],['Supply Plan','4,620,000 cases',''],['Gap','180,000 cases shortfall','color:#DC2626'],['Mumbai Capacity','Constrained ? 97% utilization','color:#DC2626'],['Delhi Capacity','Available ? 74% utilization','color:#059669'],['OTIF','92.1% (Target: 95%)','color:#D97706'],['MPS Adherence','94.2% (Target: 96%)','color:#D97706']].map(([l,v,s]) =>
         <div key={l} style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #F1F5F9;font-size:13px">
           <span style="color:#64748B">{l}</span>
           <strong style={s}>{v}</strong>
@@ -6313,7 +5274,7 @@ async function createScenario() {
   init();
 }
 function simulateSopScenario(name, id) {
-  window.showToast('Simulating scenario "' + name + '"... Results: Demand Impact +8.4%, Supply gap reduced by 42K cases, Revenue impact +₹12.4L.', 'success');
+  window.showToast('Simulating scenario "' + name + '"... Results: Demand Impact +8.4%, Supply gap reduced by 42K cases, Revenue impact +?12.4L.', 'success');
 }
 function compareSopScenario(name) {
   window.showToast('Comparison added: "' + name + '" vs Baseline. Check the Scenario Comparison view.', 'info');
@@ -6324,9 +5285,9 @@ function activateSopScenario(btn, name) {
     if (btn) { btn.innerHTML = '<i class="fas fa-check"></i> Active'; btn.disabled = true; btn.className = 'btn btn-sm btn-success'; }
   }
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="S&OP – Scenarios" activeModule="sop-scenarios" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="S&OP ? Scenarios" activeModule="sop-scenarios" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#2563EB,#3B82F6)"><i class="fas fa-sitemap"></i></div>
@@ -6358,7 +5319,7 @@ async function init() {
     <div>
       <span class="status-dot \${a.priority==='critical'?'critical':a.priority==='high'?'warning':'healthy'}"></span>
       <strong>\${a.title}</strong>
-      <div style="font-size:11px;color:#64748B;margin-top:2px">\${a.owner} · Due: \${a.due_date}</div>
+      <div style="font-size:11px;color:#64748B;margin-top:2px">\${a.owner} ? Due: \${a.due_date}</div>
     </div>
     <div style="display:flex;gap:6px">
       <span class="badge badge-\${a.status==='completed'?'success':a.status==='in_progress'?'info':'warning'}">\${a.status}</span>
@@ -6370,18 +5331,18 @@ async function completeAction(id) {
   await axios.patch('/api/action-items/'+id, {status:'completed'});
   init();
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="S&OP – Consensus Meeting" activeModule="sop-consensus" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="S&OP ? Consensus Meeting" activeModule="sop-consensus" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#2563EB,#3B82F6)"><i class="fas fa-users"></i></div>
-        <div><div class="page-title">Consensus Meeting</div><div class="page-subtitle">March 2026 S&amp;OP cycle · Meeting notes, decisions, action items</div></div>
+        <div><div class="page-title">Consensus Meeting</div><div class="page-subtitle">March 2026 S&amp;OP cycle ? Meeting notes, decisions, action items</div></div>
       </div>
       <div class="page-header-right"><button class="btn btn-primary" onclick="addSopActionItem()"><i class="fas fa-plus"></i> Add Action Item</button></div>
     </div>
     <div class="card mb-4">
-      <div class="card-header"><span class="card-title"><i class="fas fa-info-circle"></i> Meeting Summary — March 2026 S&amp;OP</span></div>
+      <div class="card-header"><span class="card-title"><i class="fas fa-info-circle"></i> Meeting Summary ? March 2026 S&amp;OP</span></div>
       <div class="card-body">
         <div class="grid-2">
           {[['Meeting Date','Feb 28, 2026'],['Participants','Sankar Iyer, Vikrant Nair, Commercial, Supply, Finance'],['Consensus Plan','4,620,000 cases (constrained)'],['Key Decision','Approve Mumbai overtime to close 120K gap'],['Next Review','Mar 28, 2026']].map(([l,v]) =>
@@ -6450,7 +5411,7 @@ async function complete(id) {
   await axios.patch('/api/action-items/'+id, {status:'completed'});
   init();
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
   const _u = getUser(c); return c.html(<Layout user={_u} title="Action Items" activeModule="actions" scripts={scripts}>
     <div class="page-header">
@@ -6480,16 +5441,16 @@ async function init() {
   ]);
   const el = document.getElementById('audit-table');
   el.innerHTML = log.map(l => \`<tr>
-    <td>\${(l.created_at||'—').slice(0,16)}</td>
+    <td>\${(l.created_at||'?').slice(0,16)}</td>
     <td><strong>\${l.user_name}</strong></td>
     <td><span class="badge badge-neutral">\${(l.module||'').toUpperCase()}</span></td>
     <td>\${l.action}</td>
     <td>\${l.entity_type} #\${l.entity_id}</td>
-    <td style="font-size:11px">\${l.old_value||'—'}</td>
-    <td style="font-size:11px">\${l.new_value||'—'}</td>
+    <td style="font-size:11px">\${l.old_value||'?'}</td>
+    <td style="font-size:11px">\${l.new_value||'?'}</td>
   </tr>\`).join('') || '<tr><td colspan="7" style="text-align:center">No audit records</td></tr>';
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
   const _u = getUser(c); return c.html(<Layout user={_u} title="Audit Log" activeModule="audit" scripts={scripts}>
     <div class="page-header">
@@ -6510,7 +5471,7 @@ document.addEventListener('DOMContentLoaded', init);
   </Layout>)
 })
 
-// ── APPROVALS WORKBENCH ───────────────────────────────────────────────
+// â”€â”€ APPROVALS WORKBENCH â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/approvals', async (c) => {
   const scripts = `
 async function init() {
@@ -6540,7 +5501,7 @@ async function init() {
           <div style="font-size:12px;color:#64748B">Due by: <strong style="color:#DC2626">\${a.due_by}</strong></div>
         </div>
       </div>
-      \${a.status==='pending'?'<div style="display:flex;gap:8px"><button class="btn btn-success" onclick="approveAction(\\'' + a.id + '\\')"><i class="fas fa-check"></i> Approve</button><button class="btn btn-secondary" onclick="rejectAction(\\'' + a.id + '\\')"><i class="fas fa-times"></i> Reject</button><button class="btn btn-secondary" onclick="deferAction(\\'' + a.id + '\\')"><i class="fas fa-clock"></i> Defer</button><a href="' + (a.module==='production'?'/production/rccp':a.module==='deployment'?'/deployment/workbench':a.module==='mrp'?'/mrp/shortage-alerts':'/'+a.module) + '" class="btn btn-secondary"><i class="fas fa-eye"></i> View Details</a></div>':'<span style=\\"color:#64748B;font-size:12px\\"><i class=\\"fas fa-check-circle\\" style=\\"color:#059669\\"></i> Processed — ' + a.status + '</span>'}
+      \${a.status==='pending'?'<div style="display:flex;gap:8px"><button class="btn btn-success" onclick="approveAction(\\'' + a.id + '\\')"><i class="fas fa-check"></i> Approve</button><button class="btn btn-secondary" onclick="rejectAction(\\'' + a.id + '\\')"><i class="fas fa-times"></i> Reject</button><button class="btn btn-secondary" onclick="deferAction(\\'' + a.id + '\\')"><i class="fas fa-clock"></i> Defer</button><a href="' + (a.module==='production'?'/production/rccp':a.module==='deployment'?'/deployment/workbench':a.module==='mrp'?'/mrp/shortage-alerts':'/'+a.module) + '" class="btn btn-secondary"><i class="fas fa-eye"></i> View Details</a></div>':'<span style=\\"color:#64748B;font-size:12px\\"><i class=\\"fas fa-check-circle\\" style=\\"color:#059669\\"></i> Processed ? ' + a.status + '</span>'}
     </div>
   </div>\`).join('') || '<p class="text-muted">No pending approvals</p>';
 }
@@ -6560,7 +5521,7 @@ async function deferAction(id) {
   await axios.post('/api/approvals/'+id+'/action', {action:'defer', comment:'Deferred via workbench'});
   init();
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
   const _u = getUser(c)
   return c.html(<Layout user={_u} title="Approvals Workbench" activeModule="audit" scripts={scripts}>
@@ -6569,7 +5530,7 @@ document.addEventListener('DOMContentLoaded', init);
         <div class="page-icon" style="background:linear-gradient(135deg,#D97706,#F59E0B)"><i class="fas fa-clipboard-check"></i></div>
         <div>
           <div class="page-title">Approvals Workbench</div>
-          <div class="page-subtitle">Pending decisions · Overtime, POs, shipments, inter-DC transfers, scenarios</div>
+          <div class="page-subtitle">Pending decisions ? Overtime, POs, shipments, inter-DC transfers, scenarios</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -6581,7 +5542,7 @@ document.addEventListener('DOMContentLoaded', init);
   </Layout>)
 })
 
-// ── EXCEPTION WORKBENCH ───────────────────────────────────────────────
+// â”€â”€ EXCEPTION WORKBENCH â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/exceptions', async (c) => {
   const scripts = `
 async function init() {
@@ -6603,8 +5564,8 @@ async function init() {
       <div class="grid-2" style="gap:12px;margin-bottom:12px">
         <div>
           <div style="font-size:11px;color:#64748B;margin-bottom:4px">FINANCIAL IMPACT</div>
-          <strong style="color:#DC2626;font-size:16px">₹\${(e.financial_impact_inr/100000).toFixed(1)}L</strong>
-          <div style="font-size:11px;color:#64748B;margin-top:2px">\${e.affected_qty?.toLocaleString()} cases affected · Detected: \${e.detected_at}</div>
+          <strong style="color:#DC2626;font-size:16px">?\${(e.financial_impact_inr/100000).toFixed(1)}L</strong>
+          <div style="font-size:11px;color:#64748B;margin-top:2px">\${e.affected_qty?.toLocaleString()} cases affected ? Detected: \${e.detected_at}</div>
         </div>
         <div>
           <div style="font-size:11px;color:#64748B;margin-bottom:4px">ASSIGNED TO</div>
@@ -6631,7 +5592,7 @@ async function init() {
   const financial = exc.reduce((s,e)=>s+e.financial_impact_inr, 0);
   document.getElementById('exc-critical').textContent = critical;
   document.getElementById('exc-high').textContent = high;
-  document.getElementById('exc-financial').textContent = '₹' + (financial/100000).toFixed(1) + 'L';
+  document.getElementById('exc-financial').textContent = '?' + (financial/100000).toFixed(1) + 'L';
 }
 async function resolveException(id, optionIdx) {
   const btn = event.target;
@@ -6641,7 +5602,7 @@ async function resolveException(id, optionIdx) {
   btn.className = 'btn btn-sm btn-success';
   btn.disabled = true;
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
   const _u = getUser(c)
   return c.html(<Layout user={_u} title="Exception Workbench" activeModule="audit" scripts={scripts}>
@@ -6650,7 +5611,7 @@ document.addEventListener('DOMContentLoaded', init);
         <div class="page-icon" style="background:linear-gradient(135deg,#DC2626,#EF4444)"><i class="fas fa-exclamation-triangle"></i></div>
         <div>
           <div class="page-title">Exception Workbench</div>
-          <div class="page-subtitle">Cross-module exception detection · Root cause · Resolution options · One-click approvals</div>
+          <div class="page-subtitle">Cross-module exception detection ? Root cause ? Resolution options ? One-click approvals</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -6662,22 +5623,22 @@ document.addEventListener('DOMContentLoaded', init);
     <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">
       <div class="kpi-card critical">
         <div class="kpi-label"><i class="fas fa-times-circle" style="margin-right:5px"></i>Critical Exceptions</div>
-        <div class="kpi-value critical" id="exc-critical">—</div>
+        <div class="kpi-value critical" id="exc-critical">?</div>
       </div>
       <div class="kpi-card warning">
         <div class="kpi-label"><i class="fas fa-exclamation-triangle" style="margin-right:5px"></i>High Exceptions</div>
-        <div class="kpi-value warning" id="exc-high">—</div>
+        <div class="kpi-value warning" id="exc-high">?</div>
       </div>
       <div class="kpi-card critical">
         <div class="kpi-label"><i class="fas fa-rupee-sign" style="margin-right:5px"></i>Total Financial Risk</div>
-        <div class="kpi-value critical" id="exc-financial">—</div>
+        <div class="kpi-value critical" id="exc-financial">?</div>
       </div>
     </div>
     <div id="exceptions-list"><div class="card" style="padding:40px;text-align:center"><div class="spinner"></div></div></div>
   </Layout>)
 })
 
-// ── RISK DASHBOARD ────────────────────────────────────────────────────
+// â”€â”€ RISK DASHBOARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/risk-dashboard', async (c) => {
   const scripts = `
 async function init() {
@@ -6690,7 +5651,7 @@ async function init() {
   document.getElementById('stockout-list').innerHTML = stockout.map(s => \`<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;border-left:4px solid \${s.risk_level==='critical'?'#DC2626':s.risk_level==='warning'?'#D97706':'#059669'}">
     <div>
       <strong>\${s.sku}</strong> @ \${s.location}
-      <div style="font-size:12px;color:#64748B;margin-top:2px">\${s.drivers.join(' · ')} · DOS: \${s.current_dos}d</div>
+      <div style="font-size:12px;color:#64748B;margin-top:2px">\${s.drivers.join(' ? ')} ? DOS: \${s.current_dos}d</div>
     </div>
     <div style="text-align:right">
       <div style="font-size:20px;font-weight:800;color:\${s.risk_level==='critical'?'#DC2626':'#D97706'}">\${s.probability_pct}%</div>
@@ -6701,8 +5662,8 @@ async function init() {
 
   document.getElementById('otd-risk-list').innerHTML = otd.map(s => \`<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;border-left:4px solid \${s.risk_level==='critical'?'#DC2626':s.risk_level==='warning'?'#D97706':'#059669'}">
     <div>
-      <strong>\${s.shipment_id}</strong> – \${s.route}
-      <div style="font-size:12px;color:#64748B;margin-top:2px">\${s.drivers.join(' · ')} · Predicted: +\${s.delay_hrs}h delay</div>
+      <strong>\${s.shipment_id}</strong> ? \${s.route}
+      <div style="font-size:12px;color:#64748B;margin-top:2px">\${s.drivers.join(' ? ')} ? Predicted: +\${s.delay_hrs}h delay</div>
     </div>
     <div style="text-align:right">
       <div style="font-size:20px;font-weight:800;color:\${s.risk_level==='critical'?'#DC2626':s.risk_level==='warning'?'#D97706':'#059669'}">\${s.risk_score}</div>
@@ -6736,7 +5697,7 @@ async function expediteShipment(id) {
   btn.innerHTML = res.data.success ? '<i class="fas fa-check"></i> Expedited' : 'Error';
   btn.className = 'btn btn-sm btn-success';
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
   const _u = getUser(c)
   return c.html(<Layout user={_u} title="Risk Dashboard" activeModule="audit" scripts={scripts}>
@@ -6745,7 +5706,7 @@ document.addEventListener('DOMContentLoaded', init);
         <div class="page-icon" style="background:linear-gradient(135deg,#DC2626,#7C3AED)"><i class="fas fa-shield-alt"></i></div>
         <div>
           <div class="page-title">Supply Chain Risk Dashboard</div>
-          <div class="page-subtitle">Stock-out risk · OTD risk · Safety stock alerts · DDMRP buffer status</div>
+          <div class="page-subtitle">Stock-out risk ? OTD risk ? Safety stock alerts ? DDMRP buffer status</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -6780,9 +5741,9 @@ document.addEventListener('DOMContentLoaded', init);
       <div class="card">
         <div class="card-header"><span class="card-title"><i class="fas fa-exclamation-circle"></i> Active Exceptions</span><a href="/exceptions" class="btn btn-sm btn-danger">Workbench</a></div>
         <div class="card-body">
-          <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>MUM-L2 Capacity 98%</strong> – Approve overtime or shift 8K cases. <a href="/production/rccp" style="color:#2563EB">→ RCCP</a></div></div>
-          <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>Orange Concentrate Shortage</strong> – 2.7MT gap for W2. <a href="/mrp/shortage-alerts" style="color:#2563EB">→ MRP Alerts</a></div></div>
-          <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>Lucknow DC Safety Stock Breach</strong> – 1,200 cases shortfall. <a href="/deployment/workbench" style="color:#2563EB">→ Deploy</a></div></div>
+          <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>MUM-L2 Capacity 98%</strong> ? Approve overtime or shift 8K cases. <a href="/production/rccp" style="color:#2563EB">? RCCP</a></div></div>
+          <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>Orange Concentrate Shortage</strong> ? 2.7MT gap for W2. <a href="/mrp/shortage-alerts" style="color:#2563EB">? MRP Alerts</a></div></div>
+          <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>Lucknow DC Safety Stock Breach</strong> ? 1,200 cases shortfall. <a href="/deployment/workbench" style="color:#2563EB">? Deploy</a></div></div>
         </div>
       </div>
     </div>
@@ -6800,20 +5761,20 @@ app.get('/api/production/kpis', async (c) => {
     const util = await db.prepare(`SELECT AVG(utilization_pct) as avg_util FROM capacity_utilization WHERE date >= date('now','-7 days')`).first<{avg_util:number}>()
     const jobs = await db.prepare(`SELECT COUNT(*) as cnt FROM jobs WHERE status IN ('in_progress','scheduled')`).first<{cnt:number}>()
     return c.json([
-      { metric_name: 'MPS Adherence', metric_value: '94.2', metric_unit: '%', metric_status: 'healthy', target_value: '95', icon: 'fa-calendar-check', trend: '↑ +1.2%', trend_dir: 'up' },
-      { metric_name: 'Line Utilization', metric_value: (util?.avg_util||82.4).toFixed(1), metric_unit: '%', metric_status: (util?.avg_util||82.4) > 90 ? 'critical' : (util?.avg_util||82.4) > 80 ? 'warning' : 'healthy', target_value: '85', icon: 'fa-industry', trend: '↑ +0.8%', trend_dir: 'up' },
+      { metric_name: 'MPS Adherence', metric_value: '94.2', metric_unit: '%', metric_status: 'healthy', target_value: '95', icon: 'fa-calendar-check', trend: 'â†‘ +1.2%', trend_dir: 'up' },
+      { metric_name: 'Line Utilization', metric_value: (util?.avg_util||82.4).toFixed(1), metric_unit: '%', metric_status: (util?.avg_util||82.4) > 90 ? 'critical' : (util?.avg_util||82.4) > 80 ? 'warning' : 'healthy', target_value: '85', icon: 'fa-industry', trend: 'â†‘ +0.8%', trend_dir: 'up' },
       { metric_name: 'Active Jobs', metric_value: String(jobs?.cnt||8), metric_unit: '', metric_status: 'info', target_value: '10', icon: 'fa-cogs', trend: '', trend_dir: 'up' },
-      { metric_name: 'ATP Available', metric_value: '32.4', metric_unit: 'K cases', metric_status: 'healthy', target_value: '25K', icon: 'fa-check-double', trend: '↑ +2.1K', trend_dir: 'up' },
-      { metric_name: 'RCCP Overloads', metric_value: '2', metric_unit: ' lines', metric_status: 'warning', target_value: '0', icon: 'fa-ruler-combined', trend: '↓ –1', trend_dir: 'up' },
-      { metric_name: 'Schedule Adherence', metric_value: '91.8', metric_unit: '%', metric_status: 'warning', target_value: '95', icon: 'fa-tasks', trend: '↑ +0.6%', trend_dir: 'up' },
+      { metric_name: 'ATP Available', metric_value: '32.4', metric_unit: 'K cases', metric_status: 'healthy', target_value: '25K', icon: 'fa-check-double', trend: 'â†‘ +2.1K', trend_dir: 'up' },
+      { metric_name: 'RCCP Overloads', metric_value: '2', metric_unit: ' lines', metric_status: 'warning', target_value: '0', icon: 'fa-ruler-combined', trend: 'â†“ ?1', trend_dir: 'up' },
+      { metric_name: 'Schedule Adherence', metric_value: '91.8', metric_unit: '%', metric_status: 'warning', target_value: '95', icon: 'fa-tasks', trend: 'â†‘ +0.6%', trend_dir: 'up' },
     ])
   } catch { return c.json([
-    { metric_name: 'MPS Adherence', metric_value: '94.2', metric_unit: '%', metric_status: 'healthy', target_value: '95', icon: 'fa-calendar-check', trend: '↑ +1.2%', trend_dir: 'up' },
-    { metric_name: 'Line Utilization', metric_value: '82.4', metric_unit: '%', metric_status: 'warning', target_value: '85', icon: 'fa-industry', trend: '↑ +0.8%', trend_dir: 'up' },
+    { metric_name: 'MPS Adherence', metric_value: '94.2', metric_unit: '%', metric_status: 'healthy', target_value: '95', icon: 'fa-calendar-check', trend: 'â†‘ +1.2%', trend_dir: 'up' },
+    { metric_name: 'Line Utilization', metric_value: '82.4', metric_unit: '%', metric_status: 'warning', target_value: '85', icon: 'fa-industry', trend: 'â†‘ +0.8%', trend_dir: 'up' },
     { metric_name: 'Active Jobs', metric_value: '8', metric_unit: '', metric_status: 'info', target_value: '10', icon: 'fa-cogs', trend: '', trend_dir: 'up' },
-    { metric_name: 'ATP Available', metric_value: '32.4', metric_unit: 'K cases', metric_status: 'healthy', target_value: '25K', icon: 'fa-check-double', trend: '↑ +2.1K', trend_dir: 'up' },
-    { metric_name: 'RCCP Overloads', metric_value: '2', metric_unit: ' lines', metric_status: 'warning', target_value: '0', icon: 'fa-ruler-combined', trend: '↓ –1', trend_dir: 'up' },
-    { metric_name: 'Schedule Adherence', metric_value: '91.8', metric_unit: '%', metric_status: 'warning', target_value: '95', icon: 'fa-tasks', trend: '↑ +0.6%', trend_dir: 'up' },
+    { metric_name: 'ATP Available', metric_value: '32.4', metric_unit: 'K cases', metric_status: 'healthy', target_value: '25K', icon: 'fa-check-double', trend: 'â†‘ +2.1K', trend_dir: 'up' },
+    { metric_name: 'RCCP Overloads', metric_value: '2', metric_unit: ' lines', metric_status: 'warning', target_value: '0', icon: 'fa-ruler-combined', trend: 'â†“ ?1', trend_dir: 'up' },
+    { metric_name: 'Schedule Adherence', metric_value: '91.8', metric_unit: '%', metric_status: 'warning', target_value: '95', icon: 'fa-tasks', trend: 'â†‘ +0.6%', trend_dir: 'up' },
   ]) }
 })
 
@@ -6858,12 +5819,12 @@ app.get('/api/production/atp', async (c) => {
 // Deployment APIs
 app.get('/api/deployment/kpis', async (c) => {
   return c.json([
-    { name: 'On-Time Delivery', value: '91.4%', target: '95%', status: 'warning', icon: 'fa-clock', trend: '↑ +0.7%', trend_dir: 'up' },
-    { name: 'Truck Utilization', value: '84.2%', target: '88%', status: 'warning', icon: 'fa-truck', trend: '↑ +1.2%', trend_dir: 'up' },
-    { name: 'Cost per Case', value: '₹18.4', target: '₹17.0', status: 'critical', icon: 'fa-rupee-sign', trend: '↓ –₹0.3', trend_dir: 'up' },
-    { name: 'Routes Optimized', value: '124/150', target: '150', status: 'warning', icon: 'fa-route', trend: '↑ +12', trend_dir: 'up' },
-    { name: 'Avg Lead Time', value: '2.8 days', target: '2.5 days', status: 'warning', icon: 'fa-hourglass-half', trend: '↓ –0.2d', trend_dir: 'up' },
-    { name: 'Fill Rate', value: '96.8%', target: '98%', status: 'warning', icon: 'fa-boxes', trend: '↑ +0.4%', trend_dir: 'up' },
+    { name: 'On-Time Delivery', value: '91.4%', target: '95%', status: 'warning', icon: 'fa-clock', trend: 'â†‘ +0.7%', trend_dir: 'up' },
+    { name: 'Truck Utilization', value: '84.2%', target: '88%', status: 'warning', icon: 'fa-truck', trend: 'â†‘ +1.2%', trend_dir: 'up' },
+    { name: 'Cost per Case', value: '?18.4', target: '?17.0', status: 'critical', icon: 'fa-rupee-sign', trend: 'â†“ ??0.3', trend_dir: 'up' },
+    { name: 'Routes Optimized', value: '124/150', target: '150', status: 'warning', icon: 'fa-route', trend: 'â†‘ +12', trend_dir: 'up' },
+    { name: 'Avg Lead Time', value: '2.8 days', target: '2.5 days', status: 'warning', icon: 'fa-hourglass-half', trend: 'â†“ ?0.2d', trend_dir: 'up' },
+    { name: 'Fill Rate', value: '96.8%', target: '98%', status: 'warning', icon: 'fa-boxes', trend: 'â†‘ +0.4%', trend_dir: 'up' },
   ])
 })
 
@@ -6889,7 +5850,7 @@ app.get('/api/deployment/routes', async (c) => {
   ])
 })
 
-// ── Production Planning Pages ─────────────────────────────────────────
+// â”€â”€ Production Planning Pages â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 app.get('/production', (c) => {
   const _u = getUser(c); return c.html(<Layout user={_u} title="Production Planning" activeModule="production">
@@ -6898,7 +5859,7 @@ app.get('/production', (c) => {
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-cogs"></i></div>
         <div>
           <div class="page-title">Production Planning</div>
-          <div class="page-subtitle">MPS · ATP · RCCP · Planner Workbench · Scenario Manager · AI Copilot</div>
+          <div class="page-subtitle">MPS ? ATP ? RCCP ? Planner Workbench ? Scenario Manager ? AI Copilot</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -6912,7 +5873,7 @@ app.get('/production', (c) => {
     <div class="grid-2">
       <div class="card">
         <div class="card-header">
-          <span class="card-title"><i class="fas fa-calendar-check"></i> MPS – 8 Week Horizon</span>
+          <span class="card-title"><i class="fas fa-calendar-check"></i> MPS ? 8 Week Horizon</span>
           <a href="/production/mps" class="btn btn-sm btn-secondary">Full MPS</a>
         </div>
         <div class="card-body" style="height:240px"><canvas id="prod-mps-horizon-chart"></canvas></div>
@@ -6923,7 +5884,7 @@ app.get('/production', (c) => {
           <div class="card-body" style="height:100px"><canvas id="prod-atp-chart"></canvas></div>
         </div>
         <div class="card">
-          <div class="card-header"><span class="card-title"><i class="fas fa-ruler-combined"></i> RCCP – Capacity Load</span><a href="/production/rccp" class="btn btn-sm btn-secondary">Details</a></div>
+          <div class="card-header"><span class="card-title"><i class="fas fa-ruler-combined"></i> RCCP ? Capacity Load</span><a href="/production/rccp" class="btn btn-sm btn-secondary">Details</a></div>
           <div class="card-body" style="height:100px"><canvas id="prod-rccp-chart"></canvas></div>
         </div>
       </div>
@@ -6933,8 +5894,8 @@ app.get('/production', (c) => {
       <div class="card">
         <div class="card-header"><span class="card-title"><i class="fas fa-exclamation-triangle"></i> Alerts</span></div>
         <div class="card-body">
-          <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>MUM-L2 Overloaded W2</strong><br/>98% capacity – approve overtime</div></div>
-          <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>SKU-1L-PET ATP Negative W3</strong><br/>–2,800 cases shortfall detected</div></div>
+          <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>MUM-L2 Overloaded W2</strong><br/>98% capacity ? approve overtime</div></div>
+          <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>SKU-1L-PET ATP Negative W3</strong><br/>?2,800 cases shortfall detected</div></div>
           <div class="alert alert-info"><i class="fas fa-info-circle"></i><div><strong>New Scenario Available</strong><br/>"Demand Upside +15%" ready to review</div></div>
         </div>
       </div>
@@ -6942,15 +5903,15 @@ app.get('/production', (c) => {
         <div class="card-header"><span class="card-title"><i class="fas fa-brain"></i> ML Recommendations</span></div>
         <div class="card-body">
           <div style="margin-bottom:12px;padding:10px;background:#F0F4FA;border-radius:8px">
-            <div style="font-size:12px;font-weight:600;color:#1E3A8A">⚡ Shift 8K cases DEL-L1</div>
+            <div style="font-size:12px;font-weight:600;color:#1E3A8A">âš¡ Shift 8K cases DEL-L1</div>
             <div style="font-size:11px;color:#64748B;margin-top:3px">Resolve MUM-L2 overload by moving load to 75%-utilized Delhi line</div>
           </div>
           <div style="margin-bottom:12px;padding:10px;background:#F0FDF4;border-radius:8px">
-            <div style="font-size:12px;font-weight:600;color:#059669">✓ Expedite SKU-1L-PET W3</div>
+            <div style="font-size:12px;font-weight:600;color:#059669">âœ“ Expedite SKU-1L-PET W3</div>
             <div style="font-size:11px;color:#64748B;margin-top:3px">Run extra 4-hour shift to cover 2,800 case ATP deficit</div>
           </div>
           <div style="padding:10px;background:#FFFBEB;border-radius:8px">
-            <div style="font-size:12px;font-weight:600;color:#D97706">⚠ Review Glass 500ml W4</div>
+            <div style="font-size:12px;font-weight:600;color:#D97706">âš  Review Glass 500ml W4</div>
             <div style="font-size:11px;color:#64748B;margin-top:3px">Low ATP buffer; consider expediting changeover from PET line</div>
           </div>
         </div>
@@ -6987,7 +5948,7 @@ app.get('/production/mps', (c) => {
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-calendar-check"></i></div>
         <div>
           <div class="page-title">Master Production Schedule</div>
-          <div class="page-subtitle">Firm orders, planned orders, capacity alignment · Horizon: 12 weeks</div>
+          <div class="page-subtitle">Firm orders, planned orders, capacity alignment ? Horizon: 12 weeks</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -7003,12 +5964,12 @@ app.get('/production/mps', (c) => {
       <div class="kpi-card healthy">
         <div class="kpi-label"><i class="fas fa-calendar-check" style="margin-right:5px"></i>Firm Orders</div>
         <div class="kpi-value healthy">6</div>
-        <div class="kpi-meta"><span class="kpi-target">Next 2 weeks</span><span class="kpi-trend up">↑ On track</span></div>
+        <div class="kpi-meta"><span class="kpi-target">Next 2 weeks</span><span class="kpi-trend up">â†‘ On track</span></div>
       </div>
       <div class="kpi-card warning">
         <div class="kpi-label"><i class="fas fa-clock" style="margin-right:5px"></i>Planned Orders</div>
         <div class="kpi-value warning">14</div>
-        <div class="kpi-meta"><span class="kpi-target">W3–W12</span><span class="kpi-trend up">Review needed</span></div>
+        <div class="kpi-meta"><span class="kpi-target">W3?W12</span><span class="kpi-trend up">Review needed</span></div>
       </div>
       <div class="kpi-card critical">
         <div class="kpi-label"><i class="fas fa-exclamation-triangle" style="margin-right:5px"></i>ATP Issues</div>
@@ -7064,7 +6025,7 @@ async function runMPSOptimize() {
     const d = res.data;
     const el = document.getElementById('optimize-result');
     const text = document.getElementById('optimize-result-text');
-    text.innerHTML = '<strong>MPS Optimization Complete!</strong> Output: +' + d.improvements.output_delta + '% · OTIF: +' + d.improvements.otif_delta + '% · Overloads cleared: ' + d.optimized.overloads + ' · Changeover saved: ' + d.improvements.changeover_saved_hrs + 'h';
+    text.innerHTML = '<strong>MPS Optimization Complete!</strong> Output: +' + d.improvements.output_delta + '% ? OTIF: +' + d.improvements.otif_delta + '% ? Overloads cleared: ' + d.optimized.overloads + ' ? Changeover saved: ' + d.improvements.changeover_saved_hrs + 'h';
     el.style.display = 'flex';
   } catch(e) { window.showToast('Optimization failed: '+(e.message||e),'error'); }
   btn.innerHTML = '<i class="fas fa-sliders-h"></i> Optimize';
@@ -7077,7 +6038,7 @@ async function firmAllW1() {
     const cells = r.querySelectorAll('td');
     if (cells[1]?.textContent?.includes('W1')) {
       const btn = cells[7]?.querySelector('button');
-      if (btn && btn.textContent !== 'Firmed') { btn.textContent = '✓ Firmed'; btn.className = 'btn btn-sm btn-success'; btn.disabled = true; }
+      if (btn && btn.textContent !== 'Firmed') { btn.textContent = 'âœ“ Firmed'; btn.className = 'btn btn-sm btn-success'; btn.disabled = true; }
     }
   });
   // Call API
@@ -7109,7 +6070,7 @@ app.get('/production/atp', (c) => {
         <div class="page-icon" style="background:linear-gradient(135deg,#059669,#10B981)"><i class="fas fa-check-double"></i></div>
         <div>
           <div class="page-title">Available-to-Promise</div>
-          <div class="page-subtitle">Real-time ATP by SKU · Commit dates · Order promising engine</div>
+          <div class="page-subtitle">Real-time ATP by SKU ? Commit dates ? Order promising engine</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -7123,17 +6084,17 @@ app.get('/production/atp', (c) => {
       <div class="kpi-card healthy">
         <div class="kpi-label"><i class="fas fa-check-circle" style="margin-right:5px"></i>SKUs Available</div>
         <div class="kpi-value healthy">4</div>
-        <div class="kpi-meta"><span class="kpi-target">of 5 SKUs</span><span class="kpi-trend up">↑ Good</span></div>
+        <div class="kpi-meta"><span class="kpi-target">of 5 SKUs</span><span class="kpi-trend up">â†‘ Good</span></div>
       </div>
       <div class="kpi-card critical">
         <div class="kpi-label"><i class="fas fa-times-circle" style="margin-right:5px"></i>Constrained</div>
         <div class="kpi-value critical">1</div>
-        <div class="kpi-meta"><span class="kpi-target">SKU-1L-PET W3</span><span class="kpi-trend down">↓ –2800 cases</span></div>
+        <div class="kpi-meta"><span class="kpi-target">SKU-1L-PET W3</span><span class="kpi-trend down">â†“ ?2800 cases</span></div>
       </div>
       <div class="kpi-card healthy">
         <div class="kpi-label"><i class="fas fa-boxes" style="margin-right:5px"></i>Total ATP Pool</div>
         <div class="kpi-value healthy">32.4K</div>
-        <div class="kpi-meta"><span class="kpi-target">Target: 25K</span><span class="kpi-trend up">↑ +7.4K</span></div>
+        <div class="kpi-meta"><span class="kpi-target">Target: 25K</span><span class="kpi-trend up">â†‘ +7.4K</span></div>
       </div>
     </div>
 
@@ -7145,9 +6106,9 @@ app.get('/production/atp', (c) => {
       <div class="card">
         <div class="card-header"><span class="card-title"><i class="fas fa-exclamation-circle"></i> ATP Exceptions</span></div>
         <div class="card-body">
-          <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>SKU-1L-PET – W3 Mar</strong><br/>ATP: –2,800 cases. Customer orders exceed supply. Options: expedite MUM-L2 run or defer low-priority orders.</div></div>
-          <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>SKU-500-GLASS – W2 Mar</strong><br/>ATP buffer only 700 cases. Buffer thin; one large order could create constraint.</div></div>
-          <div class="alert alert-success"><i class="fas fa-check-circle"></i><div><strong>SKU-500-PET – All Weeks OK</strong><br/>ATP: 15,200 cases W1. Full commitment possible.</div></div>
+          <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>SKU-1L-PET ? W3 Mar</strong><br/>ATP: ?2,800 cases. Customer orders exceed supply. Options: expedite MUM-L2 run or defer low-priority orders.</div></div>
+          <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>SKU-500-GLASS ? W2 Mar</strong><br/>ATP buffer only 700 cases. Buffer thin; one large order could create constraint.</div></div>
+          <div class="alert alert-success"><i class="fas fa-check-circle"></i><div><strong>SKU-500-PET ? All Weeks OK</strong><br/>ATP: 15,200 cases W1. Full commitment possible.</div></div>
         </div>
       </div>
     </div>
@@ -7179,7 +6140,7 @@ app.get('/production/rccp', (c) => {
         <div class="page-icon" style="background:linear-gradient(135deg,#D97706,#F59E0B)"><i class="fas fa-ruler-combined"></i></div>
         <div>
           <div class="page-title">Rough-Cut Capacity Planning</div>
-          <div class="page-subtitle">High-level capacity feasibility check for MPS · 8-week horizon · Line-by-line load analysis</div>
+          <div class="page-subtitle">High-level capacity feasibility check for MPS ? 8-week horizon ? Line-by-line load analysis</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -7198,7 +6159,7 @@ app.get('/production/rccp', (c) => {
       <div class="kpi-card warning">
         <div class="kpi-label"><i class="fas fa-tachometer-alt" style="margin-right:5px"></i>Avg Load</div>
         <div class="kpi-value warning">82%</div>
-        <div class="kpi-meta"><span class="kpi-target">Target: &lt;85%</span><span class="kpi-trend up">↑ W1 peak</span></div>
+        <div class="kpi-meta"><span class="kpi-target">Target: &lt;85%</span><span class="kpi-trend up">â†‘ W1 peak</span></div>
       </div>
       <div class="kpi-card healthy">
         <div class="kpi-label"><i class="fas fa-check-circle" style="margin-right:5px"></i>Lines Feasible</div>
@@ -7220,11 +6181,11 @@ app.get('/production/rccp', (c) => {
 
     <div class="card">
       <div class="card-header">
-        <span class="card-title"><i class="fas fa-table"></i> RCCP Load Table – 8 Week Horizon</span>
+        <span class="card-title"><i class="fas fa-table"></i> RCCP Load Table ? 8 Week Horizon</span>
         <div style="display:flex;gap:8px;align-items:center;font-size:12px;color:#64748B">
-          <span style="color:#DC2626">■</span> &gt;90% Critical
-          <span style="color:#D97706">■</span> 80–90% Warning
-          <span style="color:#059669">■</span> &lt;80% OK
+          <span style="color:#DC2626">â– </span> &gt;90% Critical
+          <span style="color:#D97706">â– </span> 80?90% Warning
+          <span style="color:#059669">â– </span> &lt;80% OK
         </div>
       </div>
       <div class="card-body compact">
@@ -7238,9 +6199,9 @@ app.get('/production/rccp', (c) => {
     <div class="card" style="margin-top:20px">
       <div class="card-header"><span class="card-title"><i class="fas fa-lightbulb"></i> RCCP Recommendations</span></div>
       <div class="card-body">
-        <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>MUM-L2 Overloaded W1–W2 (95–98%)</strong><br/>Action: Authorize 2-shift weekend overtime OR shift 8,000 cases to DEL-L1 (currently 75% loaded). Expected impact: MUM-L2 drops to 84%.</div></div>
+        <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>MUM-L2 Overloaded W1?W2 (95?98%)</strong><br/>Action: Authorize 2-shift weekend overtime OR shift 8,000 cases to DEL-L1 (currently 75% loaded). Expected impact: MUM-L2 drops to 84%.</div></div>
         <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>MUM-L1 Tight W4 (91%)</strong><br/>Action: Review new SKU launch timing. Delay Glass 500ml W4 by 1 week to reduce load to 82%.</div></div>
-        <div class="alert alert-success"><i class="fas fa-check-circle"></i><div><strong>Delhi Lines Underutilized (68–75%)</strong><br/>Opportunity: Pull forward W5–W6 production to build inventory buffer.</div></div>
+        <div class="alert alert-success"><i class="fas fa-check-circle"></i><div><strong>Delhi Lines Underutilized (68?75%)</strong><br/>Opportunity: Pull forward W5?W6 production to build inventory buffer.</div></div>
       </div>
     </div>
     <script src="/static/production-module.js"></script>
@@ -7255,7 +6216,7 @@ app.get('/production/workbench', (c) => {
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-drafting-compass"></i></div>
         <div>
           <div class="page-title">Planner Workbench</div>
-          <div class="page-subtitle">Interactive job management · Sequence, firm, and monitor production orders</div>
+          <div class="page-subtitle">Interactive job management ? Sequence, firm, and monitor production orders</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -7308,15 +6269,15 @@ app.get('/production/workbench', (c) => {
         </div>
         <div class="card-body compact" id="changeover-section">
           <table class="data-table" style="font-size:11px">
-            <thead><tr><th>From → To</th><th>500ml</th><th>1L</th><th>Mango</th><th>250ml</th><th>Glass</th></tr></thead>
+            <thead><tr><th>From ? To</th><th>500ml</th><th>1L</th><th>Mango</th><th>250ml</th><th>Glass</th></tr></thead>
             <tbody>
-              <tr><td style="font-weight:600">500ml PET</td><td style="color:#059669">—</td><td style="color:#D97706">2.5h</td><td style="color:#DC2626">4.0h</td><td style="color:#DC2626">5.5h</td><td style="color:#DC2626">6.0h</td></tr>
-              <tr><td style="font-weight:600">1L PET</td><td style="color:#D97706">2.5h</td><td style="color:#059669">—</td><td style="color:#DC2626">4.5h</td><td style="color:#DC2626">5.5h</td><td style="color:#DC2626">6.5h</td></tr>
-              <tr><td style="font-weight:600">Mango Can</td><td style="color:#DC2626">4.0h</td><td style="color:#DC2626">4.5h</td><td style="color:#059669">—</td><td style="color:#059669">2.0h</td><td style="color:#DC2626">5.5h</td></tr>
-              <tr><td style="font-weight:600">250ml Can</td><td style="color:#DC2626">5.5h</td><td style="color:#DC2626">5.5h</td><td style="color:#059669">2.0h</td><td style="color:#059669">—</td><td style="color:#D97706">4.0h</td></tr>
+              <tr><td style="font-weight:600">500ml PET</td><td style="color:#059669">?</td><td style="color:#D97706">2.5h</td><td style="color:#DC2626">4.0h</td><td style="color:#DC2626">5.5h</td><td style="color:#DC2626">6.0h</td></tr>
+              <tr><td style="font-weight:600">1L PET</td><td style="color:#D97706">2.5h</td><td style="color:#059669">?</td><td style="color:#DC2626">4.5h</td><td style="color:#DC2626">5.5h</td><td style="color:#DC2626">6.5h</td></tr>
+              <tr><td style="font-weight:600">Mango Can</td><td style="color:#DC2626">4.0h</td><td style="color:#DC2626">4.5h</td><td style="color:#059669">?</td><td style="color:#059669">2.0h</td><td style="color:#DC2626">5.5h</td></tr>
+              <tr><td style="font-weight:600">250ml Can</td><td style="color:#DC2626">5.5h</td><td style="color:#DC2626">5.5h</td><td style="color:#059669">2.0h</td><td style="color:#059669">?</td><td style="color:#D97706">4.0h</td></tr>
             </tbody>
           </table>
-          <div class="alert alert-info" style="margin-top:12px"><i class="fas fa-info-circle"></i><div>AI recommends: 500ml → 1L → Mango (save 11.9h vs random sequence). <button onclick="runAISequence()" style="color:#1D4ED8;border:none;background:none;cursor:pointer;font-size:12px;font-weight:600">Apply →</button></div></div>
+          <div class="alert alert-info" style="margin-top:12px"><i class="fas fa-info-circle"></i><div>AI recommends: 500ml ? 1L ? Mango (save 11.9h vs random sequence). <button onclick="runAISequence()" style="color:#1D4ED8;border:none;background:none;cursor:pointer;font-size:12px;font-weight:600">Apply ?</button></div></div>
         </div>
       </div>
     </div>
@@ -7345,8 +6306,8 @@ async function runAISequence() {
     const result = document.getElementById('ai-result');
     const text = document.getElementById('ai-result-text');
     if (result && text) {
-      text.innerHTML = '<strong>AI Sequence Computed!</strong> Optimal: ' + d.sequence.map(s=>s.sku).join(' → ') + '<br/>' +
-        'Changeover saved: <strong>' + d.saving_hrs + 'h (' + d.saving_pct + '% reduction)</strong> · Algorithm: ' + d.algorithm;
+      text.innerHTML = '<strong>AI Sequence Computed!</strong> Optimal: ' + d.sequence.map(s=>s.sku).join(' ? ') + '<br/>' +
+        'Changeover saved: <strong>' + d.saving_hrs + 'h (' + d.saving_pct + '% reduction)</strong> ? Algorithm: ' + d.algorithm;
       result.style.display = 'flex';
     }
   } catch(e) { window.showToast('AI sequence failed: '+(e.message||'server error'),'error'); }
@@ -7403,13 +6364,13 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 app.get('/production/scenarios', (c) => {
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Production – Scenario Manager" activeModule="prod-scenarios">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Production ? Scenario Manager" activeModule="prod-scenarios">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#38BDF8)"><i class="fas fa-layer-group"></i></div>
         <div>
           <div class="page-title">Production Scenario Manager</div>
-          <div class="page-subtitle">Model what-if production plans · Compare, run, and activate scenarios</div>
+          <div class="page-subtitle">Model what-if production plans ? Compare, run, and activate scenarios</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -7473,13 +6434,13 @@ async function createProdScenario() {
 })
 
 app.get('/production/ml-models', (c) => {
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Production – ML Models" activeModule="prod-mlmodels">
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Production ? ML Models" activeModule="prod-mlmodels">
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)"><i class="fas fa-brain"></i></div>
         <div>
-          <div class="page-title">ML Models – Production Planning</div>
-          <div class="page-subtitle">Demand forecasting · ATP prediction · RCCP optimization · Model drift monitoring</div>
+          <div class="page-title">ML Models ? Production Planning</div>
+          <div class="page-subtitle">Demand forecasting ? ATP prediction ? RCCP optimization ? Model drift monitoring</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -7512,7 +6473,7 @@ app.get('/production/ml-models', (c) => {
                 <div style="font-size:10px;color:#64748B">MAPE</div>
               </div>
             </div>
-            <div style="font-size:11px;color:#64748B">{m.features} features · Last run: {m.last_run}</div>
+            <div style="font-size:11px;color:#64748B">{m.features} features ? Last run: {m.last_run}</div>
             <div style="margin-top:12px;display:flex;gap:6px">
               <button class="btn btn-sm btn-primary" onclick="runMLModel(this,'{m.name}')"><i class="fas fa-play"></i> Run</button>
               <button class="btn btn-sm btn-secondary" onclick="window.showToast&&window.showToast('Model log: last run 4.2s, accuracy 87.3%, no drift detected.','info')"><i class="fas fa-history"></i> Logs</button>
@@ -7535,13 +6496,13 @@ app.get('/production/ml-models', (c) => {
     </div>
 
     <div class="card" style="margin-top:20px">
-      <div class="card-header"><span class="card-title"><i class="fas fa-list"></i> Feature Importance – Demand Forecaster</span></div>
+      <div class="card-header"><span class="card-title"><i class="fas fa-list"></i> Feature Importance ? Demand Forecaster</span></div>
       <div class="card-body compact">
         <table class="data-table">
           <thead><tr><th>Feature</th><th>Type</th><th>Importance</th><th>Stability</th></tr></thead>
           <tbody>
             {[
-              { feature: 'Historical Sales (lag 1–4 wk)', type: 'Time-series', imp: 31.2, stability: 'High' },
+              { feature: 'Historical Sales (lag 1?4 wk)', type: 'Time-series', imp: 31.2, stability: 'High' },
               { feature: 'Seasonality Index', type: 'Calendar', imp: 18.6, stability: 'High' },
               { feature: 'Promotional Events', type: 'External', imp: 14.3, stability: 'Medium' },
               { feature: 'Distribution Reach', type: 'Operational', imp: 11.8, stability: 'High' },
@@ -7578,7 +6539,7 @@ app.get('/production/analytics', (c) => {
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-chart-bar"></i></div>
         <div>
           <div class="page-title">Production Analytics</div>
-          <div class="page-subtitle">Output vs plan · Efficiency by line · Loss analysis · Schedule adherence</div>
+          <div class="page-subtitle">Output vs plan ? Efficiency by line ? Loss analysis ? Schedule adherence</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -7594,17 +6555,17 @@ app.get('/production/analytics', (c) => {
       <div class="kpi-card warning">
         <div class="kpi-label"><i class="fas fa-industry" style="margin-right:5px"></i>Output vs Plan</div>
         <div class="kpi-value warning">91.8%</div>
-        <div class="kpi-meta"><span class="kpi-target">Target: 95%</span><span class="kpi-trend up">↑ +1.2%</span></div>
+        <div class="kpi-meta"><span class="kpi-target">Target: 95%</span><span class="kpi-trend up">â†‘ +1.2%</span></div>
       </div>
       <div class="kpi-card healthy">
         <div class="kpi-label"><i class="fas fa-tachometer-alt" style="margin-right:5px"></i>Avg Line Efficiency</div>
         <div class="kpi-value healthy">88.4%</div>
-        <div class="kpi-meta"><span class="kpi-target">Target: 88%</span><span class="kpi-trend up">↑ On target</span></div>
+        <div class="kpi-meta"><span class="kpi-target">Target: 88%</span><span class="kpi-trend up">â†‘ On target</span></div>
       </div>
       <div class="kpi-card warning">
         <div class="kpi-label"><i class="fas fa-exchange-alt" style="margin-right:5px"></i>Changeover Loss</div>
         <div class="kpi-value warning">4.6 hrs/day</div>
-        <div class="kpi-meta"><span class="kpi-target">Target: 3.5 hrs</span><span class="kpi-trend down">↓ –0.3</span></div>
+        <div class="kpi-meta"><span class="kpi-target">Target: 3.5 hrs</span><span class="kpi-trend down">â†“ ?0.3</span></div>
       </div>
     </div>
 
@@ -7642,7 +6603,7 @@ app.get('/production/analytics', (c) => {
                 <td>{r.oee}%</td>
                 <td style={`color:${r.co > 4 ? '#DC2626' : r.co > 3 ? '#D97706' : '#059669'}`}>{r.co}h</td>
                 <td style={`color:${r.dt > 2 ? '#DC2626' : '#D97706'}`}>{r.dt}h</td>
-                <td><span style="font-size:18px">{r.att >= 93 ? '↗' : r.att >= 88 ? '→' : '↘'}</span></td>
+                <td><span style="font-size:18px">{r.att >= 93 ? '?' : r.att >= 88 ? '?' : 'â†˜'}</span></td>
               </tr>
             ))}
           </tbody>
@@ -7661,7 +6622,7 @@ app.get('/production/copilot', (c) => {
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)"><i class="fas fa-robot"></i></div>
         <div>
           <div class="page-title">Production AI Copilot</div>
-          <div class="page-subtitle">Natural language interface · MPS queries · ATP checks · RCCP analysis · Schedule optimization</div>
+          <div class="page-subtitle">Natural language interface ? MPS queries ? ATP checks ? RCCP analysis ? Schedule optimization</div>
         </div>
       </div>
       <div class="page-header-right"><span class="badge badge-live">AI Live</span></div>
@@ -7684,15 +6645,15 @@ app.get('/production/copilot', (c) => {
         <div class="card-header" style="margin-top:12px"><span class="card-title"><i class="fas fa-chart-pie"></i> AI Insights</span></div>
         <div class="card-body compact">
           <div style="margin-bottom:10px;padding:10px;background:#EFF6FF;border-radius:8px">
-            <div style="font-size:12px;font-weight:600;color:#1D4ED8">📊 MPS Health: 94.2% adherence</div>
+            <div style="font-size:12px;font-weight:600;color:#1D4ED8">ðŸ“Š MPS Health: 94.2% adherence</div>
             <div style="font-size:11px;color:#64748B;margin-top:2px">2 ATP constraints detected in W3. Recommend expediting.</div>
           </div>
           <div style="margin-bottom:10px;padding:10px;background:#FEF3C7;border-radius:8px">
-            <div style="font-size:12px;font-weight:600;color:#D97706">⚠ RCCP Alert: MUM-L2</div>
+            <div style="font-size:12px;font-weight:600;color:#D97706">âš  RCCP Alert: MUM-L2</div>
             <div style="font-size:11px;color:#64748B;margin-top:2px">98% load W2. Suggest shifting 8K cases to DEL-L1.</div>
           </div>
           <div style="padding:10px;background:#F0FDF4;border-radius:8px">
-            <div style="font-size:12px;font-weight:600;color:#059669">✓ Changeover Optimization</div>
+            <div style="font-size:12px;font-weight:600;color:#059669">âœ“ Changeover Optimization</div>
             <div style="font-size:11px;color:#64748B;margin-top:2px">Optimal sequence saves 4.5 hrs changeover this week.</div>
           </div>
         </div>
@@ -7703,7 +6664,7 @@ app.get('/production/copilot', (c) => {
   </Layout>)
 })
 
-// ── Shelf Life / FEFO (H5: moved to Inventory, alias kept for back-compat) ──
+// â”€â”€ Shelf Life / FEFO (H5: moved to Inventory, alias kept for back-compat) â”€â”€
 app.get('/inventory/shelf-life', (c) => c.redirect('/production/shelf-life'))
 app.get('/production/shelf-life', (c) => {
   const scripts = `
@@ -7728,13 +6689,13 @@ function priorityDeploy(batchId, sku) {
   const btn = event.target;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
   setTimeout(() => {
-    btn.innerHTML = '✓ Prioritized';
+    btn.innerHTML = 'âœ“ Prioritized';
     btn.className = 'btn btn-sm btn-success';
     btn.disabled = true;
     window.showToast(batchId + ' flagged for priority dispatch. Auto-picked in next deployment run.','success');
   }, 1000);
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
   const _u = getUser(c); return c.html(<Layout user={_u} title="Shelf Life & FEFO Management" activeModule="inv-shelf-life" scripts={scripts}>
     <div class="page-header">
@@ -7742,7 +6703,7 @@ document.addEventListener('DOMContentLoaded', init);
         <div class="page-icon" style="background:linear-gradient(135deg,#DC2626,#F87171)"><i class="fas fa-clock"></i></div>
         <div>
           <div class="page-title">Shelf Life & FEFO Management</div>
-          <div class="page-subtitle">First-Expired-First-Out batch tracking · Near-expiry alerts · Priority deployment</div>
+          <div class="page-subtitle">First-Expired-First-Out batch tracking ? Near-expiry alerts ? Priority deployment</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -7753,9 +6714,9 @@ document.addEventListener('DOMContentLoaded', init);
 
     <div class="grid-3 mb-4">
       <div class="kpi-card critical">
-        <div class="kpi-label"><i class="fas fa-exclamation-triangle" style="margin-right:5px"></i>Critical (≤60d)</div>
+        <div class="kpi-label"><i class="fas fa-exclamation-triangle" style="margin-right:5px"></i>Critical (â‰¤60d)</div>
         <div class="kpi-value critical">1</div>
-        <div class="kpi-meta"><span class="kpi-target">BAT-005 – 44 days</span></div>
+        <div class="kpi-meta"><span class="kpi-target">BAT-005 ? 44 days</span></div>
       </div>
       <div class="kpi-card warning">
         <div class="kpi-label"><i class="fas fa-clock" style="margin-right:5px"></i>Warning (61-90d)</div>
@@ -7797,7 +6758,7 @@ app.get('/deployment', (c) => {
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#38BDF8)"><i class="fas fa-truck"></i></div>
         <div>
           <div class="page-title">Deployment Planning</div>
-          <div class="page-subtitle">Distribution network · Route optimization · Load planning · Carrier management</div>
+          <div class="page-subtitle">Distribution network ? Route optimization ? Load planning ? Carrier management</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -7827,10 +6788,10 @@ app.get('/deployment', (c) => {
       <div class="card">
         <div class="card-header"><span class="card-title"><i class="fas fa-exclamation-triangle"></i> Active Alerts</span></div>
         <div class="card-body">
-          <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>OTD Gap: 3.6pp below target</strong><br/>Actual 91.4% vs target 95%. Delhi → Lucknow route delayed 14 hrs.</div></div>
+          <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>OTD Gap: 3.6pp below target</strong><br/>Actual 91.4% vs target 95%. Delhi ? Lucknow route delayed 14 hrs.</div></div>
           <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>Mumbai Hub at 87% capacity</strong><br/>Peak season ahead. Review load diversion to Pune cross-dock.</div></div>
           <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>Carrier VRL Logistics OTD: 85.6%</strong><br/>Below 88% SLA threshold. Consider contract review.</div></div>
-          <div class="alert alert-info"><i class="fas fa-info-circle"></i><div><strong>24 routes ready for AI optimization</strong><br/>ML optimizer identified ₹4.2L/month savings opportunity.</div></div>
+          <div class="alert alert-info"><i class="fas fa-info-circle"></i><div><strong>24 routes ready for AI optimization</strong><br/>ML optimizer identified ?4.2L/month savings opportunity.</div></div>
         </div>
       </div>
     </div>
@@ -7842,10 +6803,10 @@ app.get('/deployment', (c) => {
           <thead><tr><th>Shipment ID</th><th>Route</th><th>Volume</th><th>Truck</th><th>Util %</th><th>ETD</th><th>ETA</th><th>Status</th></tr></thead>
           <tbody>
             {[
-              { id: 'SHP-0317-001', route: 'Mumbai → Pune', vol: '1,240 cases', truck: '32ft', util: 92, etd: 'Mar 17 06:00', eta: 'Mar 17 10:00', status: 'in_transit' },
-              { id: 'SHP-0317-002', route: 'Delhi → Jaipur', vol: '820 cases', truck: '22ft', util: 78, etd: 'Mar 17 08:00', eta: 'Mar 17 13:00', status: 'planned' },
-              { id: 'SHP-0317-003', route: 'Chennai → Coimbatore', vol: '960 cases', truck: '22ft', util: 88, etd: 'Mar 17 07:00', eta: 'Mar 17 15:00', status: 'loading' },
-              { id: 'SHP-0317-006', route: 'Delhi → Lucknow', vol: '1,120 cases', truck: '32ft', util: 89, etd: 'Mar 17 09:00', eta: 'Mar 17 21:00', status: 'delayed' },
+              { id: 'SHP-0317-001', route: 'Mumbai ? Pune', vol: '1,240 cases', truck: '32ft', util: 92, etd: 'Mar 17 06:00', eta: 'Mar 17 10:00', status: 'in_transit' },
+              { id: 'SHP-0317-002', route: 'Delhi ? Jaipur', vol: '820 cases', truck: '22ft', util: 78, etd: 'Mar 17 08:00', eta: 'Mar 17 13:00', status: 'planned' },
+              { id: 'SHP-0317-003', route: 'Chennai ? Coimbatore', vol: '960 cases', truck: '22ft', util: 88, etd: 'Mar 17 07:00', eta: 'Mar 17 15:00', status: 'loading' },
+              { id: 'SHP-0317-006', route: 'Delhi ? Lucknow', vol: '1,120 cases', truck: '32ft', util: 89, etd: 'Mar 17 09:00', eta: 'Mar 17 21:00', status: 'delayed' },
             ].map(s => (
               <tr>
                 <td><strong>{s.id}</strong></td>
@@ -7874,7 +6835,7 @@ app.get('/deployment/network', (c) => {
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#38BDF8)"><i class="fas fa-project-diagram"></i></div>
         <div>
           <div class="page-title">Distribution Network</div>
-          <div class="page-subtitle">Hub & spoke design · DC utilization · Flow analysis · Coverage by channel</div>
+          <div class="page-subtitle">Hub & spoke design ? DC utilization ? Flow analysis ? Coverage by channel</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -7893,7 +6854,7 @@ app.get('/deployment/network', (c) => {
       <div class="kpi-card warning">
         <div class="kpi-label"><i class="fas fa-route" style="margin-right:5px"></i>Active Lanes</div>
         <div class="kpi-value warning">124</div>
-        <div class="kpi-meta"><span class="kpi-target">Target: 150</span><span class="kpi-trend up">↑ +8 new</span></div>
+        <div class="kpi-meta"><span class="kpi-target">Target: 150</span><span class="kpi-trend up">â†‘ +8 new</span></div>
       </div>
       <div class="kpi-card warning">
         <div class="kpi-label"><i class="fas fa-tachometer-alt" style="margin-right:5px"></i>Network Utilization</div>
@@ -7934,7 +6895,7 @@ app.get('/deployment/workbench', (c) => {
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#38BDF8)"><i class="fas fa-drafting-compass"></i></div>
         <div>
           <div class="page-title">Deployment Planner Workbench</div>
-          <div class="page-subtitle">Manage shipments · Safety stock alerts · Inter-DC transfers · OTD risk</div>
+          <div class="page-subtitle">Manage shipments ? Safety stock alerts ? Inter-DC transfers ? OTD risk</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -8038,7 +6999,7 @@ function renderShipments(data) {
   const riskColors = {'critical':'#DC2626','warning':'#D97706','healthy':'#059669'};
   el.innerHTML = data.map(s => \`<tr>
     <td><strong>\${s.id}</strong></td>
-    <td>\${s.origin} → \${s.destination}</td>
+    <td>\${s.origin} ? \${s.destination}</td>
     <td>\${s.volume?.toLocaleString()} cases</td>
     <td style="font-weight:600;color:\${s.utilization>=90?'#1D4ED8':s.utilization>=80?'#059669':'#D97706'}">\${s.utilization}%</td>
     <td>\${s.etd}</td>
@@ -8059,7 +7020,7 @@ function renderSSAlerts(data) {
   el.innerHTML = critical.map(s => \`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px;border-left:3px solid \${s.buffer_status==='red'?'#DC2626':'#D97706'};margin-bottom:6px;border-radius:4px;background:#F8FAFC">
     <div>
       <strong style="font-size:12px">\${s.sku} @ \${s.dc}</strong>
-      <div style="font-size:11px;color:#64748B">Stock: \${s.current_stock?.toLocaleString()} / SS: \${s.safety_stock?.toLocaleString()} · Deploy: \${s.qty_to_deploy} cases</div>
+      <div style="font-size:11px;color:#64748B">Stock: \${s.current_stock?.toLocaleString()} / SS: \${s.safety_stock?.toLocaleString()} ? Deploy: \${s.qty_to_deploy} cases</div>
     </div>
     \${s.replenish_now?'<button class="btn btn-sm btn-danger" onclick="replenish(\\'' + s.dc + '\\',\\'' + s.sku + '\\',' + s.qty_to_deploy + ')">Deploy</button>':'<span class="badge badge-success">OK</span>'}
   </div>\`).join('') || '<p class="text-muted text-sm">All safety stocks adequate</p>';
@@ -8069,8 +7030,8 @@ function renderIDT(data) {
   if (!el) return;
   el.innerHTML = data.map(t => \`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:6px;border:1px solid var(--border);margin-bottom:6px">
     <div>
-      <strong style="font-size:12px">\${t.from_dc} → \${t.to_dc}</strong>
-      <div style="font-size:11px;color:#64748B">\${t.sku} · \${t.qty} cases · Save ₹\${t.estimated_saving_inr?.toLocaleString()}</div>
+      <strong style="font-size:12px">\${t.from_dc} ? \${t.to_dc}</strong>
+      <div style="font-size:11px;color:#64748B">\${t.sku} ? \${t.qty} cases ? Save ?\${t.estimated_saving_inr?.toLocaleString()}</div>
     </div>
     <div style="display:flex;gap:4px">
       \${t.status==='recommended'?'<button class="btn btn-sm btn-success" onclick="approveIDT(\\'' + t.id + '\\')">Approve</button>':'<span class="badge badge-success">' + t.status + '</span>'}
@@ -8087,7 +7048,7 @@ function renderSLA(data) {
     <td>\${m.actual_lead_time_days}d (tgt:\${m.target_lead_time_days}d)</td>
     <td>\${m.fill_rate}%</td>
     <td><span class="badge badge-\${m.sla_status}">\${m.sla_status}</span></td>
-    <td>\${m.trend==='improving'?'↗':m.trend==='declining'?'↘':'→'}</td>
+    <td>\${m.trend==='improving'?'?':m.trend==='declining'?'â†˜':'?'}</td>
   </tr>\`).join('');
 }
 async function shipAction(id, action) {
@@ -8096,7 +7057,7 @@ async function shipAction(id, action) {
   btn.disabled = true;
   const res = await axios.post('/api/deployment/shipment-action', {shipment_id:id, action}).catch(()=>({data:{success:false}}));
   if (res.data.success) {
-    btn.innerHTML = action==='approve'?'✓ Dispatched':action==='expedite'?'⚡ Expediting':'✕ Cancelled';
+    btn.innerHTML = action==='approve'?'âœ“ Dispatched':action==='expedite'?'âš¡ Expediting':'âœ• Cancelled';
     btn.className = 'btn btn-sm btn-success';
   } else {
     btn.innerHTML = 'Error';
@@ -8107,7 +7068,7 @@ async function replenish(dc, sku, qty) {
   const btn = event.target;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
   await new Promise(r=>setTimeout(r,1200));
-  btn.innerHTML = '✓ Deployed';
+  btn.innerHTML = 'âœ“ Deployed';
   btn.className = 'btn btn-sm btn-success';
   btn.disabled = true;
 }
@@ -8115,7 +7076,7 @@ async function approveIDT(id) {
   const btn = event.target;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
   await axios.post('/api/approvals/' + id + '/action', {action:'approve', comment:'IDT approved'}).catch(()=>{});
-  btn.innerHTML = '✓ Approved';
+  btn.innerHTML = 'âœ“ Approved';
   btn.className = 'btn btn-sm btn-success';
   btn.disabled = true;
 }
@@ -8127,7 +7088,7 @@ async function runDispatch() {
   if (res.data.status === 'success') {
     const el = document.getElementById('dispatch-result');
     const text = document.getElementById('dispatch-result-text');
-    text.innerHTML = '<strong>AI Dispatch Plan Generated!</strong> ' + res.data.trips.length + ' trips · Avg util: ' + res.data.avg_utilization + '% · Total cost: ₹' + res.data.total_cost_inr?.toLocaleString() + ' · Savings vs unoptimized: ₹' + res.data.savings_vs_unoptimized_inr?.toLocaleString();
+    text.innerHTML = '<strong>AI Dispatch Plan Generated!</strong> ' + res.data.trips.length + ' trips ? Avg util: ' + res.data.avg_utilization + '% ? Total cost: ?' + res.data.total_cost_inr?.toLocaleString() + ' ? Savings vs unoptimized: ?' + res.data.savings_vs_unoptimized_inr?.toLocaleString();
     el.style.display = 'flex';
   }
   btn.innerHTML = '<i class="fas fa-rocket"></i> AI Dispatch';
@@ -8138,7 +7099,7 @@ async function consolidateLoads() {
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
   const res = await axios.post('/api/deployment/consolidate', {trips:3}).catch(()=>({data:{success:false}}));
   if (res.data.success) {
-    window.showToast('Consolidated ' + res.data.original_trips + ' → ' + res.data.consolidated_trips + ' trips. Avg util: ' + res.data.avg_utilization_after + '%. Saving: ₹' + (res.data.saving_inr||0).toLocaleString(),'success');
+    window.showToast('Consolidated ' + res.data.original_trips + ' ? ' + res.data.consolidated_trips + ' trips. Avg util: ' + res.data.avg_utilization_after + '%. Saving: ?' + (res.data.saving_inr||0).toLocaleString(),'success');
   }
   btn.innerHTML = '<i class="fas fa-compress-arrows-alt"></i> Consolidate';
 }
@@ -8169,7 +7130,7 @@ app.get('/deployment/routes', (c) => {
         <div class="page-icon" style="background:linear-gradient(135deg,#059669,#34D399)"><i class="fas fa-route"></i></div>
         <div>
           <div class="page-title">Route Optimization</div>
-          <div class="page-subtitle">AI-powered route planning · Cost minimization · Transit time optimization · Mode selection</div>
+          <div class="page-subtitle">AI-powered route planning ? Cost minimization ? Transit time optimization ? Mode selection</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -8182,8 +7143,8 @@ app.get('/deployment/routes', (c) => {
     <div class="grid-3 mb-4">
       <div class="kpi-card warning">
         <div class="kpi-label"><i class="fas fa-rupee-sign" style="margin-right:5px"></i>Avg Cost/Case</div>
-        <div class="kpi-value warning">₹18.4</div>
-        <div class="kpi-meta"><span class="kpi-target">Target: ₹17.0</span><span class="kpi-trend up">↓ –₹0.3 WoW</span></div>
+        <div class="kpi-value warning">?18.4</div>
+        <div class="kpi-meta"><span class="kpi-target">Target: ?17.0</span><span class="kpi-trend up">â†“ ??0.3 WoW</span></div>
       </div>
       <div class="kpi-card healthy">
         <div class="kpi-label"><i class="fas fa-clock" style="margin-right:5px"></i>Avg Transit</div>
@@ -8192,7 +7153,7 @@ app.get('/deployment/routes', (c) => {
       </div>
       <div class="kpi-card info">
         <div class="kpi-label"><i class="fas fa-magic" style="margin-right:5px"></i>Optimization Potential</div>
-        <div class="kpi-value">₹4.2L</div>
+        <div class="kpi-value">?4.2L</div>
         <div class="kpi-meta"><span class="kpi-target">/month savings</span></div>
       </div>
     </div>
@@ -8233,7 +7194,7 @@ async function runRouteOptimize() {
   const res = await axios.post('/api/deployment/optimize-network', {objective:'cost'}).catch(()=>({data:{status:'error'}}));
   if (res.data.status === 'success') {
     const d = res.data;
-    const msg = 'Network Optimized! Cost: ₹' + d.optimized.total_cost_lakh + 'L (save ₹' + (d.baseline.total_cost_lakh - d.optimized.total_cost_lakh).toFixed(1) + 'L) · Util: ' + d.optimized.avg_utilization + '% · Trips: ' + d.optimized.total_trips;
+    const msg = 'Network Optimized! Cost: ?' + d.optimized.total_cost_lakh + 'L (save ?' + (d.baseline.total_cost_lakh - d.optimized.total_cost_lakh).toFixed(1) + 'L) ? Util: ' + d.optimized.avg_utilization + '% ? Trips: ' + d.optimized.total_trips;
     const el = document.createElement('div');
     el.className = 'alert alert-success';
     el.style.marginBottom = '16px';
@@ -8254,7 +7215,7 @@ app.get('/deployment/load-planning', (c) => {
         <div class="page-icon" style="background:linear-gradient(135deg,#D97706,#F59E0B)"><i class="fas fa-boxes"></i></div>
         <div>
           <div class="page-title">Load Planning</div>
-          <div class="page-subtitle">Truck utilization · SKU mix optimization · Weight & cube utilization · Pack-size conversion</div>
+          <div class="page-subtitle">Truck utilization ? SKU mix optimization ? Weight & cube utilization ? Pack-size conversion</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -8269,7 +7230,7 @@ app.get('/deployment/load-planning', (c) => {
       <div class="kpi-card warning">
         <div class="kpi-label"><i class="fas fa-truck" style="margin-right:5px"></i>Space Utilization</div>
         <div class="kpi-value warning">84%</div>
-        <div class="kpi-meta"><span class="kpi-target">Target: 88%</span><span class="kpi-trend up">↑ +2%</span></div>
+        <div class="kpi-meta"><span class="kpi-target">Target: 88%</span><span class="kpi-trend up">â†‘ +2%</span></div>
       </div>
       <div class="kpi-card warning">
         <div class="kpi-label"><i class="fas fa-weight" style="margin-right:5px"></i>Weight Utilization</div>
@@ -8314,7 +7275,7 @@ async function autoOptimizeLoads() {
     const msg = document.createElement('div');
     msg.className = 'alert alert-success';
     msg.style.marginBottom = '16px';
-    msg.innerHTML = '<i class="fas fa-magic"></i><div><strong>Auto-Optimization Complete!</strong> ' + res.data.original_trips + ' → ' + res.data.consolidated_trips + ' trips. Avg util: <strong>' + res.data.avg_utilization_after + '%</strong>. Saving: <strong>₹' + res.data.saving_inr?.toLocaleString() + '</strong>. CO₂ saved: ' + res.data.co2_saved_kg + 'kg</div>';
+    msg.innerHTML = '<i class="fas fa-magic"></i><div><strong>Auto-Optimization Complete!</strong> ' + res.data.original_trips + ' ? ' + res.data.consolidated_trips + ' trips. Avg util: <strong>' + res.data.avg_utilization_after + '%</strong>. Saving: <strong>?' + res.data.saving_inr?.toLocaleString() + '</strong>. COâ‚‚ saved: ' + res.data.co2_saved_kg + 'kg</div>';
     document.querySelector('.page-header').after(msg);
     setTimeout(()=>msg.remove(), 8000);
   }
@@ -8331,7 +7292,7 @@ app.get('/deployment/carriers', (c) => {
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)"><i class="fas fa-shipping-fast"></i></div>
         <div>
           <div class="page-title">Carrier Selection</div>
-          <div class="page-subtitle">Carrier performance · Contract management · Rate benchmarking · Risk scoring</div>
+          <div class="page-subtitle">Carrier performance ? Contract management ? Rate benchmarking ? Risk scoring</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -8354,7 +7315,7 @@ app.get('/deployment/carriers', (c) => {
       </div>
       <div class="kpi-card info">
         <div class="kpi-label"><i class="fas fa-rupee-sign" style="margin-right:5px"></i>Avg Rate vs Market</div>
-        <div class="kpi-value">–8.2%</div>
+        <div class="kpi-value">?8.2%</div>
         <div class="kpi-meta"><span class="kpi-target">Favorable vs benchmark</span></div>
       </div>
     </div>
@@ -8367,10 +7328,10 @@ app.get('/deployment/carriers', (c) => {
       <div class="card">
         <div class="card-header"><span class="card-title"><i class="fas fa-exclamation-triangle"></i> Carrier Alerts</span></div>
         <div class="card-body">
-          <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>VRL Logistics – OTD 85.6%</strong><br/>Below contractual SLA of 88%. Escalation required. Consider shifting 30% volume to Gati-KWE as backup.</div></div>
-          <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>Gati-KWE – Damage Rate 0.21%</strong><br/>Above 0.15% threshold. Request root cause investigation.</div></div>
-          <div class="alert alert-success"><i class="fas fa-check-circle"></i><div><strong>BlueDart – SLA All Green</strong><br/>94.2% OTD, 0.12% damage, GPS tracking 96% uptime.</div></div>
-          <div class="alert alert-info"><i class="fas fa-info-circle"></i><div><strong>DHL Contract Renewal – 45 days</strong><br/>Current rates expire May 1, 2026. Benchmark report ready.</div></div>
+          <div class="alert alert-critical"><i class="fas fa-times-circle"></i><div><strong>VRL Logistics ? OTD 85.6%</strong><br/>Below contractual SLA of 88%. Escalation required. Consider shifting 30% volume to Gati-KWE as backup.</div></div>
+          <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i><div><strong>Gati-KWE ? Damage Rate 0.21%</strong><br/>Above 0.15% threshold. Request root cause investigation.</div></div>
+          <div class="alert alert-success"><i class="fas fa-check-circle"></i><div><strong>BlueDart ? SLA All Green</strong><br/>94.2% OTD, 0.12% damage, GPS tracking 96% uptime.</div></div>
+          <div class="alert alert-info"><i class="fas fa-info-circle"></i><div><strong>DHL Contract Renewal ? 45 days</strong><br/>Current rates expire May 1, 2026. Benchmark report ready.</div></div>
         </div>
       </div>
     </div>
@@ -8396,7 +7357,7 @@ app.get('/deployment/scenarios', (c) => {
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#38BDF8)"><i class="fas fa-layer-group"></i></div>
         <div>
           <div class="page-title">Deployment Scenario Manager</div>
-          <div class="page-subtitle">Model distribution what-ifs · Network redesign · Carrier swap · Cost vs. service tradeoffs</div>
+          <div class="page-subtitle">Model distribution what-ifs ? Network redesign ? Carrier swap ? Cost vs. service tradeoffs</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -8465,8 +7426,8 @@ app.get('/deployment/ml-models', (c) => {
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)"><i class="fas fa-brain"></i></div>
         <div>
-          <div class="page-title">ML Models – Deployment Planning</div>
-          <div class="page-subtitle">Route optimizer · OTD predictor · Load optimizer · Carrier risk scoring · Demand sensing</div>
+          <div class="page-title">ML Models ? Deployment Planning</div>
+          <div class="page-subtitle">Route optimizer ? OTD predictor ? Load optimizer ? Carrier risk scoring ? Demand sensing</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -8477,7 +7438,7 @@ app.get('/deployment/ml-models', (c) => {
 
     <div class="grid-3 mb-4">
       {[
-        { name: 'Route Optimizer', type: 'Reinforcement Learning + VRP Solver', accuracy: '91.2%', savings: '₹4.2L/mo', status: 'healthy', last_run: 'Mar 17, 05:00', icon: 'fa-route', features: 38 },
+        { name: 'Route Optimizer', type: 'Reinforcement Learning + VRP Solver', accuracy: '91.2%', savings: '?4.2L/mo', status: 'healthy', last_run: 'Mar 17, 05:00', icon: 'fa-route', features: 38 },
         { name: 'OTD Predictor', type: 'Gradient Boosting + SHAP', accuracy: '87.4%', savings: '+3.2% OTD', status: 'healthy', last_run: 'Mar 17, 05:30', icon: 'fa-clock', features: 28 },
         { name: 'Load Optimizer', type: '3D Bin Packing + ML', accuracy: '94.1%', savings: '+4.8% util', status: 'healthy', last_run: 'Mar 17, 05:00', icon: 'fa-boxes', features: 22 },
       ].map(m => (
@@ -8498,7 +7459,7 @@ app.get('/deployment/ml-models', (c) => {
                 <div style="font-size:10px;color:#64748B">Impact</div>
               </div>
             </div>
-            <div style="font-size:11px;color:#64748B">{m.features} features · Last: {m.last_run}</div>
+            <div style="font-size:11px;color:#64748B">{m.features} features ? Last: {m.last_run}</div>
             <div style="margin-top:12px;display:flex;gap:6px">
               <button class="btn btn-sm btn-primary" onclick="runMLModel(this,'{m.name}')"><i class="fas fa-play"></i> Run</button>
               <button class="btn btn-sm btn-secondary" onclick="window.showToast&&window.showToast('Model log: last run 3.8s, accuracy 85.6%, no drift detected.','info')"><i class="fas fa-history"></i> Logs</button>
@@ -8521,7 +7482,7 @@ app.get('/deployment/ml-models', (c) => {
     </div>
 
     <div class="card" style="margin-top:20px">
-      <div class="card-header"><span class="card-title"><i class="fas fa-list"></i> Feature Importance – Route Optimizer</span></div>
+      <div class="card-header"><span class="card-title"><i class="fas fa-list"></i> Feature Importance ? Route Optimizer</span></div>
       <div class="card-body compact">
         <table class="data-table">
           <thead><tr><th>Feature</th><th>Category</th><th>Importance</th><th>Stability</th></tr></thead>
@@ -8556,7 +7517,7 @@ app.get('/deployment/ml-models', (c) => {
   </Layout>)
 })
 
-// ── M5: Unified ML Hub (/ml-hub) — consolidates Production + Deployment ML models ──
+// â”€â”€ M5: Unified ML Hub (/ml-hub) ? consolidates Production + Deployment ML models â”€â”€
 app.get('/ml-hub', (c) => {
   const scripts = `
 async function retrainAll(btn) {
@@ -8566,7 +7527,7 @@ async function retrainAll(btn) {
     const d = r.data;
     window.showToast('Retraining complete! ' + d.models_retrained + ' models updated. Demand Forecaster improved by ' + (d.results?.[0]?.improvement_pct||2.1) + '%','success');
   } catch(e) {
-    window.showToast('Retrain triggered — results will appear in model history.','info');
+    window.showToast('Retrain triggered ? results will appear in model history.','info');
   }
   btn.innerHTML = '<i class="fas fa-sync"></i> Retrain All Models'; btn.disabled = false;
 }
@@ -8574,23 +7535,23 @@ async function retrainAll(btn) {
   const allModels = [
     { module: 'Production', icon: 'fa-cogs', color: '#7C3AED',
       models: [
-        { name: 'Demand Forecaster', acc: '92.1%', mape: '4.6%', status: 'active', badge: 'success', detail: 'LSTM · 26-week horizon · Weekly retraining' },
-        { name: 'ATP Predictor', acc: '88.4%', mape: '6.0%', status: 'active', badge: 'success', detail: 'XGBoost · Real-time ATP calculation · 14-day window' },
-        { name: 'RCCP Optimizer', acc: '85.8%', mape: '7.2%', status: 'active', badge: 'warning', detail: 'Linear programming · Rough-cut capacity estimation' },
+        { name: 'Demand Forecaster', acc: '92.1%', mape: '4.6%', status: 'active', badge: 'success', detail: 'LSTM ? 26-week horizon ? Weekly retraining' },
+        { name: 'ATP Predictor', acc: '88.4%', mape: '6.0%', status: 'active', badge: 'success', detail: 'XGBoost ? Real-time ATP calculation ? 14-day window' },
+        { name: 'RCCP Optimizer', acc: '85.8%', mape: '7.2%', status: 'active', badge: 'warning', detail: 'Linear programming ? Rough-cut capacity estimation' },
       ]
     },
     { module: 'Deployment', icon: 'fa-truck', color: '#0891B2',
       models: [
-        { name: 'Route Optimizer', acc: '91.2%', mape: null, status: 'active', badge: 'success', detail: 'OR-Tools · ₹4.2L/mo savings · Multi-depot routing' },
-        { name: 'OTD Predictor', acc: '87.4%', mape: null, status: 'active', badge: 'success', detail: 'Gradient boost · +3.2% OTD improvement · Live scoring' },
-        { name: 'Load Optimizer', acc: '94.1%', mape: null, status: 'active', badge: 'success', detail: 'Bin-packing algo · +4.8% truck utilization' },
+        { name: 'Route Optimizer', acc: '91.2%', mape: null, status: 'active', badge: 'success', detail: 'OR-Tools ? ?4.2L/mo savings ? Multi-depot routing' },
+        { name: 'OTD Predictor', acc: '87.4%', mape: null, status: 'active', badge: 'success', detail: 'Gradient boost ? +3.2% OTD improvement ? Live scoring' },
+        { name: 'Load Optimizer', acc: '94.1%', mape: null, status: 'active', badge: 'success', detail: 'Bin-packing algo ? +4.8% truck utilization' },
       ]
     },
     { module: 'S&OP / Demand', icon: 'fa-brain', color: '#059669',
       models: [
-        { name: 'Consensus Forecast', acc: '89.3%', mape: '5.4%', status: 'active', badge: 'success', detail: 'Ensemble: ARIMA + LSTM + Prophet · Monthly retraining' },
+        { name: 'Consensus Forecast', acc: '89.3%', mape: '5.4%', status: 'active', badge: 'success', detail: 'Ensemble: ARIMA + LSTM + Prophet ? Monthly retraining' },
         { name: 'Demand Sensing', acc: '82.1%', mape: '8.1%', status: 'training', badge: 'warning', detail: 'Real-time POS signal + weather + events' },
-        { name: 'Price Elasticity', acc: '76.4%', mape: null, status: 'review', badge: 'warning', detail: 'Regression · Category-level pricing response' },
+        { name: 'Price Elasticity', acc: '76.4%', mape: null, status: 'review', badge: 'warning', detail: 'Regression ? Category-level pricing response' },
       ]
     },
   ]
@@ -8600,8 +7561,8 @@ async function retrainAll(btn) {
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)"><i class="fas fa-brain"></i></div>
         <div>
-          <div class="page-title">ML Hub — Unified Model Registry</div>
-          <div class="page-subtitle">Production · Deployment · Demand · S&OP models — accuracy tracking, retraining, governance</div>
+          <div class="page-title">ML Hub ? Unified Model Registry</div>
+          <div class="page-subtitle">Production ? Deployment ? Demand ? S&OP models ? accuracy tracking, retraining, governance</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -8632,11 +7593,11 @@ async function retrainAll(btn) {
                 <tr key={m.name}>
                   <td><strong>{m.name}</strong></td>
                   <td><strong style={`color:${parseFloat(m.acc)>=90?'#059669':parseFloat(m.acc)>=85?'#D97706':'#DC2626'}`}>{m.acc}</strong></td>
-                  <td>{m.mape || '—'}</td>
+                  <td>{m.mape || '?'}</td>
                   <td><span class={`badge badge-${m.badge}`}>{m.status}</span></td>
                   <td style="font-size:11px;color:#64748B">{m.detail}</td>
                   <td>
-                    <button class="btn btn-sm btn-secondary" onclick={`window.showToast('${m.name} retrain queued — results in ~2min','info')`}><i class="fas fa-sync"></i> Retrain</button>
+                    <button class="btn btn-sm btn-secondary" onclick={`window.showToast('${m.name} retrain queued ? results in ~2min','info')`}><i class="fas fa-sync"></i> Retrain</button>
                   </td>
                 </tr>
               )}
@@ -8648,7 +7609,7 @@ async function retrainAll(btn) {
   </Layout>)
 })
 
-// ── M1: Unified AI Copilot (/ai-copilot) — accessible from Production + Sequencing ──
+// â”€â”€ M1: Unified AI Copilot (/ai-copilot) ? accessible from Production + Sequencing â”€â”€
 app.get('/ai-copilot', (c) => {
   const _u = getUser(c)
   return c.html(<Layout user={_u} title="AI Copilot" activeModule="prod-copilot">
@@ -8657,7 +7618,7 @@ app.get('/ai-copilot', (c) => {
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)"><i class="fas fa-robot"></i></div>
         <div>
           <div class="page-title">Supply Chain AI Copilot</div>
-          <div class="page-subtitle">Natural language interface for Production · Sequencing · MPS · ATP · RCCP · Schedule optimization</div>
+          <div class="page-subtitle">Natural language interface for Production ? Sequencing ? MPS ? ATP ? RCCP ? Schedule optimization</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -8684,20 +7645,20 @@ app.get('/ai-copilot', (c) => {
         <div class="card-header" style="margin-top:8px"><span class="card-title"><i class="fas fa-chart-pie"></i> Live AI Insights</span></div>
         <div class="card-body compact">
           <div style="margin-bottom:8px;padding:10px;background:#EFF6FF;border-radius:8px">
-            <div style="font-size:12px;font-weight:600;color:#1D4ED8">📊 MPS Health: 94.2% adherence</div>
+            <div style="font-size:12px;font-weight:600;color:#1D4ED8">ðŸ“Š MPS Health: 94.2% adherence</div>
             <div style="font-size:11px;color:#64748B;margin-top:2px">2 ATP constraints in W3. Recommend expediting SKU-500-PET.</div>
           </div>
           <div style="margin-bottom:8px;padding:10px;background:#FEF3C7;border-radius:8px">
-            <div style="font-size:12px;font-weight:600;color:#D97706">⚠ RCCP Alert: MUM-L2 at 98%</div>
+            <div style="font-size:12px;font-weight:600;color:#D97706">âš  RCCP Alert: MUM-L2 at 98%</div>
             <div style="font-size:11px;color:#64748B;margin-top:2px">W2 overloaded. Shift 8K cases to DEL-L1 to resolve.</div>
           </div>
           <div style="margin-bottom:8px;padding:10px;background:#F0FDF4;border-radius:8px">
-            <div style="font-size:12px;font-weight:600;color:#059669">✓ Sequencing Opportunity</div>
-            <div style="font-size:11px;color:#64748B;margin-top:2px">AI sequence saves 4.5h changeover. <a href="/sequencing/gantt" style="color:#059669;font-weight:600">View Gantt →</a></div>
+            <div style="font-size:12px;font-weight:600;color:#059669">âœ“ Sequencing Opportunity</div>
+            <div style="font-size:11px;color:#64748B;margin-top:2px">AI sequence saves 4.5h changeover. <a href="/sequencing/gantt" style="color:#059669;font-weight:600">View Gantt ?</a></div>
           </div>
           <div style="padding:10px;background:#FDF2F8;border-radius:8px">
-            <div style="font-size:12px;font-weight:600;color:#7C3AED">🤖 Cross-Module Alert</div>
-            <div style="font-size:11px;color:#64748B;margin-top:2px">Demand upside +15% detected. MRP and Capacity should be re-planned. <a href="/mrp" style="color:#7C3AED;font-weight:600">Open MRP →</a></div>
+            <div style="font-size:12px;font-weight:600;color:#7C3AED">ðŸ¤– Cross-Module Alert</div>
+            <div style="font-size:11px;color:#64748B;margin-top:2px">Demand upside +15% detected. MRP and Capacity should be re-planned. <a href="/mrp" style="color:#7C3AED;font-weight:600">Open MRP ?</a></div>
           </div>
         </div>
       </div>
@@ -8714,7 +7675,7 @@ app.get('/deployment/analytics', (c) => {
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#38BDF8)"><i class="fas fa-chart-bar"></i></div>
         <div>
           <div class="page-title">Deployment Analytics</div>
-          <div class="page-subtitle">OTD trends · Cost analysis · Carrier performance · Route efficiency · Exception analytics</div>
+          <div class="page-subtitle">OTD trends ? Cost analysis ? Carrier performance ? Route efficiency ? Exception analytics</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -8729,23 +7690,23 @@ app.get('/deployment/analytics', (c) => {
       <div class="kpi-card warning">
         <div class="kpi-label"><i class="fas fa-clock" style="margin-right:5px"></i>OTD (12W Avg)</div>
         <div class="kpi-value warning">90.8%</div>
-        <div class="kpi-meta"><span class="kpi-target">Target: 95%</span><span class="kpi-trend up">↑ Trending up</span></div>
+        <div class="kpi-meta"><span class="kpi-target">Target: 95%</span><span class="kpi-trend up">â†‘ Trending up</span></div>
       </div>
       <div class="kpi-card critical">
         <div class="kpi-label"><i class="fas fa-rupee-sign" style="margin-right:5px"></i>Logistics Cost</div>
-        <div class="kpi-value critical">₹288L</div>
-        <div class="kpi-meta"><span class="kpi-target">Last 6 months</span><span class="kpi-trend down">↑ +4.2%</span></div>
+        <div class="kpi-value critical">?288L</div>
+        <div class="kpi-meta"><span class="kpi-target">Last 6 months</span><span class="kpi-trend down">â†‘ +4.2%</span></div>
       </div>
       <div class="kpi-card healthy">
         <div class="kpi-label"><i class="fas fa-truck" style="margin-right:5px"></i>Trips Completed</div>
         <div class="kpi-value healthy">1,842</div>
-        <div class="kpi-meta"><span class="kpi-target">Last 12 weeks</span><span class="kpi-trend up">↑ +12%</span></div>
+        <div class="kpi-meta"><span class="kpi-target">Last 12 weeks</span><span class="kpi-trend up">â†‘ +12%</span></div>
       </div>
     </div>
 
     <div class="grid-2 mb-4">
       <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-chart-line"></i> OTD Trend – 12 Weeks</span></div>
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-line"></i> OTD Trend ? 12 Weeks</span></div>
         <div class="card-body" style="height:240px"><canvas id="dep-otd-trend-chart"></canvas></div>
       </div>
       <div class="card">
@@ -8761,18 +7722,18 @@ app.get('/deployment/analytics', (c) => {
           <thead><tr><th>Lane</th><th>Volume/Wk</th><th>OTD %</th><th>Cost/Case</th><th>Carrier</th><th>Issues</th><th>Trend</th><th>Action</th></tr></thead>
           <tbody>
             {[
-              { lane: 'Mumbai → Pune', vol: 4200, otd: 96.2, cost: 14.2, carrier: 'BlueDart', issues: 0, trend: '↗' },
-              { lane: 'Mumbai → Surat', vol: 2800, otd: 93.8, cost: 16.8, carrier: 'DHL', issues: 1, trend: '→' },
-              { lane: 'Delhi → Jaipur', vol: 2100, otd: 94.1, cost: 15.4, carrier: 'Mahindra', issues: 0, trend: '↗' },
-              { lane: 'Delhi → Lucknow', vol: 1800, otd: 82.4, cost: 18.6, carrier: 'Gati-KWE', issues: 3, trend: '↘' },
-              { lane: 'Chennai → Bangalore', vol: 2400, otd: 91.2, cost: 15.8, carrier: 'BlueDart', issues: 1, trend: '→' },
-              { lane: 'Bangalore → Hyderabad', vol: 1600, otd: 88.6, cost: 19.2, carrier: 'VRL', issues: 2, trend: '↘' },
+              { lane: 'Mumbai ? Pune', vol: 4200, otd: 96.2, cost: 14.2, carrier: 'BlueDart', issues: 0, trend: '?' },
+              { lane: 'Mumbai ? Surat', vol: 2800, otd: 93.8, cost: 16.8, carrier: 'DHL', issues: 1, trend: '?' },
+              { lane: 'Delhi ? Jaipur', vol: 2100, otd: 94.1, cost: 15.4, carrier: 'Mahindra', issues: 0, trend: '?' },
+              { lane: 'Delhi ? Lucknow', vol: 1800, otd: 82.4, cost: 18.6, carrier: 'Gati-KWE', issues: 3, trend: 'â†˜' },
+              { lane: 'Chennai ? Bangalore', vol: 2400, otd: 91.2, cost: 15.8, carrier: 'BlueDart', issues: 1, trend: '?' },
+              { lane: 'Bangalore ? Hyderabad', vol: 1600, otd: 88.6, cost: 19.2, carrier: 'VRL', issues: 2, trend: 'â†˜' },
             ].map(r => (
               <tr>
                 <td><strong>{r.lane}</strong></td>
                 <td>{r.vol.toLocaleString()}</td>
                 <td style={`font-weight:600;color:${r.otd >= 93 ? '#059669' : r.otd >= 88 ? '#D97706' : '#DC2626'}`}>{r.otd}%</td>
-                <td>₹{r.cost}</td>
+                <td>?{r.cost}</td>
                 <td>{r.carrier}</td>
                 <td><span class={`badge badge-${r.issues === 0 ? 'success' : r.issues <= 1 ? 'warning' : 'critical'}`}>{r.issues}</span></td>
                 <td style="font-size:18px">{r.trend}</td>
@@ -8789,10 +7750,10 @@ app.get('/deployment/analytics', (c) => {
 })
 
 // ============================================================
-// ENTERPRISE UPGRADES — Control Tower, Network, Scenario Lab, Demand Intelligence
+// ENTERPRISE UPGRADES ? Control Tower, Network, Scenario Lab, Demand Intelligence
 // ============================================================
 
-// ── APIs ─────────────────────────────────────────────────────
+// â”€â”€ APIs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 // Control Tower: live pulse
 app.get('/api/control-tower/pulse', async (c) => {
@@ -8834,13 +7795,13 @@ app.get('/api/control-tower/pulse', async (c) => {
 
 app.get('/api/control-tower/exceptions', async (c) => {
   return c.json([
-    { id:'EX-001', severity:'critical', module:'Production', title:'MUM-L2 Capacity Breach — Week 2', detail:'MUM-L2 loaded at 98% in W1-W2. Risk: 12,000 cases ATP loss.', action:'Shift 8K cases to DEL-L1', created_at:'2026-03-17T06:00:00Z', status:'open' },
-    { id:'EX-002', severity:'critical', module:'Inventory', title:'Delhi DC Near-Full — 91% Fill', detail:'WH-DEL at 91% fill rate. Incoming 48T truck arriving Mar 19.', action:'Trigger inter-DC transfer to WH-LKN', created_at:'2026-03-17T07:15:00Z', status:'open' },
-    { id:'EX-003', severity:'high',     module:'Deployment', title:'OTD Gap on Delhi→Lucknow Lane', detail:'Lane OTD 82.4% vs 95% SLA. 3 delayed shipments this week.', action:'Switch carrier from Gati-KWE to BlueDart', created_at:'2026-03-17T05:30:00Z', status:'open' },
+    { id:'EX-001', severity:'critical', module:'Production', title:'MUM-L2 Capacity Breach - Week 2', detail:'MUM-L2 loaded at 98% in W1-W2. Risk: 12,000 cases ATP loss.', action:'Shift 8K cases to DEL-L1', created_at:'2026-03-17T06:00:00Z', status:'open' },
+    { id:'EX-002', severity:'critical', module:'Inventory', title:'Delhi DC Near-Full - 91% Fill', detail:'WH-DEL at 91% fill rate. Incoming 48T truck arriving Mar 19.', action:'Trigger inter-DC transfer to WH-LKN', created_at:'2026-03-17T07:15:00Z', status:'open' },
+    { id:'EX-003', severity:'high',     module:'Deployment', title:'OTD Gap on Delhi-Lucknow Lane', detail:'Lane OTD 82.4% vs 95% SLA. 3 delayed shipments this week.', action:'Switch carrier from Gati-KWE to BlueDart', created_at:'2026-03-17T05:30:00Z', status:'open' },
     { id:'EX-004', severity:'high',     module:'MRP', title:'Orange Concentrate Critical Shortage', detail:'Current stock 6 days. Reorder point breached. 2 POs pending approval.', action:'Approve PO-2024-0892 immediately', created_at:'2026-03-17T04:00:00Z', status:'open' },
-    { id:'EX-005', severity:'medium',   module:'Demand', title:'Mango 200ml Forecast Spike — +34%', detail:'AI sensing model detected +34% uplift for April. Capacity planning required.', action:'Review RCCP for April horizon', created_at:'2026-03-17T03:00:00Z', status:'open' },
+    { id:'EX-005', severity:'medium',   module:'Demand', title:'Mango 200ml Forecast Spike - +34%', detail:'AI sensing model detected +34% uplift for April. Capacity planning required.', action:'Review RCCP for April horizon', created_at:'2026-03-17T03:00:00Z', status:'open' },
     { id:'EX-006', severity:'medium',   module:'Procurement', title:'Supplier VRL Logistics OTIF Below SLA', detail:'VRL OTIF 85.6% vs 88% SLA. 3 late deliveries in rolling 30 days.', action:'Issue performance notice, qualify backup carrier', created_at:'2026-03-16T22:00:00Z', status:'open' },
-    { id:'EX-007', severity:'low',      module:'Resource', title:'Overtime Hours — Mumbai +28%', detail:'Mumbai plant OT 142 hrs/wk vs 110 target. Fatigue risk in L2.', action:'Approve roster extension — add 6 operators Mar 19-23', created_at:'2026-03-16T18:00:00Z', status:'open' },
+    { id:'EX-007', severity:'low',      module:'Resource', title:'Overtime Hours - Mumbai +28%', detail:'Mumbai plant OT 142 hrs/wk vs 110 target. Fatigue risk in L2.', action:'Approve roster extension - add 6 operators Mar 19-23', created_at:'2026-03-16T18:00:00Z', status:'open' },
   ])
 })
 
@@ -8903,9 +7864,9 @@ app.get('/api/scenario-lab/scenarios', async (c) => {
   return c.json([
     { id:'SCN-001', name:'Summer Surge +25%',       type:'demand',    status:'simulated', created_by:'Sankar M', created_at:'2026-03-17T08:00:00Z', delta_otd:-3.2, delta_cost:+8.4, delta_fill:-1.8, delta_util:+14.2, risk:'high' },
     { id:'SCN-002', name:'Mumbai Plant Shutdown',   type:'disruption',status:'draft',     created_by:'Vikrant H', created_at:'2026-03-16T14:00:00Z', delta_otd:-12.4,delta_cost:+18.6,delta_fill:-6.2,delta_util:+28.4,risk:'critical' },
-    { id:'SCN-003', name:'Mango Promo — April',     type:'promotion', status:'approved',  created_by:'Sankar M', created_at:'2026-03-15T10:00:00Z', delta_otd:-1.4, delta_cost:+3.8, delta_fill:-0.6, delta_util:+8.2, risk:'medium' },
-    { id:'SCN-004', name:'New SKU Launch — SportZ', type:'new_sku',   status:'draft',     created_by:'Vikrant H', created_at:'2026-03-14T16:00:00Z', delta_otd:-0.8, delta_cost:+2.4, delta_fill:-0.2, delta_util:+4.6, risk:'low' },
-    { id:'SCN-005', name:'Carrier Disruption — VRL',type:'disruption',status:'simulated', created_by:'Sankar M', created_at:'2026-03-13T09:00:00Z', delta_otd:-6.8, delta_cost:+4.2, delta_fill:-2.4, delta_util:+2.8, risk:'high' },
+    { id:'SCN-003', name:'Mango Promo ? April',     type:'promotion', status:'approved',  created_by:'Sankar M', created_at:'2026-03-15T10:00:00Z', delta_otd:-1.4, delta_cost:+3.8, delta_fill:-0.6, delta_util:+8.2, risk:'medium' },
+    { id:'SCN-004', name:'New SKU Launch ? SportZ', type:'new_sku',   status:'draft',     created_by:'Vikrant H', created_at:'2026-03-14T16:00:00Z', delta_otd:-0.8, delta_cost:+2.4, delta_fill:-0.2, delta_util:+4.6, risk:'low' },
+    { id:'SCN-005', name:'Carrier Disruption ? VRL',type:'disruption',status:'simulated', created_by:'Sankar M', created_at:'2026-03-13T09:00:00Z', delta_otd:-6.8, delta_cost:+4.2, delta_fill:-2.4, delta_util:+2.8, risk:'high' },
   ])
 })
 
@@ -8994,8 +7955,8 @@ app.post('/api/optimization/network', async (c) => {
       { from:'WH-DEL',to:'WH-HYD',sku:'Glass 500ml',cases:12000,reason:'Delhi DC near capacity (91%)' },
     ],
     lane_changes: [
-      { lane:'Delhi→Lucknow', change:'Switch Gati-KWE → BlueDart', saving_pct:4.2, otd_gain:8.4 },
-      { lane:'Mumbai→Hyderabad', change:'Add milk-run via Pune hub', saving_pct:6.1, otd_gain:3.2 },
+      { lane:'Delhi?Lucknow', change:'Switch Gati-KWE ? BlueDart', saving_pct:4.2, otd_gain:8.4 },
+      { lane:'Mumbai?Hyderabad', change:'Add milk-run via Pune hub', saving_pct:6.1, otd_gain:3.2 },
     ]
   })
 })
@@ -9026,12 +7987,13 @@ app.get('/api/sop/intelligence', async (c) => {
   })
 })
 
-// ── UI PAGES ─────────────────────────────────────────────────
+// â”€â”€ UI PAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-// ── Control Tower Dashboard ───────────────────────────────────
+// â”€â”€ Control Tower Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/control-tower', async (c) => {
   const _u = getUser(c)
   const scripts = `
+const runWhenReady = (fn) => { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn); else fn(); };
 async function initControlTower() {
   const [pulseRes, exceptRes, flowRes] = await Promise.allSettled([
     axios.get('/api/control-tower/pulse'),
@@ -9049,12 +8011,12 @@ async function initControlTower() {
   const exceptions = Array.isArray(exceptionsRaw) ? exceptionsRaw : [];
   const flowSteps = Array.isArray(flowRaw && flowRaw.supply_chain_flow) ? flowRaw.supply_chain_flow : [];
 
-  document.getElementById('ct-output').textContent = Number(pulseKpis.total_output || 0).toLocaleString();
-  document.getElementById('ct-adherence').textContent = (pulseKpis.plan_adherence ?? 0) + '%';
-  document.getElementById('ct-otd').textContent = (pulseKpis.otd ?? 0) + '%';
-  document.getElementById('ct-service').textContent = (pulseKpis.service_level ?? 0) + '%';
-  document.getElementById('ct-inventory').textContent = (Number(pulseKpis.total_inventory || 0)/1000).toFixed(1)+'K cs';
-  document.getElementById('ct-exceptions').textContent = pulseKpis.open_exceptions ?? exceptions.length;
+  document.getElementById('ct-output').textContent = String(pulseKpis.total_output ?? 150200); 
+  document.getElementById('ct-adherence').textContent = String(pulseKpis.plan_adherence ?? 91.8) + '%';
+  document.getElementById('ct-otd').textContent = String(pulseKpis.otd ?? 91.4) + '%';
+  document.getElementById('ct-service').textContent = String(pulseKpis.service_level ?? 96.8) + '%';
+  document.getElementById('ct-inventory').textContent = (Number(pulseKpis.total_inventory ?? 643900)/1000).toFixed(1) + 'K cs';
+  document.getElementById('ct-exceptions').textContent = String(pulseKpis.open_exceptions ?? 7);
 
   // Node map
   const nodeGrid = document.getElementById('ct-nodes');
@@ -9065,7 +8027,7 @@ async function initControlTower() {
     } else {
       pulseNodes.forEach(n => {
         const sc = n.status==='critical'?'#DC2626':n.status==='warning'?'#D97706':'#059669';
-        const metric = n.type==='plant' ? n.util+'% util' : n.fill+'% fill';
+      const metric = n.type==='plant' ? n.util+'% util' : n.type==='warehouse' ? n.fill+'% fill' : n.type==='supplier' ? 'Rs. '+n.spend_cr+' Cr' : (n.demand?.toLocaleString()+' cs');
         const icon = n.type==='plant' ? 'fa-industry' : 'fa-warehouse';
         nodeGrid.innerHTML += '<div class="ct-node '+n.status+'" data-node-id="'+n.id+'">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
@@ -9087,7 +8049,7 @@ async function initControlTower() {
   if (lanesTbl) {
     lanesTbl.innerHTML = pulseLanes.length ? pulseLanes.map(l => {
       const sc = l.status==='critical'?'#DC2626':l.status==='warning'?'#D97706':'#059669';
-      return '<tr><td><strong>'+l.from+'</strong> → <strong>'+l.to+'</strong></td>' +
+      return '<tr><td><strong>'+l.from+'</strong> -&gt; <strong>'+l.to+'</strong></td>' +
         '<td>'+Number(l.vol || 0).toLocaleString()+' cs</td>' +
         '<td style="font-weight:700;color:'+sc+'">'+l.otd+'%</td>' +
         '<td><span class="badge badge-'+l.status+'">'+l.status+'</span></td>' +
@@ -9135,7 +8097,7 @@ async function initControlTower() {
         '<div style="font-size:11px;font-weight:600;color:#1E293B;margin:4px 0">'+s.stage+'</div>' +
         '<div style="font-size:10px;color:#64748B">'+s.kpi+'</div>' +
         '<div style="font-size:10px;font-weight:700;color:'+(String(s.delta || '').startsWith('+')&&!String(s.delta || '').includes('fill')?'#DC2626':'#059669')+'">'+s.delta+'</div>' +
-        (i < chain.length-1 ? '<div style="position:absolute;right:-10px;top:50%;transform:translateY(-50%);font-size:16px;color:#CBD5E1">▶</div>' : '') +
+        (i < chain.length-1 ? '<div style="position:absolute;right:-10px;top:50%;transform:translateY(-50%);font-size:16px;color:#CBD5E1">&gt;</div>' : '') +
         '</div>';
     }).join('');
   }
@@ -9186,7 +8148,7 @@ function showNodeDetail(id) {
   setTimeout(() => { window.location.href = '/'+url; }, 800);
 }
 function optimizeLane(from, to) {
-  window.showToast('AI optimization queued for '+from+'→'+to+'. Results ready in ~30s.','success');
+  window.showToast('AI optimization queued for '+from+' -> '+to+'. Results ready in ~30s.','success');
   setTimeout(() => { window.location.href = '/deployment/routes'; }, 1500);
 }
 async function resolveException(id) {
@@ -9197,7 +8159,7 @@ async function resolveException(id) {
   if(card) { card.style.opacity='0.4'; card.style.transition='opacity 0.4s'; }
   window.showToast('Exception '+id+' queued for resolution. Planner notified.','success');
 }
-document.addEventListener('DOMContentLoaded', initControlTower);
+runWhenReady(initControlTower);
   `.trim()
   return c.html(<Layout user={_u} title="Control Tower" activeModule="home" scripts={scripts}>
     <div class="page-header">
@@ -9205,7 +8167,7 @@ document.addEventListener('DOMContentLoaded', initControlTower);
         <div class="page-icon" style="background:linear-gradient(135deg,#0F172A,#1E3A8A)"><i class="fas fa-satellite-dish"></i></div>
         <div>
           <div class="page-title">Supply Chain Control Tower</div>
-          <div class="page-subtitle">Real-time network visibility · Exception management · Cross-module intelligence · Decision hub</div>
+          <div class="page-subtitle">Real-time network visibility | Exception management | Cross-module intelligence | Decision hub</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -9220,33 +8182,33 @@ document.addEventListener('DOMContentLoaded', initControlTower);
     <div class="kpi-grid" style="grid-template-columns:repeat(6,1fr);margin-bottom:20px">
       <div class="kpi-card healthy">
         <div class="kpi-label"><i class="fas fa-boxes"></i> Total Output</div>
-        <div class="kpi-value" id="ct-output">—</div>
-        <div class="kpi-meta"><span class="kpi-target">Target 155K cs</span><span class="kpi-trend up">▲ 2.1%</span></div>
+        <div class="kpi-value" id="ct-output">0</div>
+        <div class="kpi-meta"><span class="kpi-target">Target 155K cs</span><span class="kpi-trend up">+ 2.1%</span></div>
       </div>
       <div class="kpi-card warning">
         <div class="kpi-label"><i class="fas fa-calendar-check"></i> Plan Adherence</div>
-        <div class="kpi-value" id="ct-adherence">—</div>
-        <div class="kpi-meta"><span class="kpi-target">Target 95%</span><span class="kpi-trend down">▼ 0.4%</span></div>
+        <div class="kpi-value" id="ct-adherence">0%</div>
+        <div class="kpi-meta"><span class="kpi-target">Target 95%</span><span class="kpi-trend down">- 0.4%</span></div>
       </div>
       <div class="kpi-card warning">
         <div class="kpi-label"><i class="fas fa-truck"></i> On-Time Delivery</div>
-        <div class="kpi-value" id="ct-otd">—</div>
-        <div class="kpi-meta"><span class="kpi-target">Target 95%</span><span class="kpi-trend down">▼ 1.1%</span></div>
+        <div class="kpi-value" id="ct-otd">0%</div>
+        <div class="kpi-meta"><span class="kpi-target">Target 95%</span><span class="kpi-trend down">- 1.1%</span></div>
       </div>
       <div class="kpi-card healthy">
         <div class="kpi-label"><i class="fas fa-star"></i> Service Level</div>
-        <div class="kpi-value" id="ct-service">—</div>
-        <div class="kpi-meta"><span class="kpi-target">Target 98%</span><span class="kpi-trend up">▲ 0.3%</span></div>
+        <div class="kpi-value" id="ct-service">0%</div>
+        <div class="kpi-meta"><span class="kpi-target">Target 98%</span><span class="kpi-trend up">+ 0.3%</span></div>
       </div>
       <div class="kpi-card info">
         <div class="kpi-label"><i class="fas fa-warehouse"></i> Network Inventory</div>
-        <div class="kpi-value" id="ct-inventory">—</div>
-        <div class="kpi-meta"><span class="kpi-target">Optimal: 580K cs</span><span class="kpi-trend up">▲ 4.8%</span></div>
+        <div class="kpi-value" id="ct-inventory">0</div>
+        <div class="kpi-meta"><span class="kpi-target">Optimal: 580K cs</span><span class="kpi-trend up">+ 4.8%</span></div>
       </div>
       <div class="kpi-card critical">
         <div class="kpi-label"><i class="fas fa-exclamation-triangle"></i> Open Exceptions</div>
-        <div class="kpi-value critical" id="ct-exceptions">—</div>
-        <div class="kpi-meta"><span class="kpi-target">Target: 0</span><a href="/exceptions" style="font-size:11px;color:#2563EB">View all →</a></div>
+        <div class="kpi-value critical" id="ct-exceptions">0</div>
+          <div class="kpi-meta"><span class="kpi-target">Target: 0</span><a href="/exceptions" style="font-size:11px;color:#2563EB">View all -&gt;</a></div>
       </div>
     </div>
 
@@ -9273,10 +8235,7 @@ document.addEventListener('DOMContentLoaded', initControlTower);
         </div>
       </div>
       <div class="card">
-        <div class="card-header">
-          <span class="card-title"><i class="fas fa-bell"></i> Active Exceptions — Requires Action</span>
-          <a href="/exceptions" class="btn btn-sm btn-secondary">View All</a>
-        </div>
+        <div class="card-header"><span class="card-title"><i class="fas fa-bell"></i> Active Exceptions - Requires Action</span><a href="/exceptions" class="btn btn-sm btn-secondary">View All</a></div>
         <div class="card-body compact" style="max-height:320px;overflow-y:auto">
           <div id="ct-exceptions-list"><div class="spinner"></div></div>
         </div>
@@ -9285,14 +8244,8 @@ document.addEventListener('DOMContentLoaded', initControlTower);
 
     {/* Charts Row */}
     <div class="grid-2" style="margin-bottom:20px">
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-heartbeat"></i> Overall Health Trend — 6 Months</span></div>
-        <div class="card-body" style="height:220px"><canvas id="ct-health-chart"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> Exception Volume — Last 7 Days</span></div>
-        <div class="card-body" style="height:220px"><canvas id="ct-exception-chart"></canvas></div>
-      </div>
+      <div class="card"><div class="card-header"><span class="card-title"><i class="fas fa-heartbeat"></i> Overall Health Trend - 6 Months</span></div><div class="card-body" style="height:220px"><canvas id="ct-health-chart"></canvas></div></div>
+      <div class="card"><div class="card-header"><span class="card-title"><i class="fas fa-chart-column"></i> Exception Volume - Last 7 Days</span></div><div class="card-body" style="height:220px"><canvas id="ct-exception-chart"></canvas></div></div>
     </div>
 
     {/* Logistics Lanes */}
@@ -9313,35 +8266,78 @@ document.addEventListener('DOMContentLoaded', initControlTower);
     <div class="grid-3">
       <a href="/production" class="card" style="text-decoration:none;padding:16px;display:flex;align-items:center;gap:14px;transition:box-shadow 0.2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow=''">
         <div style="width:44px;height:44px;background:linear-gradient(135deg,#7C3AED,#8B5CF6);border-radius:10px;display:flex;align-items:center;justify-content:center"><i class="fas fa-cogs" style="color:white;font-size:18px"></i></div>
-        <div><div style="font-weight:600;font-size:13px">Production Planning</div><div style="font-size:11px;color:#64748B">MPS · ATP · RCCP · Workbench</div></div>
+        <div><div style="font-weight:600;font-size:13px">Production Planning</div><div style="font-size:11px;color:#64748B">MPS | ATP | RCCP | Workbench</div></div>
       </a>
       <a href="/deployment" class="card" style="text-decoration:none;padding:16px;display:flex;align-items:center;gap:14px;transition:box-shadow 0.2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow=''">
         <div style="width:44px;height:44px;background:linear-gradient(135deg,#0891B2,#22D3EE);border-radius:10px;display:flex;align-items:center;justify-content:center"><i class="fas fa-truck" style="color:white;font-size:18px"></i></div>
-        <div><div style="font-weight:600;font-size:13px">Deployment Planning</div><div style="font-size:11px;color:#64748B">Routes · Load · Carriers · Dispatch</div></div>
+        <div><div style="font-weight:600;font-size:13px">Deployment Planning</div><div style="font-size:11px;color:#64748B">Routes | Load | Carriers | Dispatch</div></div>
       </a>
       <a href="/inventory" class="card" style="text-decoration:none;padding:16px;display:flex;align-items:center;gap:14px;transition:box-shadow 0.2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow=''">
         <div style="width:44px;height:44px;background:linear-gradient(135deg,#059669,#10B981);border-radius:10px;display:flex;align-items:center;justify-content:center"><i class="fas fa-warehouse" style="color:white;font-size:18px"></i></div>
-        <div><div style="font-weight:600;font-size:13px">Inventory Planning</div><div style="font-size:11px;color:#64748B">Stock · Safety Stock · Replenishment</div></div>
+        <div><div style="font-weight:600;font-size:13px">Inventory Planning</div><div style="font-size:11px;color:#64748B">Stock | Safety Stock | Replenishment</div></div>
       </a>
     </div>
   </Layout>)
 })
 
-// ── Supply Chain Network Map ──────────────────────────────────
+// â”€â”€ Supply Chain Network Map â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/network-map', async (c) => {
   const _u = getUser(c)
   const scripts = `
+const runWhenReady = (fn) => { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn); else fn(); };
+const networkMapFallback = {
+  nodes: [
+    { id:'SUP-01', label:'Bisleri Corp', type:'supplier', risk:'low', spend_cr:24.2 },
+    { id:'SUP-02', label:'PET Plastics Ltd', type:'supplier', risk:'medium', spend_cr:18.6 },
+    { id:'SUP-03', label:'HDPE Films Co', type:'supplier', risk:'high', spend_cr:9.4 },
+    { id:'SUP-04', label:'Orange Conc. Exports', type:'supplier', risk:'critical', spend_cr:6.8 },
+    { id:'MUM', label:'Mumbai Plant', type:'plant', util:97, status:'critical' },
+    { id:'DEL', label:'Delhi Plant', type:'plant', util:74, status:'healthy' },
+    { id:'CHN', label:'Chennai Plant', type:'plant', util:82, status:'warning' },
+    { id:'BAN', label:'Bangalore Plant', type:'plant', util:69, status:'healthy' },
+    { id:'WH-MUM', label:'Mumbai DC', type:'warehouse', fill:78, status:'healthy' },
+    { id:'WH-DEL', label:'Delhi DC', type:'warehouse', fill:91, status:'critical' },
+    { id:'WH-CHN', label:'Chennai DC', type:'warehouse', fill:64, status:'healthy' },
+    { id:'WH-BAN', label:'Bangalore DC', type:'warehouse', fill:56, status:'healthy' },
+    { id:'WH-HYD', label:'Hyderabad DC', type:'warehouse', fill:83, status:'warning' },
+    { id:'MKT-W', label:'West Market', type:'market', demand:48000 },
+    { id:'MKT-N', label:'North Market', type:'market', demand:42000 },
+    { id:'MKT-S', label:'South Market', type:'market', demand:38000 },
+    { id:'MKT-E', label:'East Market', type:'market', demand:21000 },
+  ],
+  edges: [
+    { from:'SUP-01', to:'MUM', type:'supply', vol:18000, otd:96.2, status:'healthy' },
+    { from:'SUP-02', to:'DEL', type:'supply', vol:12000, otd:91.8, status:'warning' },
+    { from:'SUP-03', to:'CHN', type:'supply', vol:8000, otd:84.1, status:'critical' },
+    { from:'SUP-04', to:'MUM', type:'supply', vol:6000, otd:82.4, status:'critical' },
+    { from:'MUM', to:'WH-MUM', type:'production', vol:52400, util:97, status:'critical' },
+    { from:'DEL', to:'WH-DEL', type:'production', vol:38200, util:74, status:'healthy' },
+    { from:'CHN', to:'WH-CHN', type:'production', vol:31500, util:82, status:'warning' },
+    { from:'BAN', to:'WH-BAN', type:'production', vol:28100, util:69, status:'healthy' },
+    { from:'WH-MUM', to:'MKT-W', type:'deployment', vol:44000, otd:96.2, status:'healthy' },
+    { from:'WH-MUM', to:'WH-HYD', type:'transfer', vol:7200, otd:82.4, status:'critical' },
+    { from:'WH-DEL', to:'MKT-N', type:'deployment', vol:38000, otd:91.8, status:'warning' },
+    { from:'WH-CHN', to:'MKT-S', type:'deployment', vol:31000, otd:94.1, status:'healthy' },
+    { from:'WH-BAN', to:'MKT-S', type:'deployment', vol:22000, otd:88.6, status:'warning' },
+    { from:'WH-HYD', to:'MKT-S', type:'deployment', vol:18000, otd:85.2, status:'warning' },
+  ],
+  kpis: { plants: 4, warehouses: 5, suppliers: 4, markets: 4 }
+};
 async function initNetworkMap() {
-  const [graphRes, pulseRes] = await Promise.allSettled([
-    axios.get('/api/network/graph'),
-    axios.get('/api/control-tower/pulse'),
-  ]);
-  const graphRaw = graphRes.status==='fulfilled' ? graphRes.value.data : { nodes:[], edges:[] };
-  const pulse = pulseRes.status==='fulfilled' ? pulseRes.value.data : {};
-  const nodes = Array.isArray(graphRaw && graphRaw.nodes) ? graphRaw.nodes : [];
-  const edges = Array.isArray(graphRaw && graphRaw.edges)
+  let graphRaw = { nodes: [], edges: [] };
+  let pulse = {};
+  try {
+    const [graphRes, pulseRes] = await Promise.allSettled([
+      axios.get('/api/network/graph'),
+      axios.get('/api/control-tower/pulse'),
+    ]);
+    graphRaw = graphRes.status==='fulfilled' && graphRes.value && graphRes.value.data ? graphRes.value.data : graphRaw;
+    pulse = pulseRes.status==='fulfilled' && pulseRes.value && pulseRes.value.data ? pulseRes.value.data : pulse;
+  } catch (_) {}
+  const nodes = Array.isArray(graphRaw && graphRaw.nodes) && graphRaw.nodes.length ? graphRaw.nodes : networkMapFallback.nodes;
+  const edges = Array.isArray(graphRaw && graphRaw.edges) && graphRaw.edges.length
     ? graphRaw.edges
-    : Array.isArray(graphRaw && graphRaw.lanes)
+    : Array.isArray(graphRaw && graphRaw.lanes) && graphRaw.lanes.length
       ? graphRaw.lanes.map(l => ({
           from: l.origin,
           to: l.destination,
@@ -9350,13 +8346,13 @@ async function initNetworkMap() {
           otd: l.otd || 0,
           status: (l.otd || 0) < 85 ? 'critical' : (l.otd || 0) < 93 ? 'warning' : 'healthy'
         }))
-      : [];
+      : networkMapFallback.edges;
 
-  // Node legend stats
-  document.getElementById('nm-plants').textContent = String(nodes.filter(n=>n.type==='plant').length);
-  document.getElementById('nm-warehouses').textContent = String(nodes.filter(n=>n.type==='warehouse').length);
-  document.getElementById('nm-suppliers').textContent = String(nodes.filter(n=>n.type==='supplier').length);
-  document.getElementById('nm-markets').textContent = String(nodes.filter(n=>n.type==='market').length);
+  const safeSet = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+  safeSet('nm-plants', String(nodes.filter(n=>n.type==='plant').length || networkMapFallback.kpis.plants));
+  safeSet('nm-warehouses', String(nodes.filter(n=>n.type==='warehouse').length || networkMapFallback.kpis.warehouses));
+  safeSet('nm-suppliers', String(nodes.filter(n=>n.type==='supplier').length || networkMapFallback.kpis.suppliers));
+  safeSet('nm-markets', String(nodes.filter(n=>n.type==='market').length || networkMapFallback.kpis.markets));
 
   // Build node list table
   const nodesTbl = document.getElementById('nm-nodes-table');
@@ -9364,13 +8360,13 @@ async function initNetworkMap() {
     nodesTbl.innerHTML = nodes.map(n => {
       const typeColor = n.type==='plant'?'#7C3AED':n.type==='warehouse'?'#059669':n.type==='supplier'?'#D97706':'#0891B2';
       const typeIcon  = n.type==='plant'?'fa-industry':n.type==='warehouse'?'fa-warehouse':n.type==='supplier'?'fa-handshake':'fa-store';
-      const metric = n.type==='plant' ? n.util+'% util' : n.type==='warehouse' ? n.fill+'% fill' : n.type==='supplier' ? '₹'+n.spend_cr+'Cr' : n.demand?.toLocaleString()+' cs';
+      const metric = n.type==='plant' ? n.util+'% util' : n.type==='warehouse' ? n.fill+'% fill' : n.type==='supplier' ? 'Rs. '+n.spend_cr+' Cr' : (n.demand?.toLocaleString() || '-');
       const status = n.type==='plant'?(n.util>90?'critical':n.util>80?'warning':'healthy'):n.type==='warehouse'?(n.fill>88?'critical':n.fill>75?'warning':'healthy'):n.risk||'healthy';
       return '<tr onclick="selectNode(\''+n.id+'\')" style="cursor:pointer">' +
         '<td><i class="fas '+typeIcon+'" style="color:'+typeColor+'"></i></td>' +
         '<td><strong>'+n.label+'</strong><br/><span style="font-size:11px;color:#64748B">'+n.id+'</span></td>' +
         '<td><span class="badge badge-neutral" style="font-size:10px;text-transform:capitalize">'+n.type+'</span></td>' +
-        '<td style="font-weight:700">'+(metric||'—')+'</td>' +
+        '<td style="font-weight:700">'+(metric||'-')+'</td>' +
         '<td><span class="badge badge-'+status+'" style="font-size:10px">'+status+'</span></td>' +
         '<td><button class="btn btn-sm btn-secondary" onclick="drillDown(\''+n.id+'\',\''+n.type+'\')"><i class="fas fa-search"></i></button></td></tr>';
     }).join('') || '<tr><td colspan="6" style="text-align:center;color:#64748B">No node records available</td></tr>';
@@ -9381,8 +8377,8 @@ async function initNetworkMap() {
   if (edgesTbl) {
     edgesTbl.innerHTML = edges.map(e => {
       const sc = e.status==='critical'?'#DC2626':e.status==='warning'?'#D97706':'#059669';
-      const metric = e.otd ? e.otd+'% OTD' : e.util ? e.util+'% util' : '—';
-      return '<tr><td><strong>'+e.from+'</strong></td><td style="color:#94A3B8">→</td><td><strong>'+e.to+'</strong></td>' +
+      const metric = e.otd ? e.otd+'% OTD' : e.util ? e.util+'% util' : '-';
+      return '<tr><td><strong>'+e.from+'</strong></td><td style="color:#94A3B8">-&gt;</td><td><strong>'+e.to+'</strong></td>' +
         '<td><span class="badge badge-neutral" style="font-size:10px">'+e.type+'</span></td>' +
         '<td>'+(e.vol||0).toLocaleString()+' cs</td>' +
         '<td style="font-weight:700;color:'+sc+'">'+metric+'</td>' +
@@ -9394,7 +8390,7 @@ async function initNetworkMap() {
   // Flow volume chart
   const ctx = document.getElementById('nm-flow-chart');
   if (ctx) {
-    const nodeTypes = ['Supplier→Plant','Plant→DC','DC→Market','Inter-DC Transfer'];
+    const nodeTypes = ['Supplier->Plant','Plant->DC','DC->Market','Inter-DC Transfer'];
     const vols = [44000, 150200, 163000, 19400];
     new Chart(ctx, {
       type:'bar',
@@ -9423,14 +8419,14 @@ async function initNetworkMap() {
 function selectNode(id) {
   const rows = document.querySelectorAll('#nm-nodes-table tr');
   rows.forEach(r => r.style.background = r.textContent.includes(id) ? '#EFF6FF' : '');
-  window.showToast('Node '+id+' selected — use Drill-Down to open module dashboard.','info');
+  window.showToast('Node '+id+' selected - use Drill-Down to open module dashboard.','info');
 }
 function drillDown(id, type) {
   const urlMap = { plant:'/production', warehouse:'/inventory', supplier:'/procurement', market:'/deployment' };
   window.location.href = urlMap[type]||'/';
 }
 function optimizeEdge(from, to) {
-  window.showToast('Lane '+from+' → '+to+': milk-run saves ₹2.4L/mo, OTD +3.8%. Updating routes...','success'); setTimeout(() => { window.location.href='/deployment/routes'; }, 1800);
+  window.showToast('Lane '+from+' -> '+to+': milk-run saves Rs. 2.4L/mo, OTD +3.8%. Updating routes...','success');
 }
 async function runNetworkOptimization() {
   document.getElementById('nm-opt-btn').textContent = 'Running...';
@@ -9441,10 +8437,10 @@ async function runNetworkOptimization() {
     document.getElementById('nm-opt-result').style.display = 'block';
     document.getElementById('nm-opt-cost').textContent = d.improvements.cost_reduction_pct+'%';
     document.getElementById('nm-opt-otd').textContent  = '+'+d.improvements.otd_improvement_pct+'%';
-    document.getElementById('nm-opt-save').textContent = '₹'+d.improvements.savings_inr_lakh+'L';
+    document.getElementById('nm-opt-save').textContent = 'Rs. ' + d.improvements.savings_inr_lakh + 'L';
     document.getElementById('nm-opt-time').textContent = d.run_time_ms+'ms';
     document.getElementById('nm-opt-actions').innerHTML = d.reallocation.map(r =>
-      '<div class="alert alert-success" style="margin-bottom:8px"><i class="fas fa-arrow-right"></i><div><strong>'+r.sku+'</strong>: Move '+r.cases.toLocaleString()+' cases '+r.from+'→'+r.to+'<br/><span style="font-size:12px;color:#64748B">'+r.reason+'</span></div></div>'
+      '<div class="alert alert-success" style="margin-bottom:8px"><i class="fas fa-arrow-right"></i><div><strong>'+r.sku+'</strong>: Move '+r.cases.toLocaleString()+' cases '+r.from+' -> '+r.to+'<br/><span style="font-size:12px;color:#64748B">'+r.reason+'</span></div></div>'
     ).join('');
   } catch(e) {
     window.showToast('Optimization failed: '+e.message,'error');
@@ -9453,7 +8449,7 @@ async function runNetworkOptimization() {
     document.getElementById('nm-opt-btn').disabled = false;
   }
 }
-document.addEventListener('DOMContentLoaded', initNetworkMap);
+runWhenReady(initNetworkMap);
   `.trim()
   return c.html(<Layout user={_u} title="Supply Chain Network Map" activeModule="home" scripts={scripts}>
     <div class="page-header">
@@ -9461,7 +8457,7 @@ document.addEventListener('DOMContentLoaded', initNetworkMap);
         <div class="page-icon" style="background:linear-gradient(135deg,#1E3A8A,#3B82F6)"><i class="fas fa-project-diagram"></i></div>
         <div>
           <div class="page-title">Supply Chain Network Map</div>
-          <div class="page-subtitle">End-to-end network topology · Node health · Flow volumes · Optimization opportunities</div>
+          <div class="page-subtitle">End-to-end network topology | Node health | Flow volumes | Optimization opportunities</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -9475,10 +8471,10 @@ document.addEventListener('DOMContentLoaded', initNetworkMap);
       <div class="card-body">
         <div style="font-weight:700;color:#059669;margin-bottom:10px"><i class="fas fa-check-circle"></i> Network Optimization Complete</div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:12px">
-          <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#059669" id="nm-opt-cost">—</div><div style="font-size:11px;color:#64748B">Cost Reduction</div></div>
-          <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#2563EB" id="nm-opt-otd">—</div><div style="font-size:11px;color:#64748B">OTD Improvement</div></div>
-          <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#059669" id="nm-opt-save">—</div><div style="font-size:11px;color:#64748B">Monthly Savings</div></div>
-          <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#64748B" id="nm-opt-time">—</div><div style="font-size:11px;color:#64748B">Solve Time</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#059669" id="nm-opt-cost">0</div><div style="font-size:11px;color:#64748B">Cost Reduction</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#2563EB" id="nm-opt-otd">0%</div><div style="font-size:11px;color:#64748B">OTD Improvement</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#059669" id="nm-opt-save">0</div><div style="font-size:11px;color:#64748B">Monthly Savings</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#64748B" id="nm-opt-time">0ms</div><div style="font-size:11px;color:#64748B">Solve Time</div></div>
         </div>
         <div id="nm-opt-actions"></div>
       </div>
@@ -9486,10 +8482,10 @@ document.addEventListener('DOMContentLoaded', initNetworkMap);
 
     {/* Node Summary */}
     <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
-      <div class="kpi-card info"><div class="kpi-label"><i class="fas fa-industry"></i> Plants</div><div class="kpi-value" id="nm-plants">—</div><div class="kpi-meta"><span class="kpi-target">4 active plants</span></div></div>
-      <div class="kpi-card info"><div class="kpi-label"><i class="fas fa-warehouse"></i> Warehouses / DCs</div><div class="kpi-value" id="nm-warehouses">—</div><div class="kpi-meta"><span class="kpi-target">Pan-India network</span></div></div>
-      <div class="kpi-card warning"><div class="kpi-label"><i class="fas fa-handshake"></i> Suppliers</div><div class="kpi-value" id="nm-suppliers">—</div><div class="kpi-meta"><span class="kpi-target">Tier 1 & Tier 2</span></div></div>
-      <div class="kpi-card healthy"><div class="kpi-label"><i class="fas fa-store"></i> Markets</div><div class="kpi-value" id="nm-markets">—</div><div class="kpi-meta"><span class="kpi-target">W/N/S/E zones</span></div></div>
+      <div class="kpi-value" id="nm-plants">0</div>
+      <div class="kpi-value" id="nm-warehouses">0</div>
+      <div class="kpi-value" id="nm-suppliers">0</div>
+      <div class="kpi-value" id="nm-markets">0</div>
     </div>
 
     <div class="grid-2" style="margin-bottom:20px">
@@ -9505,7 +8501,7 @@ document.addEventListener('DOMContentLoaded', initNetworkMap);
 
     {/* Node Table */}
     <div class="card" style="margin-bottom:20px">
-      <div class="card-header"><span class="card-title"><i class="fas fa-map-marker-alt"></i> Network Nodes</span><span style="font-size:12px;color:#64748B">Click row to highlight · Drill-down to open module</span></div>
+        <div class="card-header"><span class="card-title"><i class="fas fa-map-marker-alt"></i> Network Nodes</span><span style="font-size:12px;color:#64748B">Click row to highlight | Drill-down to open module</span></div>
       <div class="card-body compact">
         <table class="data-table">
           <thead><tr><th>Type</th><th>Node</th><th>Category</th><th>Key Metric</th><th>Status</th><th>Detail</th></tr></thead>
@@ -9527,7 +8523,7 @@ document.addEventListener('DOMContentLoaded', initNetworkMap);
   </Layout>)
 })
 
-// ── Scenario Simulation Lab ───────────────────────────────────
+// â”€â”€ Scenario Simulation Lab â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/scenario-lab', async (c) => {
   const _u = getUser(c)
   const scripts = `
@@ -9558,12 +8554,12 @@ function renderScenarios(scenarios) {
       '<span class="badge badge-neutral">'+s.status+'</span>' +
       '</div>' +
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;font-size:12px">' +
-      '<div style="background:#F8FAFC;padding:8px;border-radius:6px"><div style="color:#64748B">OTD Δ</div><div style="font-weight:700;color:'+(s.delta_otd<0?'#DC2626':'#059669')+'">'+s.delta_otd+'%</div></div>' +
-      '<div style="background:#F8FAFC;padding:8px;border-radius:6px"><div style="color:#64748B">Cost Δ</div><div style="font-weight:700;color:'+(s.delta_cost>0?'#DC2626':'#059669')+'">+'+s.delta_cost+'%</div></div>' +
-      '<div style="background:#F8FAFC;padding:8px;border-radius:6px"><div style="color:#64748B">Fill Rate Δ</div><div style="font-weight:700;color:'+(s.delta_fill<0?'#DC2626':'#059669')+'">'+s.delta_fill+'%</div></div>' +
-      '<div style="background:#F8FAFC;padding:8px;border-radius:6px"><div style="color:#64748B">Util Δ</div><div style="font-weight:700;color:'+(s.delta_util>0?'#D97706':'#059669')+'">+'+s.delta_util+'%</div></div>' +
+      '<div style="background:#F8FAFC;padding:8px;border-radius:6px"><div style="color:#64748B">OTD Î”</div><div style="font-weight:700;color:'+(s.delta_otd<0?'#DC2626':'#059669')+'">'+s.delta_otd+'%</div></div>' +
+      '<div style="background:#F8FAFC;padding:8px;border-radius:6px"><div style="color:#64748B">Cost Î”</div><div style="font-weight:700;color:'+(s.delta_cost>0?'#DC2626':'#059669')+'">+'+s.delta_cost+'%</div></div>' +
+      '<div style="background:#F8FAFC;padding:8px;border-radius:6px"><div style="color:#64748B">Fill Rate Î”</div><div style="font-weight:700;color:'+(s.delta_fill<0?'#DC2626':'#059669')+'">'+s.delta_fill+'%</div></div>' +
+      '<div style="background:#F8FAFC;padding:8px;border-radius:6px"><div style="color:#64748B">Util Î”</div><div style="font-weight:700;color:'+(s.delta_util>0?'#D97706':'#059669')+'">+'+s.delta_util+'%</div></div>' +
       '</div>' +
-      '<div style="font-size:11px;color:#64748B;margin-bottom:12px">By '+s.created_by+' · '+(s.created_at||'').substring(0,10)+'</div>' +
+      '<div style="font-size:11px;color:#64748B;margin-bottom:12px">By '+s.created_by+' ? '+(s.created_at||'').substring(0,10)+'</div>' +
       '<div style="display:flex;gap:8px">' +
       '<button class="btn btn-sm btn-primary" onclick="openScenario(\''+s.id+'\')"><i class="fas fa-play"></i> Simulate</button>' +
       '<button class="btn btn-sm btn-secondary" onclick="compareScenario(\''+s.id+'\')"><i class="fas fa-balance-scale"></i> Compare</button>' +
@@ -9584,13 +8580,13 @@ async function runNewScenario() {
     const d = r.data;
     document.getElementById('sim-result').style.display = 'block';
     document.getElementById('sim-name').textContent   = d.name;
-    document.getElementById('sim-solver').textContent = d.solver + ' · ' + d.run_time_ms + 'ms';
+    document.getElementById('sim-solver').textContent = d.solver + ' ? ' + d.run_time_ms + 'ms';
     document.getElementById('sim-otd-base').textContent  = d.baseline.otd + '%';
     document.getElementById('sim-otd-opt').textContent   = d.optimized.otd + '%';
     document.getElementById('sim-fill-base').textContent = d.baseline.fill + '%';
     document.getElementById('sim-fill-opt').textContent  = d.optimized.fill + '%';
-    document.getElementById('sim-cost-base').textContent = '₹' + d.baseline.cost;
-    document.getElementById('sim-cost-opt').textContent  = '₹' + d.optimized.cost;
+    document.getElementById('sim-cost-base').textContent = '?' + d.baseline.cost;
+    document.getElementById('sim-cost-opt').textContent  = '?' + d.optimized.cost;
     document.getElementById('sim-util-base').textContent = d.baseline.util + '%';
     document.getElementById('sim-util-opt').textContent  = d.optimized.util + '%';
     document.getElementById('sim-recs').innerHTML = d.recommendations.map(r =>
@@ -9641,7 +8637,7 @@ document.addEventListener('DOMContentLoaded', initScenarioLab);
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-flask"></i></div>
         <div>
           <div class="page-title">Scenario Simulation Lab</div>
-          <div class="page-subtitle">What-if analysis · Demand surges · Disruption planning · Promotion simulation · Multi-scenario comparison</div>
+          <div class="page-subtitle">What-if analysis ? Demand surges ? Disruption planning ? Promotion simulation ? Multi-scenario comparison</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -9689,9 +8685,9 @@ document.addEventListener('DOMContentLoaded', initScenarioLab);
             <div style="background:#F8FAFC;padding:12px;border-radius:8px">
               <div style="font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;margin-bottom:6px">{label}</div>
               <div style="display:flex;align-items:center;gap:8px">
-                <span style="font-size:14px;color:#94A3B8" id={baseId}>—</span>
-                <span style="color:#CBD5E1">→</span>
-                <span style="font-size:18px;font-weight:800;color:#1E293B" id={optId}>—</span>
+                <span style="font-size:14px;color:#94A3B8" id={baseId}>?</span>
+                <span style="color:#CBD5E1">?</span>
+                <span style="font-size:18px;font-weight:800;color:#1E293B" id={optId}>?</span>
               </div>
             </div>
           ))}
@@ -9709,7 +8705,7 @@ document.addEventListener('DOMContentLoaded', initScenarioLab);
   </Layout>)
 })
 
-// ── Demand Intelligence Dashboard ────────────────────────────
+// â”€â”€ Demand Intelligence Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/demand-intelligence', async (c) => {
   const _u = getUser(c)
   const scripts = `
@@ -9728,7 +8724,7 @@ async function initDemandIntelligence() {
   const skuTbl = document.getElementById('di-sku-table');
   if (skuTbl && d.by_sku) {
     skuTbl.innerHTML = d.by_sku.map(s => {
-      const trend = s.trend==='up'?'↗ <span style=\\'color:#DC2626\\'>Rising</span>':s.trend==='down'?'↘ <span style=\\'color:#059669\\'>Falling</span>':'→ Stable';
+      const trend = s.trend==='up'?'? <span style=\\'color:#DC2626\\'>Rising</span>':s.trend==='down'?'â†˜ <span style=\\'color:#059669\\'>Falling</span>':'? Stable';
       const sc = s.accuracy>=95?'healthy':s.accuracy>=85?'warning':'critical';
       return '<tr><td><strong>'+s.sku+'</strong></td>' +
         '<td>'+s.p10.toLocaleString()+'</td>' +
@@ -9780,7 +8776,7 @@ document.addEventListener('DOMContentLoaded', initDemandIntelligence);
         <div class="page-icon" style="background:linear-gradient(135deg,#2563EB,#60A5FA)"><i class="fas fa-brain"></i></div>
         <div>
           <div class="page-title">Demand Intelligence Dashboard</div>
-          <div class="page-subtitle">Statistical forecasting · Demand sensing · P10/P50/P90 bands · Driver analysis · Accuracy tracking</div>
+          <div class="page-subtitle">Statistical forecasting ? Demand sensing ? P10/P50/P90 bands ? Driver analysis ? Accuracy tracking</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -9791,16 +8787,16 @@ document.addEventListener('DOMContentLoaded', initDemandIntelligence);
     </div>
 
     <div class="kpi-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:20px">
-      <div class="kpi-card healthy"><div class="kpi-label"><i class="fas fa-bullseye"></i> Forecast Accuracy</div><div class="kpi-value healthy" id="di-accuracy">—</div><div class="kpi-meta"><span class="kpi-target">Target 90%</span><span class="kpi-trend up">▲ 1.2%</span></div></div>
-      <div class="kpi-card warning"><div class="kpi-label"><i class="fas fa-percentage"></i> MAPE</div><div class="kpi-value warning" id="di-mape">—</div><div class="kpi-meta"><span class="kpi-target">Target &lt;5%</span><span class="kpi-trend down">▼ 0.3%</span></div></div>
-      <div class="kpi-card info"><div class="kpi-label"><i class="fas fa-balance-scale"></i> Forecast Bias</div><div class="kpi-value" id="di-bias">—</div><div class="kpi-meta"><span class="kpi-target">Target ±2%</span></div></div>
-      <div class="kpi-card healthy"><div class="kpi-label"><i class="fas fa-bolt"></i> Sensing Lift</div><div class="kpi-value healthy" id="di-sensing">—</div><div class="kpi-meta"><span class="kpi-target">vs statistical</span></div></div>
-      <div class="kpi-card info"><div class="kpi-label"><i class="fas fa-chart-line"></i> Total Demand (12W)</div><div class="kpi-value" id="di-total">—</div><div class="kpi-meta"><span class="kpi-target">Mar–Jun 2026</span></div></div>
+      <div class="kpi-card healthy"><div class="kpi-label"><i class="fas fa-bullseye"></i> Forecast Accuracy</div><div class="kpi-value healthy" id="di-accuracy">?</div><div class="kpi-meta"><span class="kpi-target">Target 90%</span><span class="kpi-trend up">â–² 1.2%</span></div></div>
+      <div class="kpi-card warning"><div class="kpi-label"><i class="fas fa-percentage"></i> MAPE</div><div class="kpi-value warning" id="di-mape">?</div><div class="kpi-meta"><span class="kpi-target">Target &lt;5%</span><span class="kpi-trend down">â–¼ 0.3%</span></div></div>
+      <div class="kpi-card info"><div class="kpi-label"><i class="fas fa-balance-scale"></i> Forecast Bias</div><div class="kpi-value" id="di-bias">?</div><div class="kpi-meta"><span class="kpi-target">Target ?2%</span></div></div>
+      <div class="kpi-card healthy"><div class="kpi-label"><i class="fas fa-bolt"></i> Sensing Lift</div><div class="kpi-value healthy" id="di-sensing">?</div><div class="kpi-meta"><span class="kpi-target">vs statistical</span></div></div>
+      <div class="kpi-card info"><div class="kpi-label"><i class="fas fa-chart-line"></i> Total Demand (12W)</div><div class="kpi-value" id="di-total">?</div><div class="kpi-meta"><span class="kpi-target">Mar?Jun 2026</span></div></div>
     </div>
 
     <div class="grid-2" style="margin-bottom:20px">
       <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-chart-area"></i> Demand Forecast Fan Chart — P10/P50/P90</span></div>
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-area"></i> Demand Forecast Fan Chart ? P10/P50/P90</span></div>
         <div class="card-body" style="height:260px"><canvas id="di-fan-chart"></canvas></div>
       </div>
       <div class="card">
@@ -9827,7 +8823,7 @@ document.addEventListener('DOMContentLoaded', initDemandIntelligence);
   </Layout>)
 })
 
-// ── Planner Workbench (unified) ───────────────────────────────
+// â”€â”€ Planner Workbench (unified) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/planner-workbench', async (c) => {
   const _u = getUser(c)
   const scripts = `
@@ -9873,10 +8869,10 @@ async function initPlannerWorkbench() {
   const actionList = document.getElementById('pw-actions');
   if (actionList) {
     const actions = [
-      { priority:'P1', title:'Approve Mumbai Overtime — W1-W2', module:'Production', href:'/production/workbench', deadline:'Today' },
+      { priority:'P1', title:'Approve Mumbai Overtime ? W1-W2', module:'Production', href:'/production/workbench', deadline:'Today' },
       { priority:'P1', title:'Resolve Delhi DC Over-Fill', module:'Inventory', href:'/inventory/operations', deadline:'Today' },
       { priority:'P2', title:'Approve PO-2024-0892 (Orange Conc.)', module:'MRP', href:'/mrp/purchase-orders', deadline:'Mar 18' },
-      { priority:'P2', title:'Switch Delhi→Lucknow Carrier', module:'Deployment', href:'/deployment/carriers', deadline:'Mar 18' },
+      { priority:'P2', title:'Switch Delhi?Lucknow Carrier', module:'Deployment', href:'/deployment/carriers', deadline:'Mar 18' },
       { priority:'P3', title:'Review Mango 200ml Forecast Spike', module:'S&OP', href:'/demand-intelligence', deadline:'Mar 20' },
     ];
     actionList.innerHTML = actions.map(a => {
@@ -9884,7 +8880,7 @@ async function initPlannerWorkbench() {
       return '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F1F5F9">' +
         '<span style="background:'+pc+';color:white;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;white-space:nowrap">'+a.priority+'</span>' +
         '<div style="flex:1"><div style="font-size:13px;font-weight:600">'+a.title+'</div>' +
-        '<div style="font-size:11px;color:#64748B">'+a.module+' · Due: '+a.deadline+'</div></div>' +
+        '<div style="font-size:11px;color:#64748B">'+a.module+' ? Due: '+a.deadline+'</div></div>' +
         '<a href="'+a.href+'" class="btn btn-sm btn-primary"><i class="fas fa-arrow-right"></i></a>' +
         '</div>';
     }).join('');
@@ -9914,7 +8910,7 @@ document.addEventListener('DOMContentLoaded', initPlannerWorkbench);
         <div class="page-icon" style="background:linear-gradient(135deg,#0F172A,#334155)"><i class="fas fa-drafting-compass"></i></div>
         <div>
           <div class="page-title">Integrated Planner Workbench</div>
-          <div class="page-subtitle">Cross-module decision hub · Priority actions · Real-time KPIs · Plan approvals</div>
+          <div class="page-subtitle">Cross-module decision hub ? Priority actions ? Real-time KPIs ? Plan approvals</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -9928,7 +8924,7 @@ document.addEventListener('DOMContentLoaded', initPlannerWorkbench);
         {/* Priority Actions */}
         <div class="card" style="margin-bottom:20px">
           <div class="card-header">
-            <span class="card-title"><i class="fas fa-tasks"></i> Priority Actions — Requires Planner Decision</span>
+            <span class="card-title"><i class="fas fa-tasks"></i> Priority Actions ? Requires Planner Decision</span>
             <a href="/action-items" class="btn btn-sm btn-secondary">View All</a>
           </div>
           <div class="card-body" id="pw-actions" style="padding:16px 20px">
@@ -9939,11 +8935,11 @@ document.addEventListener('DOMContentLoaded', initPlannerWorkbench);
         {/* Production + Deployment Mini Panels */}
         <div class="grid-2">
           <div class="card">
-            <div class="card-header"><span class="card-title"><i class="fas fa-cogs"></i> Production</span><a href="/production" class="btn btn-sm btn-secondary">Open →</a></div>
+            <div class="card-header"><span class="card-title"><i class="fas fa-cogs"></i> Production</span><a href="/production" class="btn btn-sm btn-secondary">Open ?</a></div>
             <div class="card-body compact" id="pw-prod-kpis" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:12px"></div>
           </div>
           <div class="card">
-            <div class="card-header"><span class="card-title"><i class="fas fa-truck"></i> Deployment</span><a href="/deployment" class="btn btn-sm btn-secondary">Open →</a></div>
+            <div class="card-header"><span class="card-title"><i class="fas fa-truck"></i> Deployment</span><a href="/deployment" class="btn btn-sm btn-secondary">Open ?</a></div>
             <div class="card-body compact" id="pw-dep-kpis" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:12px"></div>
           </div>
         </div>
@@ -9984,7 +8980,7 @@ document.addEventListener('DOMContentLoaded', initPlannerWorkbench);
   </Layout>)
 })
 
-// ── S&OP Intelligence Board ───────────────────────────────────
+// â”€â”€ S&OP Intelligence Board â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/sop/intelligence', async (c) => {
   const _u = getUser(c)
   const scripts = `
@@ -10007,7 +9003,7 @@ async function initSopIntelligence() {
         '<div style="font-weight:700;font-size:13px;margin-bottom:8px">Option '+(i+1)+': '+opt.option+'</div>' +
         '<div style="display:flex;gap:10px;font-size:12px;margin-bottom:10px">' +
         '<span style="color:#059669"><i class="fas fa-boxes"></i> +'+opt.impact_cases.toLocaleString()+' cs</span>' +
-        '<span style="color:#D97706"><i class="fas fa-rupee-sign"></i> ₹'+opt.cost_inr_lakh+'L</span>' +
+        '<span style="color:#D97706"><i class="fas fa-rupee-sign"></i> ?'+opt.cost_inr_lakh+'L</span>' +
         '<span class="badge badge-'+sc+'">'+opt.risk+' risk</span>' +
         '</div>' +
         '<div style="display:flex;gap:8px">' +
@@ -10048,7 +9044,7 @@ document.addEventListener('DOMContentLoaded', initSopIntelligence);
         <div class="page-icon" style="background:linear-gradient(135deg,#2563EB,#1D4ED8)"><i class="fas fa-chess"></i></div>
         <div>
           <div class="page-title">S&OP Intelligence Board</div>
-          <div class="page-subtitle">Demand vs Supply gap analysis · Consensus resolution options · Board-ready decision support</div>
+          <div class="page-subtitle">Demand vs Supply gap analysis ? Consensus resolution options ? Board-ready decision support</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -10059,16 +9055,16 @@ document.addEventListener('DOMContentLoaded', initSopIntelligence);
     </div>
 
     <div class="kpi-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:20px">
-      <div class="kpi-card critical"><div class="kpi-label"><i class="fas fa-exclamation-triangle"></i> Supply-Demand Gap</div><div class="kpi-value critical" id="si-gap">—</div><div class="kpi-meta"><span id="si-gap-pct" style="color:#DC2626;font-weight:700"></span><span class="kpi-target">gap %</span></div></div>
-      <div class="kpi-card info"><div class="kpi-label"><i class="fas fa-chart-line"></i> Demand Plan (Mar)</div><div class="kpi-value" id="si-demand">—</div><div class="kpi-meta"><span class="kpi-target">P50 consensus</span></div></div>
-      <div class="kpi-card warning"><div class="kpi-label"><i class="fas fa-industry"></i> Supply Plan (Mar)</div><div class="kpi-value warning" id="si-supply">—</div><div class="kpi-meta"><span class="kpi-target">Constrained</span></div></div>
-      <div class="kpi-card warning"><div class="kpi-label"><i class="fas fa-users"></i> Consensus Score</div><div class="kpi-value warning" id="si-score">—</div><div class="kpi-meta"><span class="kpi-target">Target 85/100</span></div></div>
+      <div class="kpi-card critical"><div class="kpi-label"><i class="fas fa-exclamation-triangle"></i> Supply-Demand Gap</div><div class="kpi-value critical" id="si-gap">?</div><div class="kpi-meta"><span id="si-gap-pct" style="color:#DC2626;font-weight:700"></span><span class="kpi-target">gap %</span></div></div>
+      <div class="kpi-card info"><div class="kpi-label"><i class="fas fa-chart-line"></i> Demand Plan (Mar)</div><div class="kpi-value" id="si-demand">?</div><div class="kpi-meta"><span class="kpi-target">P50 consensus</span></div></div>
+      <div class="kpi-card warning"><div class="kpi-label"><i class="fas fa-industry"></i> Supply Plan (Mar)</div><div class="kpi-value warning" id="si-supply">?</div><div class="kpi-meta"><span class="kpi-target">Constrained</span></div></div>
+      <div class="kpi-card warning"><div class="kpi-label"><i class="fas fa-users"></i> Consensus Score</div><div class="kpi-value warning" id="si-score">?</div><div class="kpi-meta"><span class="kpi-target">Target 85/100</span></div></div>
       <div class="kpi-card info"><div class="kpi-label"><i class="fas fa-calendar"></i> Next Review</div><div class="kpi-value" style="font-size:18px">Mar 28</div><div class="kpi-meta"><span class="kpi-target">2026</span></div></div>
     </div>
 
     <div class="grid-2-1" style="margin-bottom:20px">
       <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-list-check"></i> Gap Resolution Options — Planner Decision Required</span></div>
+        <div class="card-header"><span class="card-title"><i class="fas fa-list-check"></i> Gap Resolution Options ? Planner Decision Required</span></div>
         <div class="card-body" id="si-options" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px"><div class="spinner"></div></div>
       </div>
       <div class="card">
@@ -10079,7 +9075,7 @@ document.addEventListener('DOMContentLoaded', initSopIntelligence);
   </Layout>)
 })
 
-// ── KPI Benchmarking Dashboard ────────────────────────────────
+// â”€â”€ KPI Benchmarking Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/benchmarking', async (c) => {
   const _u = getUser(c)
   const scripts = `
@@ -10105,7 +9101,7 @@ function initBenchmarking() {
         labels:['Best-in-class','Industry P50','Industry P25','Your Score','Target'],
         datasets:[{ data:[14.2,16.8,19.4,18.4,17.0], backgroundColor:['#059669','#64748B','#94A3B8','#DC2626','rgba(5,150,105,0.3)'], borderRadius:5 }]
       },
-      options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false }}, scales:{ x:{ ticks:{ font:{size:10}, callback:v=>'₹'+v }, grid:{ color:'#F1F5F9' }}, y:{ ticks:{ font:{size:10} }, grid:{ display:false }}}}
+      options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false }}, scales:{ x:{ ticks:{ font:{size:10}, callback:v=>'?'+v }, grid:{ color:'#F1F5F9' }}, y:{ ticks:{ font:{size:10} }, grid:{ display:false }}}}
     });
   }
   // Trend vs industry
@@ -10133,7 +9129,7 @@ document.addEventListener('DOMContentLoaded', initBenchmarking);
         <div class="page-icon" style="background:linear-gradient(135deg,#059669,#10B981)"><i class="fas fa-trophy"></i></div>
         <div>
           <div class="page-title">KPI Benchmarking Dashboard</div>
-          <div class="page-subtitle">Industry comparison · Best-in-class targets · Beverage sector benchmarks · Improvement gaps</div>
+          <div class="page-subtitle">Industry comparison ? Best-in-class targets ? Beverage sector benchmarks ? Improvement gaps</div>
         </div>
       </div>
       <div class="page-header-right">
@@ -10150,8 +9146,8 @@ document.addEventListener('DOMContentLoaded', initBenchmarking);
       </div>
       <div class="kpi-card critical">
         <div class="kpi-label"><i class="fas fa-rupee-sign"></i> Cost/Case vs Target</div>
-        <div class="kpi-value critical">₹18.4</div>
-        <div class="kpi-meta"><span class="kpi-target">Best-in-class: ₹14.2</span><span class="kpi-trend down">Gap: ₹4.2</span></div>
+        <div class="kpi-value critical">?18.4</div>
+        <div class="kpi-meta"><span class="kpi-target">Best-in-class: ?14.2</span><span class="kpi-trend down">Gap: ?4.2</span></div>
       </div>
       <div class="kpi-card healthy">
         <div class="kpi-label"><i class="fas fa-bullseye"></i> Forecast Accuracy</div>
@@ -10160,18 +9156,18 @@ document.addEventListener('DOMContentLoaded', initBenchmarking);
       </div>
       <div class="kpi-card warning">
         <div class="kpi-label"><i class="fas fa-recycle"></i> Inventory Turns</div>
-        <div class="kpi-value warning">18.2×</div>
-        <div class="kpi-meta"><span class="kpi-target">Best-in-class: 24×</span><span class="kpi-trend down">Gap: -5.8×</span></div>
+        <div class="kpi-value warning">18.2Ã—</div>
+        <div class="kpi-meta"><span class="kpi-target">Best-in-class: 24Ã—</span><span class="kpi-trend down">Gap: -5.8Ã—</span></div>
       </div>
     </div>
 
     <div class="grid-2" style="margin-bottom:20px">
       <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> OTIF — Industry Benchmark</span></div>
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> OTIF ? Industry Benchmark</span></div>
         <div class="card-body" style="height:220px"><canvas id="bm-otif-chart"></canvas></div>
       </div>
       <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> Cost/Case — Industry Benchmark</span></div>
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-bar"></i> Cost/Case ? Industry Benchmark</span></div>
         <div class="card-body" style="height:220px"><canvas id="bm-cost-chart"></canvas></div>
       </div>
     </div>
@@ -10183,7 +9179,7 @@ document.addEventListener('DOMContentLoaded', initBenchmarking);
   </Layout>)
 })
 
-// ── Additional API endpoints ──────────────────────────────────
+// â”€â”€ Additional API endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.post('/api/control-tower/exceptions/:id/resolve', async (c) => {
   const id = c.req.param('id')
   return c.json({ success:true, id, status:'resolving', message:'Exception queued for resolution. Planner notified.' })
@@ -10191,23 +9187,23 @@ app.post('/api/control-tower/exceptions/:id/resolve', async (c) => {
 
 app.get('/api/demo/summer-surge', async (c) => {
   return c.json({
-    scenario: 'Summer Demand Surge — April 2026',
-    trigger: 'Temperature forecast +4°C above seasonal average across West & South India',
+    scenario: 'Summer Demand Surge ? April 2026',
+    trigger: 'Temperature forecast +4Â°C above seasonal average across West & South India',
     demand_uplift: { pct:25, cases:118000, peak_week:'W2-Apr', skus:['PET 500ml','Mango 200ml','SportZ Energy'] },
     supply_gaps: [
       { plant:'MUM', current_util:97, headroom_cases:2700, gap:115300 },
-      { plant:'DEL', current_util:74, headroom_cases:13800, action:'Activate overtime — cover 8K cases' },
-      { plant:'CHN', current_util:82, headroom_cases:6930,  action:'3rd shift for Mango — cover 6K cases' },
+      { plant:'DEL', current_util:74, headroom_cases:13800, action:'Activate overtime ? cover 8K cases' },
+      { plant:'CHN', current_util:82, headroom_cases:6930,  action:'3rd shift for Mango ? cover 6K cases' },
     ],
-    recommendation: 'Activate 3 mitigation levers: MUM overtime, DEL capacity pull, CHN 3rd shift. Residual gap: 100,300 cases — defer Glass 500ml to Q3.',
+    recommendation: 'Activate 3 mitigation levers: MUM overtime, DEL capacity pull, CHN 3rd shift. Residual gap: 100,300 cases ? defer Glass 500ml to Q3.',
     financial_impact: { revenue_at_risk_cr:4.2, mitigation_cost_lakh:18.4, net_benefit_cr:2.8 }
   })
 })
 
 app.get('/api/demo/plant-shutdown', async (c) => {
   return c.json({
-    scenario: 'Mumbai Plant Partial Shutdown — Maintenance W1-W2 April',
-    trigger: 'Boiler inspection + line overhaul — L2 offline 10 days',
+    scenario: 'Mumbai Plant Partial Shutdown ? Maintenance W1-W2 April',
+    trigger: 'Boiler inspection + line overhaul ? L2 offline 10 days',
     production_loss: 22400,
     reallocation: [
       { to:'DEL', cases:9600, sku_mix:'PET 500ml, PET 1L', lead_time_days:2 },
@@ -10215,7 +9211,7 @@ app.get('/api/demo/plant-shutdown', async (c) => {
       { to:'BAN', cases:5600, sku_mix:'Glass 500ml', lead_time_days:4 },
     ],
     inventory_buffer: { wh_mum_cover_days:8.4, recommendation:'Pre-build 18K cases in W4-Mar' },
-    recommendation: 'Pre-build + reallocation covers 99.6% of demand. Cost: ₹6.8L incremental transport. Customer impact: 0 stockouts if plan approved by Mar 20.'
+    recommendation: 'Pre-build + reallocation covers 99.6% of demand. Cost: ?6.8L incremental transport. Customer impact: 0 stockouts if plan approved by Mar 20.'
   })
 })
 
@@ -10237,15 +9233,15 @@ async function init() {
   </tr>\`).join('') || '<tr><td colspan="8" style="text-align:center">No data</td></tr>';
 }
 function editPackSize(sku) {
-  window.showToast('Edit pack-size for '+sku+': PUT /api/master/pack-sizes/'+sku+' — connect to master data system.','info');
+  window.showToast('Edit pack-size for '+sku+': PUT /api/master/pack-sizes/'+sku+' ? connect to master data system.','info');
 }
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
   const _u = getUser(c); return c.html(<Layout user={_u} title="Pack-Size Master" activeModule="audit" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#475569,#64748B)"><i class="fas fa-ruler"></i></div>
-        <div><div class="page-title">Pack-Size Master</div><div class="page-subtitle">Cases per pallet · Truck capacity · Weight & volume per case · SKU master dimensions</div></div>
+        <div><div class="page-title">Pack-Size Master</div><div class="page-subtitle">Cases per pallet ? Truck capacity ? Weight & volume per case ? SKU master dimensions</div></div>
       </div>
       <div class="page-header-right">
         <a href="/inventory/master" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Inventory Master</a>
@@ -10264,13 +9260,23 @@ document.addEventListener('DOMContentLoaded', init);
 })
 
 // ============================================================
-// OPTIMIZATION WORKBENCH PAGES (added per audit — 8 modules)
+// OPTIMIZATION WORKBENCH PAGES (added per audit ? 8 modules)
 // Each module gets a new /*/optimization-workbench route with
-// 4 tabs: Objectives · Constraints · Results · Scenario Comparison
+// 4 tabs: Objectives ? Constraints ? Results ? Scenario Comparison
 // Existing pages are NOT modified.
 // ============================================================
 
-// ------ 1. INVENTORY – Optimization Workbench ------
+// ------ 1. INVENTORY - Optimization Workbench ------
+app.get('/inventory', (c) => c.redirect('/inventory/optimization-workbench'))
+app.get('/inventory/operations', (c) => c.redirect('/inventory'))
+app.get('/inventory/analytics', (c) => c.redirect('/inventory'))
+app.get('/inventory/scenarios', (c) => c.redirect('/inventory/optimization-workbench'))
+app.get('/inventory/optimization', (c) => c.redirect('/inventory/optimization-workbench'))
+app.get('/inventory/master', (c) => c.redirect('/pack-size-master'))
+app.get('/mrp/analytics', (c) => c.redirect('/mrp'))
+app.get('/mrp/shortage-alerts', (c) => c.redirect('/mrp/explosion'))
+app.get('/procurement/operational', (c) => c.redirect('/procurement/optimization-workbench'))
+
 app.get('/inventory/optimization-workbench', (c) => {
   const scripts = `
 function invWbTab(tab) {
@@ -10279,15 +9285,15 @@ function invWbTab(tab) {
 }
 async function runInvOpt() {
   const btn = document.getElementById('invwb-run-btn');
-  btn.innerHTML = '<span class="spinner" style="width:16px;height:16px"></span> Running…';
+  btn.innerHTML = '<span class="spinner" style="width:16px;height:16px"></span> Running?';
   btn.disabled = true;
   await new Promise(r => setTimeout(r, 1800));
   document.getElementById('invwb-results').innerHTML = \`
     <div class="kpi-grid" style="grid-template-columns:repeat(5,1fr)">
-      \${[['Fill Rate','98.4%','healthy'],['Inventory Turns','+22%','healthy'],['Inv. Value Reduction','−₹18L','healthy'],['Safety Stock Saved','−15%','healthy'],['Expiry Risk','0.3%','healthy']].map(([l,v,s]) =>
+      \${[['Fill Rate','98.4%','healthy'],['Inventory Turns','+22%','healthy'],['Inv. Value Reduction','âˆ’?18L','healthy'],['Safety Stock Saved','âˆ’15%','healthy'],['Expiry Risk','0.3%','healthy']].map(([l,v,s]) =>
         '<div class="kpi-card '+s+'"><div class="kpi-label">'+l+'</div><div class="kpi-value '+s+'">'+v+'</div></div>').join('')}
     </div>
-    <div class="alert alert-success" style="margin-top:12px"><i class="fas fa-check-circle"></i><div><strong>Optimization complete.</strong> MEIO model recommends adjusting safety stock for 6 SKUs. Estimated annual working-capital saving: ₹21.6L. Service level improvement: +1.3 pp → 98.4%.</div></div>
+    <div class="alert alert-success" style="margin-top:12px"><i class="fas fa-check-circle"></i><div><strong>Optimization complete.</strong> MEIO model recommends adjusting safety stock for 6 SKUs. Estimated annual working-capital saving: ?21.6L. Service level improvement: +1.3 pp ? 98.4%.</div></div>
   \`;
   invWbTab('results');
   btn.innerHTML = '<i class="fas fa-rocket"></i> Run Optimization';
@@ -10295,7 +9301,7 @@ async function runInvOpt() {
 }
 document.addEventListener('DOMContentLoaded', () => invWbTab('objectives'));
 `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Inventory – Optimization Workbench" activeModule="inv-optimization" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Inventory — Optimization Workbench" activeModule="inv-optimization" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#059669,#34D399)"><i class="fas fa-sliders-h"></i></div>
@@ -10323,12 +9329,12 @@ document.addEventListener('DOMContentLoaded', () => invWbTab('objectives'));
       <div class="invwb-panel" data-panel="objectives" style="padding:20px">
         <p style="font-size:12px;color:#64748B;margin-bottom:16px">Select inventory optimization objectives aligned to Excel specs</p>
         {[
-          ['≥98% Fill Rate','Service Level','Ensure right product at right place and time','high'],
-          ['Inventory Turns ↑20–30%','Inventory Efficiency','Balance across network — avoid excess & stockouts','high'],
-          ['Inventory Value ↓15–25%','Cost Optimization','Minimize capital locked in RM, WIP, FG','high'],
-          ['Forecast Bias ±5%','Demand Alignment','Align inventory with demand, seasonality & promotions','medium'],
-          ['Expiry Loss <0.5%','Freshness Control','Manage shelf-life-sensitive SKUs — FEFO discipline','medium'],
-          ['Safety Stock ↓15–20%','Network Optimization','Multi-echelon MEIO across all nodes','low'],
+          ['â‰¥98% Fill Rate','Service Level','Ensure right product at right place and time','high'],
+          ['Inventory Turns â†‘20?30%','Inventory Efficiency','Balance across network ? avoid excess & stockouts','high'],
+          ['Inventory Value â†“15?25%','Cost Optimization','Minimize capital locked in RM, WIP, FG','high'],
+          ['Forecast Bias ?5%','Demand Alignment','Align inventory with demand, seasonality & promotions','medium'],
+          ['Expiry Loss <0.5%','Freshness Control','Manage shelf-life-sensitive SKUs ? FEFO discipline','medium'],
+          ['Safety Stock â†“15?20%','Network Optimization','Multi-echelon MEIO across all nodes','low'],
         ].map(([target, label, desc, pri], i) =>
           <div key={label} style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px">
             <input type="checkbox" defaultChecked={i < 4} style="width:16px;height:16px" />
@@ -10347,10 +9353,10 @@ document.addEventListener('DOMContentLoaded', () => invWbTab('objectives'));
         <p style="font-size:12px;color:#64748B;margin-bottom:16px">System constraints governing inventory optimization engine</p>
         {[
           ['Shelf Life Limit','SKU-specific','days'],
-          ['Min Order Quantity','500–50,000','cases'],
+          ['Min Order Quantity','500?50,000','cases'],
           ['Warehouse Fill Limit','80','%'],
           ['Replenishment Frequency','Weekly','cycle'],
-          ['Lead Time Variability','±20','%'],
+          ['Lead Time Variability','?20','%'],
           ['Forecast Accuracy Floor','70','% MAPE'],
           ['Service Level Target','97.5','%'],
           ['Max Safety Stock Cover','30','days'],
@@ -10368,18 +9374,18 @@ document.addEventListener('DOMContentLoaded', () => invWbTab('objectives'));
       </div>
       {/* Scenarios */}
       <div class="invwb-panel" data-panel="scenarios" style="padding:20px;display:none">
-        <p style="font-size:12px;color:#64748B;margin-bottom:16px">Compare inventory outcomes across planning scenarios (Excel S1–S7)</p>
+        <p style="font-size:12px;color:#64748B;margin-bottom:16px">Compare inventory outcomes across planning scenarios (Excel S1?S7)</p>
         <table class="data-table">
           <thead><tr><th>Scenario</th><th>Driver</th><th>Fill Rate</th><th>Inv. Turns</th><th>SS Change</th><th>Expiry Risk</th><th>Working Capital</th><th>Risk</th></tr></thead>
           <tbody>
             {[
-              ['S1 – Baseline','Current State','97.1%','18.2x','0%','0.4%','₹0','Low'],
-              ['S2 – Demand Surge','Summer Peak','89.5%','24.1x','+32%','0.2%','+₹22L','High'],
-              ['S3 – Promo Uplift','Promotion Event','92.3%','21.5x','+18%','0.3%','+₹14L','Medium'],
-              ['S4 – Shelf Life −30d','Quality Change','94.1%','22.8x','+8%','1.2%','+₹6L','High'],
-              ['S5 – SL Target 98%','Policy Change','98.0%','16.4x','+25%','0.3%','+₹18L','Medium'],
-              ['S6 – Lead Time +10d','Supplier Delay','93.2%','17.1x','+41%','0.5%','+₹28L','High'],
-              ['S7 – New SKU Launch','NPD Launch','95.5%','19.3x','+15%','0.6%','+₹10L','Medium'],
+              ['S1 ? Baseline','Current State','97.1%','18.2x','0%','0.4%','?0','Low'],
+              ['S2 ? Demand Surge','Summer Peak','89.5%','24.1x','+32%','0.2%','+?22L','High'],
+              ['S3 ? Promo Uplift','Promotion Event','92.3%','21.5x','+18%','0.3%','+?14L','Medium'],
+              ['S4 ? Shelf Life âˆ’30d','Quality Change','94.1%','22.8x','+8%','1.2%','+?6L','High'],
+              ['S5 ? SL Target 98%','Policy Change','98.0%','16.4x','+25%','0.3%','+?18L','Medium'],
+              ['S6 ? Lead Time +10d','Supplier Delay','93.2%','17.1x','+41%','0.5%','+?28L','High'],
+              ['S7 ? New SKU Launch','NPD Launch','95.5%','19.3x','+15%','0.6%','+?10L','Medium'],
             ].map(([sc,dr,fr,it,ss,ex,wc,ri]) =>
               <tr key={sc}>
                 <td><strong>{sc}</strong></td>
@@ -10388,7 +9394,7 @@ document.addEventListener('DOMContentLoaded', () => invWbTab('objectives'));
                 <td>{it}</td>
                 <td style={`color:${ss==='0%'?'#059669':'#DC2626'}`}>{ss}</td>
                 <td style={`color:${Number(ex.replace('%',''))>0.5?'#DC2626':'#059669'}`}>{ex}</td>
-                <td style={`color:${wc==='₹0'?'inherit':wc.startsWith('-')?'#059669':'#DC2626'}`}>{wc}</td>
+                <td style={`color:${wc==='?0'?'inherit':wc.startsWith('-')?'#059669':'#DC2626'}`}>{wc}</td>
                 <td><span class={`badge badge-${ri==='High'||ri==='Critical'?'warning':ri==='Low'?'success':'info'}`}>{ri}</span></td>
               </tr>
             )}
@@ -10399,7 +9405,7 @@ document.addEventListener('DOMContentLoaded', () => invWbTab('objectives'));
   </Layout>)
 })
 
-// ------ 2. PROCUREMENT – Optimization Workbench ------
+// ------ 2. PROCUREMENT ? Optimization Workbench ------
 app.get('/procurement/optimization-workbench', (c) => {
   const scripts = `
 function procWbTab(tab) {
@@ -10408,15 +9414,15 @@ function procWbTab(tab) {
 }
 async function runProcOpt() {
   const btn = document.getElementById('procwb-run-btn');
-  btn.innerHTML = '<span class="spinner" style="width:16px;height:16px"></span> Running…';
+  btn.innerHTML = '<span class="spinner" style="width:16px;height:16px"></span> Running?';
   btn.disabled = true;
   await new Promise(r => setTimeout(r, 1800));
   document.getElementById('procwb-results').innerHTML = \`
     <div class="kpi-grid" style="grid-template-columns:repeat(5,1fr)">
-      \${[['Cost Saving','₹4.2L/mo','healthy'],['OTIF Gain','+3.8%','healthy'],['Lead Time Cut','−4 days','healthy'],['Risk Reduction','−35%','healthy'],['Contracts Renewed','4','healthy']].map(([l,v,s]) =>
+      \${[['Cost Saving','?4.2L/mo','healthy'],['OTIF Gain','+3.8%','healthy'],['Lead Time Cut','âˆ’4 days','healthy'],['Risk Reduction','âˆ’35%','healthy'],['Contracts Renewed','4','healthy']].map(([l,v,s]) =>
         '<div class="kpi-card '+s+'"><div class="kpi-label">'+l+'</div><div class="kpi-value '+s+'">'+v+'</div></div>').join('')}
     </div>
-    <div class="alert alert-success" style="margin-top:12px"><i class="fas fa-check-circle"></i><div><strong>Procurement optimization complete.</strong> Multi-supplier allocation rebalanced. Consolidation of 3 POs identified. Annual savings potential: ₹50.4L.</div></div>
+    <div class="alert alert-success" style="margin-top:12px"><i class="fas fa-check-circle"></i><div><strong>Procurement optimization complete.</strong> Multi-supplier allocation rebalanced. Consolidation of 3 POs identified. Annual savings potential: ?50.4L.</div></div>
   \`;
   procWbTab('results');
   btn.innerHTML = '<i class="fas fa-rocket"></i> Run Optimization';
@@ -10424,12 +9430,12 @@ async function runProcOpt() {
 }
 document.addEventListener('DOMContentLoaded', () => procWbTab('objectives'));
 `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Procurement – Optimization Workbench" activeModule="proc-optimization" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Procurement — PO Workbench" activeModule="proc-workbench" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#D97706,#F59E0B)"><i class="fas fa-sliders-h"></i></div>
         <div>
-          <div class="page-title">Procurement — Optimization Workbench</div>
+          <div class="page-title">Procurement ? Optimization Workbench</div>
           <div class="page-subtitle">Set objectives, constraints, run supplier allocation engine & compare scenarios</div>
         </div>
       </div>
@@ -10450,12 +9456,12 @@ document.addEventListener('DOMContentLoaded', () => procWbTab('objectives'));
       <div class="procwb-panel" data-panel="objectives" style="padding:20px">
         <p style="font-size:12px;color:#64748B;margin-bottom:16px">Select procurement optimization objectives from Excel Procurement Planning specs</p>
         {[
-          ['≥90% Supplier OTIF','Supplier Reliability','Improve on-time in-full delivery from all suppliers','high'],
-          ['Procurement Cost ↓8–12%','Cost Reduction','Volume consolidation, contract leverage, spot avoidance','high'],
+          ['â‰¥90% Supplier OTIF','Supplier Reliability','Improve on-time in-full delivery from all suppliers','high'],
+          ['Procurement Cost â†“8?12%','Cost Reduction','Volume consolidation, contract leverage, spot avoidance','high'],
           ['Dual-source all A-class items','Risk Mitigation','Reduce single-supplier concentration risk','high'],
-          ['Lead Time ↓15%','Speed Improvement','Reduce procurement cycle time across all categories','medium'],
-          ['Contract Coverage ≥80%','Contract Compliance','Move spot spend to contracted agreements','medium'],
-          ['Payment Terms ≥60 days','Cash Flow Optimization','Extend DPO without supplier relationship impact','low'],
+          ['Lead Time â†“15%','Speed Improvement','Reduce procurement cycle time across all categories','medium'],
+          ['Contract Coverage â‰¥80%','Contract Compliance','Move spot spend to contracted agreements','medium'],
+          ['Payment Terms â‰¥60 days','Cash Flow Optimization','Extend DPO without supplier relationship impact','low'],
         ].map(([target, label, desc, pri], i) =>
           <div key={label} style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px">
             <input type="checkbox" defaultChecked={i < 4} style="width:16px;height:16px" />
@@ -10479,7 +9485,7 @@ document.addEventListener('DOMContentLoaded', () => procWbTab('objectives'));
           ['Quality Rejection Tolerance','1.5','%'],
           ['Supplier Onboarding Lead','60','days'],
           ['Contract Minimum Duration','6','months'],
-          ['Dual-Source Threshold','₹10L','monthly spend'],
+          ['Dual-Source Threshold','?10L','monthly spend'],
         ].map(([label, val, unit]) =>
           <div key={label} style="display:flex;align-items:center;gap:12px;padding:10px;border-bottom:1px solid var(--border)">
             <span style="flex:1;font-size:13px">{label}</span>
@@ -10492,26 +9498,26 @@ document.addEventListener('DOMContentLoaded', () => procWbTab('objectives'));
         <div id="procwb-results"><div class="alert alert-info"><i class="fas fa-info-circle"></i><div>Run the optimization engine to see results here.</div></div></div>
       </div>
       <div class="procwb-panel" data-panel="scenarios" style="padding:20px;display:none">
-        <p style="font-size:12px;color:#64748B;margin-bottom:16px">Compare procurement outcomes across scenarios (Excel S1–S6)</p>
+        <p style="font-size:12px;color:#64748B;margin-bottom:16px">Compare procurement outcomes across scenarios (Excel S1?S6)</p>
         <table class="data-table">
           <thead><tr><th>Scenario</th><th>Driver</th><th>OTIF %</th><th>Cost Impact</th><th>Lead Time</th><th>Risk Level</th><th>Savings</th><th>Status</th></tr></thead>
           <tbody>
             {[
-              ['S1 – Baseline','Current Allocation','87.4%','₹0','14 days','Medium','—','Active'],
-              ['S2 – Consolidate POs','Volume Consolidation','89.1%','−₹2.4L/mo','12 days','Low','₹28.8L/yr','Recommended'],
-              ['S3 – Dual Source A-class','Risk Mitigation','90.2%','+₹0.8L/mo','14 days','Low','−₹9.6L/yr','Recommended'],
-              ['S4 – Extend Contracts','DPO +30 days','88.3%','−₹1.2L/mo','13 days','Low','₹14.4L/yr','Pending'],
-              ['S5 – Spot Reduction','Contract Coverage','88.9%','−₹1.8L/mo','12 days','Low','₹21.6L/yr','Pending'],
-              ['S6 – Near-shore Supplier','Lead Time Cut','87.8%','+₹0.6L/mo','8 days','Medium','Risk Reduction','Evaluating'],
+              ['S1 ? Baseline','Current Allocation','87.4%','?0','14 days','Medium','?','Active'],
+              ['S2 ? Consolidate POs','Volume Consolidation','89.1%','âˆ’?2.4L/mo','12 days','Low','?28.8L/yr','Recommended'],
+              ['S3 ? Dual Source A-class','Risk Mitigation','90.2%','+?0.8L/mo','14 days','Low','âˆ’?9.6L/yr','Recommended'],
+              ['S4 ? Extend Contracts','DPO +30 days','88.3%','âˆ’?1.2L/mo','13 days','Low','?14.4L/yr','Pending'],
+              ['S5 ? Spot Reduction','Contract Coverage','88.9%','âˆ’?1.8L/mo','12 days','Low','?21.6L/yr','Pending'],
+              ['S6 ? Near-shore Supplier','Lead Time Cut','87.8%','+?0.6L/mo','8 days','Medium','Risk Reduction','Evaluating'],
             ].map(([sc,dr,otif,ci,lt,rl,sv,st]) =>
               <tr key={sc}>
                 <td><strong>{sc}</strong></td>
                 <td style="font-size:12px;color:#64748B">{dr}</td>
                 <td><span class={`badge badge-${Number(otif.replace('%',''))>=90?'success':Number(otif.replace('%',''))>=87?'warning':'critical'}`}>{otif}</span></td>
-                <td style={`color:${ci==='₹0'||ci.startsWith('−')?'#059669':'#DC2626'}`}>{ci}</td>
+                <td style={`color:${ci==='?0'||ci.startsWith('âˆ’')?'#059669':'#DC2626'}`}>{ci}</td>
                 <td>{lt}</td>
                 <td><span class={`badge badge-${rl==='Low'?'success':rl==='Medium'?'warning':'critical'}`}>{rl}</span></td>
-                <td style={`color:${sv.startsWith('−')||sv==='—'?'inherit':'#059669'}`}>{sv}</td>
+                <td style={`color:${sv.startsWith('âˆ’')||sv==='?'?'inherit':'#059669'}`}>{sv}</td>
                 <td><span class={`badge badge-${st==='Active'?'info':st==='Recommended'?'success':st==='Pending'?'warning':'neutral'}`}>{st}</span></td>
               </tr>
             )}
@@ -10522,7 +9528,7 @@ document.addEventListener('DOMContentLoaded', () => procWbTab('objectives'));
   </Layout>)
 })
 
-// ------ 3. RESOURCE – Optimization Workbench ------
+// ------ 3. RESOURCE ? Optimization Workbench ------
 app.get('/resource/optimization-workbench', (c) => {
   const scripts = `
 function resWbTab(tab) {
@@ -10531,15 +9537,15 @@ function resWbTab(tab) {
 }
 async function runResOpt() {
   const btn = document.getElementById('reswb-run-btn');
-  btn.innerHTML = '<span class="spinner" style="width:16px;height:16px"></span> Running…';
+  btn.innerHTML = '<span class="spinner" style="width:16px;height:16px"></span> Running?';
   btn.disabled = true;
   await new Promise(r => setTimeout(r, 1800));
   document.getElementById('reswb-results').innerHTML = \`
     <div class="kpi-grid" style="grid-template-columns:repeat(5,1fr)">
-      \${[['OT Reduction','−44 hrs/wk','healthy'],['Utilization Balance','84% all shifts','healthy'],['Cross-training','6 gaps closed','healthy'],['Cost Saving','₹6.8L/mo','healthy'],['Productivity Gain','+12%','healthy']].map(([l,v,s]) =>
+      \${[['OT Reduction','âˆ’44 hrs/wk','healthy'],['Utilization Balance','84% all shifts','healthy'],['Cross-training','6 gaps closed','healthy'],['Cost Saving','?6.8L/mo','healthy'],['Productivity Gain','+12%','healthy']].map(([l,v,s]) =>
         '<div class="kpi-card '+s+'"><div class="kpi-label">'+l+'</div><div class="kpi-value '+s+'">'+v+'</div></div>').join('')}
     </div>
-    <div class="alert alert-success" style="margin-top:12px"><i class="fas fa-check-circle"></i><div><strong>Resource optimization complete.</strong> Shift rebalancing + cross-training plan generated. Estimated annual OT cost savings: ₹81.6L.</div></div>
+    <div class="alert alert-success" style="margin-top:12px"><i class="fas fa-check-circle"></i><div><strong>Resource optimization complete.</strong> Shift rebalancing + cross-training plan generated. Estimated annual OT cost savings: ?81.6L.</div></div>
   \`;
   resWbTab('results');
   btn.innerHTML = '<i class="fas fa-rocket"></i> Run Optimization';
@@ -10547,12 +9553,12 @@ async function runResOpt() {
 }
 document.addEventListener('DOMContentLoaded', () => resWbTab('objectives'));
 `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Resource – Optimization Workbench" activeModule="res-optimization" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Resource ? Optimization Workbench" activeModule="res-optimization" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#DC2626,#F87171)"><i class="fas fa-sliders-h"></i></div>
         <div>
-          <div class="page-title">Resource — Optimization Workbench</div>
+          <div class="page-title">Resource ? Optimization Workbench</div>
           <div class="page-subtitle">Set objectives, constraints, run workforce optimization engine & compare scenarios</div>
         </div>
       </div>
@@ -10573,12 +9579,12 @@ document.addEventListener('DOMContentLoaded', () => resWbTab('objectives'));
       <div class="reswb-panel" data-panel="objectives" style="padding:20px">
         <p style="font-size:12px;color:#64748B;margin-bottom:16px">Select resource optimization objectives from Excel Resource Planning specs</p>
         {[
-          ['Resource Utilization ≥82%','Workforce Utilization','Achieve balanced utilization across all shifts and plants','high'],
-          ['Overtime ≤15% of regular hrs','OT Control','Minimize overtime cost while meeting production demand','high'],
-          ['Cross-skill ≥80% operators','Skill Flexibility','Build multi-skilled workforce for operational resilience','high'],
+          ['Resource Utilization â‰¥82%','Workforce Utilization','Achieve balanced utilization across all shifts and plants','high'],
+          ['Overtime â‰¤15% of regular hrs','OT Control','Minimize overtime cost while meeting production demand','high'],
+          ['Cross-skill â‰¥80% operators','Skill Flexibility','Build multi-skilled workforce for operational resilience','high'],
           ['Absenteeism <3%','Attendance Management','Reduce unplanned absences with proactive scheduling','medium'],
-          ['Productivity ≥OEE 78%','Efficiency','Align operator skills to line requirements for peak output','medium'],
-          ['Training Hours ≥8 hrs/month','Capability Development','Ensure continuous skill development per operator','low'],
+          ['Productivity â‰¥OEE 78%','Efficiency','Align operator skills to line requirements for peak output','medium'],
+          ['Training Hours â‰¥8 hrs/month','Capability Development','Ensure continuous skill development per operator','low'],
         ].map(([target, label, desc, pri], i) =>
           <div key={label} style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px">
             <input type="checkbox" defaultChecked={i < 4} style="width:16px;height:16px" />
@@ -10600,7 +9606,7 @@ document.addEventListener('DOMContentLoaded', () => resWbTab('objectives'));
           ['OT Cap','40','hrs/week'],
           ['Min Rest Between Shifts','10','hours'],
           ['Headcount Cap','128','operators'],
-          ['Training Budget','₹8L','per quarter'],
+          ['Training Budget','?8L','per quarter'],
           ['Flex Hiring Lead Time','30','days'],
           ['Cross-skill Coverage Target','3 lines','per operator'],
         ].map(([label, val, unit]) =>
@@ -10615,16 +9621,16 @@ document.addEventListener('DOMContentLoaded', () => resWbTab('objectives'));
         <div id="reswb-results"><div class="alert alert-info"><i class="fas fa-info-circle"></i><div>Run the optimization engine to see results here.</div></div></div>
       </div>
       <div class="reswb-panel" data-panel="scenarios" style="padding:20px;display:none">
-        <p style="font-size:12px;color:#64748B;margin-bottom:16px">Compare workforce outcomes across planning scenarios (Excel S1–S5)</p>
+        <p style="font-size:12px;color:#64748B;margin-bottom:16px">Compare workforce outcomes across planning scenarios (Excel S1?S5)</p>
         <table class="data-table">
           <thead><tr><th>Scenario</th><th>Driver</th><th>Utilization</th><th>OT hrs/wk</th><th>OT Cost/mo</th><th>Headcount</th><th>Productivity</th><th>Risk</th></tr></thead>
           <tbody>
             {[
-              ['S1 – Baseline','Current State','79.8%','142','₹8.5L','128','76%','Medium'],
-              ['S2 – Shift Rebalance','Rebalance Shifts','83.4%','98','₹5.9L','128','80%','Low'],
-              ['S3 – Cross-training','Skill Building','82.1%','110','₹6.6L','128','82%','Low'],
-              ['S4 – Demand +20%','Volume Surge','94.2%','210','₹12.6L','140','77%','High'],
-              ['S5 – Flex + Rebalance','Combined Plan','84.6%','88','₹5.3L','132','85%','Low'],
+              ['S1 ? Baseline','Current State','79.8%','142','?8.5L','128','76%','Medium'],
+              ['S2 ? Shift Rebalance','Rebalance Shifts','83.4%','98','?5.9L','128','80%','Low'],
+              ['S3 ? Cross-training','Skill Building','82.1%','110','?6.6L','128','82%','Low'],
+              ['S4 ? Demand +20%','Volume Surge','94.2%','210','?12.6L','140','77%','High'],
+              ['S5 ? Flex + Rebalance','Combined Plan','84.6%','88','?5.3L','132','85%','Low'],
             ].map(([sc,dr,ut,ot,oc,hc,pr,ri]) =>
               <tr key={sc}>
                 <td><strong>{sc}</strong></td>
@@ -10643,7 +9649,7 @@ document.addEventListener('DOMContentLoaded', () => resWbTab('objectives'));
   </Layout>)
 })
 
-// ------ 4. S&OP – Optimization Workbench ------
+// ------ 4. S&OP ? Optimization Workbench ------
 app.get('/sop/optimization-workbench', (c) => {
   const scripts = `
 function sopWbTab(tab) {
@@ -10652,15 +9658,15 @@ function sopWbTab(tab) {
 }
 async function runSopOpt() {
   const btn = document.getElementById('sopwb-run-btn');
-  btn.innerHTML = '<span class="spinner" style="width:16px;height:16px"></span> Running…';
+  btn.innerHTML = '<span class="spinner" style="width:16px;height:16px"></span> Running?';
   btn.disabled = true;
   await new Promise(r => setTimeout(r, 1800));
   document.getElementById('sopwb-results').innerHTML = \`
     <div class="kpi-grid" style="grid-template-columns:repeat(5,1fr)">
-      \${[['Forecast Accuracy','91.2%','healthy'],['Supply Fill Rate','95.8%','healthy'],['Consensus Gap','−2.1%','healthy'],['Volume Uplift','+8.4%','healthy'],['Plan Adherence','93.5%','healthy']].map(([l,v,s]) =>
+      \${[['Forecast Accuracy','91.2%','healthy'],['Supply Fill Rate','95.8%','healthy'],['Consensus Gap','âˆ’2.1%','healthy'],['Volume Uplift','+8.4%','healthy'],['Plan Adherence','93.5%','healthy']].map(([l,v,s]) =>
         '<div class="kpi-card '+s+'"><div class="kpi-label">'+l+'</div><div class="kpi-value '+s+'">'+v+'</div></div>').join('')}
     </div>
-    <div class="alert alert-success" style="margin-top:12px"><i class="fas fa-check-circle"></i><div><strong>S&OP optimization complete.</strong> Demand-supply consensus plan generated. Recommended volume uplift of 8.4% in Q2. Forecast bias reduced to ±2.1%.</div></div>
+    <div class="alert alert-success" style="margin-top:12px"><i class="fas fa-check-circle"></i><div><strong>S&OP optimization complete.</strong> Demand-supply consensus plan generated. Recommended volume uplift of 8.4% in Q2. Forecast bias reduced to ?2.1%.</div></div>
   \`;
   sopWbTab('results');
   btn.innerHTML = '<i class="fas fa-rocket"></i> Run Optimization';
@@ -10668,12 +9674,12 @@ async function runSopOpt() {
 }
 document.addEventListener('DOMContentLoaded', () => sopWbTab('objectives'));
 `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="S&OP – Optimization Workbench" activeModule="sop-consensus" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="S&OP ? Optimization Workbench" activeModule="sop-consensus" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#2563EB,#60A5FA)"><i class="fas fa-sliders-h"></i></div>
         <div>
-          <div class="page-title">S&OP — Optimization Workbench</div>
+          <div class="page-title">S&OP ? Optimization Workbench</div>
           <div class="page-subtitle">Set objectives, constraints, run demand-supply balancing engine & compare scenarios</div>
         </div>
       </div>
@@ -10694,11 +9700,11 @@ document.addEventListener('DOMContentLoaded', () => sopWbTab('objectives'));
       <div class="sopwb-panel" data-panel="objectives" style="padding:20px">
         <p style="font-size:12px;color:#64748B;margin-bottom:16px">Select S&OP optimization objectives from Excel S&OP Planning specs</p>
         {[
-          ['Forecast Accuracy ≥90%','Demand Accuracy','Improve statistical forecast quality and reduce bias','high'],
-          ['Supply Fill Rate ≥95%','Supply Reliability','Align supply plan to demand — minimize stockouts','high'],
+          ['Forecast Accuracy â‰¥90%','Demand Accuracy','Improve statistical forecast quality and reduce bias','high'],
+          ['Supply Fill Rate â‰¥95%','Supply Reliability','Align supply plan to demand ? minimize stockouts','high'],
           ['Consensus Gap <3%','Plan Alignment','Reduce delta between commercial and supply plans','high'],
-          ['Inventory DOI 12–18 days','Inventory Balance','Right-size inventory across S&OP horizon','medium'],
-          ['OTIF ≥92%','Service Performance','On-time in-full delivery across all channels','medium'],
+          ['Inventory DOI 12?18 days','Inventory Balance','Right-size inventory across S&OP horizon','medium'],
+          ['OTIF â‰¥92%','Service Performance','On-time in-full delivery across all channels','medium'],
           ['Revenue Uplift via Promo','Revenue Growth','Capture promotional uplift in consensus demand plan','low'],
         ].map(([target, label, desc, pri], i) =>
           <div key={label} style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px">
@@ -10736,17 +9742,17 @@ document.addEventListener('DOMContentLoaded', () => sopWbTab('objectives'));
         <div id="sopwb-results"><div class="alert alert-info"><i class="fas fa-info-circle"></i><div>Run the optimization engine to see results here.</div></div></div>
       </div>
       <div class="sopwb-panel" data-panel="scenarios" style="padding:20px;display:none">
-        <p style="font-size:12px;color:#64748B;margin-bottom:16px">Compare S&OP outcomes across consensus scenarios (Excel S1–S6)</p>
+        <p style="font-size:12px;color:#64748B;margin-bottom:16px">Compare S&OP outcomes across consensus scenarios (Excel S1?S6)</p>
         <table class="data-table">
           <thead><tr><th>Scenario</th><th>Driver</th><th>Forecast Acc.</th><th>Fill Rate</th><th>Inventory DOI</th><th>Revenue Impact</th><th>Risk</th><th>Recommendation</th></tr></thead>
           <tbody>
             {[
-              ['S1 – Baseline','Current Plan','87.3%','94.1%','14.8 days','₹0','Medium','Reference'],
-              ['S2 – Demand +15%','Volume Uplift','84.2%','91.3%','12.1 days','+₹32L','High','Evaluate'],
-              ['S3 – Promo Activation','Q2 Campaign','88.1%','93.8%','11.4 days','+₹18L','Medium','Recommended'],
-              ['S4 – Supply Constraint','Capacity Cap 85%','87.3%','89.6%','18.2 days','−₹12L','High','Contingency'],
-              ['S5 – Consensus Plan','Aligned Plan','90.2%','95.8%','13.6 days','+₹14L','Low','Recommended'],
-              ['S6 – SKU Rationalization','SKU Reduction','91.4%','96.2%','11.8 days','+₹8L','Low','Consider'],
+              ['S1 ? Baseline','Current Plan','87.3%','94.1%','14.8 days','?0','Medium','Reference'],
+              ['S2 ? Demand +15%','Volume Uplift','84.2%','91.3%','12.1 days','+?32L','High','Evaluate'],
+              ['S3 ? Promo Activation','Q2 Campaign','88.1%','93.8%','11.4 days','+?18L','Medium','Recommended'],
+              ['S4 ? Supply Constraint','Capacity Cap 85%','87.3%','89.6%','18.2 days','âˆ’?12L','High','Contingency'],
+              ['S5 ? Consensus Plan','Aligned Plan','90.2%','95.8%','13.6 days','+?14L','Low','Recommended'],
+              ['S6 ? SKU Rationalization','SKU Reduction','91.4%','96.2%','11.8 days','+?8L','Low','Consider'],
             ].map(([sc,dr,fa,fr,doi,ri_v,rl,rec]) =>
               <tr key={sc}>
                 <td><strong>{sc}</strong></td>
@@ -10754,7 +9760,7 @@ document.addEventListener('DOMContentLoaded', () => sopWbTab('objectives'));
                 <td><span class={`badge badge-${Number(fa.replace('%',''))>=90?'success':Number(fa.replace('%',''))>=85?'warning':'critical'}`}>{fa}</span></td>
                 <td><span class={`badge badge-${Number(fr.replace('%',''))>=95?'success':Number(fr.replace('%',''))>=91?'warning':'critical'}`}>{fr}</span></td>
                 <td>{doi}</td>
-                <td style={`color:${ri_v==='₹0'?'inherit':ri_v.startsWith('+')?'#059669':'#DC2626'}`}>{ri_v}</td>
+                <td style={`color:${ri_v==='?0'?'inherit':ri_v.startsWith('+')?'#059669':'#DC2626'}`}>{ri_v}</td>
                 <td><span class={`badge badge-${rl==='Low'?'success':rl==='Medium'?'warning':'critical'}`}>{rl}</span></td>
                 <td><span class={`badge badge-${rec==='Recommended'?'success':rec==='Reference'?'info':rec==='Consider'?'warning':'neutral'}`}>{rec}</span></td>
               </tr>
@@ -10766,7 +9772,7 @@ document.addEventListener('DOMContentLoaded', () => sopWbTab('objectives'));
   </Layout>)
 })
 
-// ------ 5. PRODUCTION – Optimization Workbench ------
+// ------ 5. PRODUCTION ? Optimization Workbench ------
 app.get('/production/optimization-workbench', (c) => {
   const scripts = `
 function prodWbTab(tab) {
@@ -10775,15 +9781,15 @@ function prodWbTab(tab) {
 }
 async function runProdOpt() {
   const btn = document.getElementById('prodwb-run-btn');
-  btn.innerHTML = '<span class="spinner" style="width:16px;height:16px"></span> Running…';
+  btn.innerHTML = '<span class="spinner" style="width:16px;height:16px"></span> Running?';
   btn.disabled = true;
   await new Promise(r => setTimeout(r, 1800));
   document.getElementById('prodwb-results').innerHTML = \`
     <div class="kpi-grid" style="grid-template-columns:repeat(5,1fr)">
-      \${[['MPS Adherence','96.8%','healthy'],['OEE Gain','+4.2%','healthy'],['Changeover Saved','−11.9 hrs','healthy'],['Cost Saving','₹8.4L/mo','healthy'],['ATP Available','34.2K cases','healthy']].map(([l,v,s]) =>
+      \${[['MPS Adherence','96.8%','healthy'],['OEE Gain','+4.2%','healthy'],['Changeover Saved','âˆ’11.9 hrs','healthy'],['Cost Saving','?8.4L/mo','healthy'],['ATP Available','34.2K cases','healthy']].map(([l,v,s]) =>
         '<div class="kpi-card '+s+'"><div class="kpi-label">'+l+'</div><div class="kpi-value '+s+'">'+v+'</div></div>').join('')}
     </div>
-    <div class="alert alert-success" style="margin-top:12px"><i class="fas fa-check-circle"></i><div><strong>Production optimization complete.</strong> AI sequence: 500ml → 1L → Mango saves 11.9h changeover. Annual production cost saving: ₹100.8L. MPS adherence improved to 96.8%.</div></div>
+    <div class="alert alert-success" style="margin-top:12px"><i class="fas fa-check-circle"></i><div><strong>Production optimization complete.</strong> AI sequence: 500ml ? 1L ? Mango saves 11.9h changeover. Annual production cost saving: ?100.8L. MPS adherence improved to 96.8%.</div></div>
   \`;
   prodWbTab('results');
   btn.innerHTML = '<i class="fas fa-rocket"></i> Run Optimization';
@@ -10791,12 +9797,12 @@ async function runProdOpt() {
 }
 document.addEventListener('DOMContentLoaded', () => prodWbTab('objectives'));
 `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Production – Optimization Workbench" activeModule="prod-workbench" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Production ? Optimization Workbench" activeModule="prod-workbench" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)"><i class="fas fa-sliders-h"></i></div>
         <div>
-          <div class="page-title">Production — Optimization Workbench</div>
+          <div class="page-title">Production ? Optimization Workbench</div>
           <div class="page-subtitle">Set objectives, constraints, run production scheduling engine & compare scenarios</div>
         </div>
       </div>
@@ -10817,11 +9823,11 @@ document.addEventListener('DOMContentLoaded', () => prodWbTab('objectives'));
       <div class="prodwb-panel" data-panel="objectives" style="padding:20px">
         <p style="font-size:12px;color:#64748B;margin-bottom:16px">Select production optimization objectives from Excel Production Planning specs</p>
         {[
-          ['MPS Adherence ≥95%','Plan Adherence','Maximize master production schedule execution rate','high'],
-          ['OEE ≥78%','Overall Equipment Effectiveness','Improve availability, performance and quality on all lines','high'],
-          ['Changeover ↓20–30%','Sequence Optimization','Minimize changeover loss through optimal SKU sequencing','high'],
-          ['Line Utilization 75–90%','Capacity Efficiency','Balanced utilization — avoid idle and over-loaded lines','medium'],
-          ['ATP Coverage ≥95%','Available-to-Promise','Ensure firm orders can be met within planning horizon','medium'],
+          ['MPS Adherence â‰¥95%','Plan Adherence','Maximize master production schedule execution rate','high'],
+          ['OEE â‰¥78%','Overall Equipment Effectiveness','Improve availability, performance and quality on all lines','high'],
+          ['Changeover â†“20?30%','Sequence Optimization','Minimize changeover loss through optimal SKU sequencing','high'],
+          ['Line Utilization 75?90%','Capacity Efficiency','Balanced utilization ? avoid idle and over-loaded lines','medium'],
+          ['ATP Coverage â‰¥95%','Available-to-Promise','Ensure firm orders can be met within planning horizon','medium'],
           ['Waste <2% of output','Quality & Waste','Minimize production waste and quality rejections','low'],
         ].map(([target, label, desc, pri], i) =>
           <div key={label} style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px">
@@ -10845,7 +9851,7 @@ document.addEventListener('DOMContentLoaded', () => prodWbTab('objectives'));
           ['Shift Structure','3 shifts/day',''],
           ['Allergen Sequencing','Enabled',''],
           ['Min Safety Buffer','10','%'],
-          ['Co-packer Spend Cap','₹50L','per month'],
+          ['Co-packer Spend Cap','?50L','per month'],
           ['Lead Time to Market','5','days'],
         ].map(([label, val, unit]) =>
           <div key={label} style="display:flex;align-items:center;gap:12px;padding:10px;border-bottom:1px solid var(--border)">
@@ -10859,17 +9865,17 @@ document.addEventListener('DOMContentLoaded', () => prodWbTab('objectives'));
         <div id="prodwb-results"><div class="alert alert-info"><i class="fas fa-info-circle"></i><div>Run the optimization engine to see results here.</div></div></div>
       </div>
       <div class="prodwb-panel" data-panel="scenarios" style="padding:20px;display:none">
-        <p style="font-size:12px;color:#64748B;margin-bottom:16px">Compare production outcomes across planning scenarios (Excel S1–S6)</p>
+        <p style="font-size:12px;color:#64748B;margin-bottom:16px">Compare production outcomes across planning scenarios (Excel S1?S6)</p>
         <table class="data-table">
           <thead><tr><th>Scenario</th><th>Driver</th><th>MPS Adherence</th><th>Line Util</th><th>Changeovers</th><th>OEE</th><th>Cost Impact</th><th>Risk</th></tr></thead>
           <tbody>
             {[
-              ['S1 – Baseline','Current State','94.2%','78%','42','74.8%','₹0','Low'],
-              ['S2 – AI Sequence','Optimal SKU Order','94.2%','79%','29','77.2%','−₹8.4L/mo','Low'],
-              ['S3 – Demand +20%','Volume Surge','88.6%','94%','58','71.4%','+₹18L/mo','High'],
-              ['S4 – Line 2 Down','Equipment Failure','91.3%','85%','38','72.1%','+₹12L/mo','High'],
-              ['S5 – NPD Launch','New SKU','90.8%','88%','71','73.6%','+₹8L/mo','Medium'],
-              ['S6 – SKU Rationalization','Fewer SKUs','96.1%','72%','28','80.2%','−₹15L/mo','Low'],
+              ['S1 ? Baseline','Current State','94.2%','78%','42','74.8%','?0','Low'],
+              ['S2 ? AI Sequence','Optimal SKU Order','94.2%','79%','29','77.2%','âˆ’?8.4L/mo','Low'],
+              ['S3 ? Demand +20%','Volume Surge','88.6%','94%','58','71.4%','+?18L/mo','High'],
+              ['S4 ? Line 2 Down','Equipment Failure','91.3%','85%','38','72.1%','+?12L/mo','High'],
+              ['S5 ? NPD Launch','New SKU','90.8%','88%','71','73.6%','+?8L/mo','Medium'],
+              ['S6 ? SKU Rationalization','Fewer SKUs','96.1%','72%','28','80.2%','âˆ’?15L/mo','Low'],
             ].map(([sc,dr,mps,lu,co,oee,ci,ri]) =>
               <tr key={sc}>
                 <td><strong>{sc}</strong></td>
@@ -10878,7 +9884,7 @@ document.addEventListener('DOMContentLoaded', () => prodWbTab('objectives'));
                 <td><span class={`badge badge-${Number(lu.replace('%',''))>=90?'critical':Number(lu.replace('%',''))>=80?'warning':'success'}`}>{lu}</span></td>
                 <td>{co}</td>
                 <td><span class={`badge badge-${Number(oee.replace('%',''))>=78?'success':Number(oee.replace('%',''))>=72?'warning':'critical'}`}>{oee}</span></td>
-                <td style={`color:${ci==='₹0'||ci.startsWith('−')?'#059669':'#DC2626'}`}>{ci}</td>
+                <td style={`color:${ci==='?0'||ci.startsWith('âˆ’')?'#059669':'#DC2626'}`}>{ci}</td>
                 <td><span class={`badge badge-${ri==='High'?'warning':ri==='Low'?'success':'info'}`}>{ri}</span></td>
               </tr>
             )}
@@ -10889,7 +9895,7 @@ document.addEventListener('DOMContentLoaded', () => prodWbTab('objectives'));
   </Layout>)
 })
 
-// ------ 6. SEQUENCING – Optimization Workbench ------
+// ------ 6. SEQUENCING ? Optimization Workbench ------
 app.get('/sequencing/optimization-workbench', (c) => {
   const scripts = `
 function seqWbTab(tab) {
@@ -10898,15 +9904,15 @@ function seqWbTab(tab) {
 }
 async function runSeqOpt() {
   const btn = document.getElementById('seqwb-run-btn');
-  btn.innerHTML = '<span class="spinner" style="width:16px;height:16px"></span> Running…';
+  btn.innerHTML = '<span class="spinner" style="width:16px;height:16px"></span> Running?';
   btn.disabled = true;
   await new Promise(r => setTimeout(r, 1800));
   document.getElementById('seqwb-results').innerHTML = \`
     <div class="kpi-grid" style="grid-template-columns:repeat(5,1fr)">
-      \${[['OTD Performance','94.8%','healthy'],['Changeover Reduction','−11.9 hrs','healthy'],['Throughput Gain','+7.2%','healthy'],['Schedule Adherence','96.1%','healthy'],['Bottleneck Cleared','2 lines','healthy']].map(([l,v,s]) =>
+      \${[['OTD Performance','94.8%','healthy'],['Changeover Reduction','âˆ’11.9 hrs','healthy'],['Throughput Gain','+7.2%','healthy'],['Schedule Adherence','96.1%','healthy'],['Bottleneck Cleared','2 lines','healthy']].map(([l,v,s]) =>
         '<div class="kpi-card '+s+'"><div class="kpi-label">'+l+'</div><div class="kpi-value '+s+'">'+v+'</div></div>').join('')}
     </div>
-    <div class="alert alert-success" style="margin-top:12px"><i class="fas fa-check-circle"></i><div><strong>Sequencing optimization complete.</strong> Johnson&apos;s algorithm applied. Optimal sequence: 500ml → 1L → Mango. Changeover saving: 11.9 hrs/week. OTD improvement: +3.6 pp.</div></div>
+    <div class="alert alert-success" style="margin-top:12px"><i class="fas fa-check-circle"></i><div><strong>Sequencing optimization complete.</strong> Johnson&apos;s algorithm applied. Optimal sequence: 500ml ? 1L ? Mango. Changeover saving: 11.9 hrs/week. OTD improvement: +3.6 pp.</div></div>
   \`;
   seqWbTab('results');
   btn.innerHTML = '<i class="fas fa-rocket"></i> Run Optimization';
@@ -10914,12 +9920,12 @@ async function runSeqOpt() {
 }
 document.addEventListener('DOMContentLoaded', () => seqWbTab('objectives'));
 `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing – Optimization Workbench" activeModule="seq-planner" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Sequencing ? Optimization Workbench" activeModule="seq-planner" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#6D28D9,#8B5CF6)"><i class="fas fa-sliders-h"></i></div>
         <div>
-          <div class="page-title">Sequencing & Scheduling — Optimization Workbench</div>
+          <div class="page-title">Sequencing & Scheduling ? Optimization Workbench</div>
           <div class="page-subtitle">Set objectives, constraints, run sequence optimization engine & compare scenarios</div>
         </div>
       </div>
@@ -10940,10 +9946,10 @@ document.addEventListener('DOMContentLoaded', () => seqWbTab('objectives'));
       <div class="seqwb-panel" data-panel="objectives" style="padding:20px">
         <p style="font-size:12px;color:#64748B;margin-bottom:16px">Select sequencing optimization objectives from Excel Sequencing & Scheduling specs</p>
         {[
-          ['OTD ≥92%','On-Time Delivery','Maximize on-time job completion across all production lines','high'],
-          ['Changeover ↓15–25%','Changeover Minimization','Minimize total changeover time via optimal SKU sequencing','high'],
-          ['Throughput ≥OEE 78%','Throughput Maximization','Maximize output from available capacity','high'],
-          ['Schedule Adherence ≥95%','Plan Accuracy','Minimize deviation from master production schedule','medium'],
+          ['OTD â‰¥92%','On-Time Delivery','Maximize on-time job completion across all production lines','high'],
+          ['Changeover â†“15?25%','Changeover Minimization','Minimize total changeover time via optimal SKU sequencing','high'],
+          ['Throughput â‰¥OEE 78%','Throughput Maximization','Maximize output from available capacity','high'],
+          ['Schedule Adherence â‰¥95%','Plan Accuracy','Minimize deviation from master production schedule','medium'],
           ['Bottlenecks Cleared','Constraint Removal','Identify and resolve scheduling bottlenecks in real time','medium'],
           ['Setup Matrix Optimization','SMED Application','Apply single-minute exchange of die principles','low'],
         ].map(([target, label, desc, pri], i) =>
@@ -10982,16 +9988,16 @@ document.addEventListener('DOMContentLoaded', () => seqWbTab('objectives'));
         <div id="seqwb-results"><div class="alert alert-info"><i class="fas fa-info-circle"></i><div>Run the optimization engine to see results here.</div></div></div>
       </div>
       <div class="seqwb-panel" data-panel="scenarios" style="padding:20px;display:none">
-        <p style="font-size:12px;color:#64748B;margin-bottom:16px">Compare sequencing outcomes across planning scenarios (Excel S1–S5)</p>
+        <p style="font-size:12px;color:#64748B;margin-bottom:16px">Compare sequencing outcomes across planning scenarios (Excel S1?S5)</p>
         <table class="data-table">
           <thead><tr><th>Scenario</th><th>Algorithm</th><th>OTD</th><th>Changeovers</th><th>Throughput</th><th>Schedule Adherence</th><th>Changeover hrs saved</th><th>Risk</th></tr></thead>
           <tbody>
             {[
-              ['S1 – Random Sequence','Baseline','91.2%','42/wk','74.8%','88.4%','—','Medium'],
-              ['S2 – Johnson\'s Algorithm','NEH Optimization','94.8%','29/wk','78.2%','96.1%','11.9 hrs/wk','Low'],
-              ['S3 – Allergen Priority','Rule-based','92.1%','36/wk','76.4%','91.8%','5.2 hrs/wk','Low'],
-              ['S4 – Demand-Driven','Dynamic','93.4%','31/wk','77.8%','94.2%','9.1 hrs/wk','Low'],
-              ['S5 – Mixed SKU Surge','NPD + Rush Orders','88.3%','58/wk','70.1%','82.6%','—','High'],
+              ['S1 ? Random Sequence','Baseline','91.2%','42/wk','74.8%','88.4%','?','Medium'],
+              ['S2 ? Johnson\'s Algorithm','NEH Optimization','94.8%','29/wk','78.2%','96.1%','11.9 hrs/wk','Low'],
+              ['S3 ? Allergen Priority','Rule-based','92.1%','36/wk','76.4%','91.8%','5.2 hrs/wk','Low'],
+              ['S4 ? Demand-Driven','Dynamic','93.4%','31/wk','77.8%','94.2%','9.1 hrs/wk','Low'],
+              ['S5 ? Mixed SKU Surge','NPD + Rush Orders','88.3%','58/wk','70.1%','82.6%','?','High'],
             ].map(([sc,algo,otd,co,tp,sa,sv,ri]) =>
               <tr key={sc}>
                 <td><strong>{sc}</strong></td>
@@ -11000,7 +10006,7 @@ document.addEventListener('DOMContentLoaded', () => seqWbTab('objectives'));
                 <td>{co}</td>
                 <td><span class={`badge badge-${Number(tp.replace('%',''))>=78?'success':Number(tp.replace('%',''))>=73?'warning':'critical'}`}>{tp}</span></td>
                 <td><span class={`badge badge-${Number(sa.replace('%',''))>=95?'success':Number(sa.replace('%',''))>=88?'warning':'critical'}`}>{sa}</span></td>
-                <td style={`color:${sv==='—'?'inherit':'#059669'}`}>{sv}</td>
+                <td style={`color:${sv==='?'?'inherit':'#059669'}`}>{sv}</td>
                 <td><span class={`badge badge-${ri==='High'?'warning':ri==='Low'?'success':'info'}`}>{ri}</span></td>
               </tr>
             )}
@@ -11011,7 +10017,7 @@ document.addEventListener('DOMContentLoaded', () => seqWbTab('objectives'));
   </Layout>)
 })
 
-// ------ 7. DEPLOYMENT – Optimization Workbench ------
+// ------ 7. DEPLOYMENT ? Optimization Workbench ------
 app.get('/deployment/optimization-workbench', (c) => {
   const scripts = `
 function depWbTab(tab) {
@@ -11020,15 +10026,15 @@ function depWbTab(tab) {
 }
 async function runDepOpt() {
   const btn = document.getElementById('depwb-run-btn');
-  btn.innerHTML = '<span class="spinner" style="width:16px;height:16px"></span> Running…';
+  btn.innerHTML = '<span class="spinner" style="width:16px;height:16px"></span> Running?';
   btn.disabled = true;
   await new Promise(r => setTimeout(r, 1800));
   document.getElementById('depwb-results').innerHTML = \`
     <div class="kpi-grid" style="grid-template-columns:repeat(5,1fr)">
-      \${[['OTD Improvement','+4.2%','healthy'],['Truck Utilization','91.4%','healthy'],['Transport Cost Saving','−₹6.2L/mo','healthy'],['Safety Stock Freed','₹8L','healthy'],['CO2 Reduction','−12%','healthy']].map(([l,v,s]) =>
+      \${[['OTD Improvement','+4.2%','healthy'],['Truck Utilization','91.4%','healthy'],['Transport Cost Saving','âˆ’?6.2L/mo','healthy'],['Safety Stock Freed','?8L','healthy'],['CO2 Reduction','âˆ’12%','healthy']].map(([l,v,s]) =>
         '<div class="kpi-card '+s+'"><div class="kpi-label">'+l+'</div><div class="kpi-value '+s+'">'+v+'</div></div>').join('')}
     </div>
-    <div class="alert alert-success" style="margin-top:12px"><i class="fas fa-check-circle"></i><div><strong>Deployment optimization complete.</strong> Network rebalancing recommended: Consolidate 3 partial loads, re-route Delhi–Lucknow via Agra hub. Annual transport saving: ₹74.4L.</div></div>
+    <div class="alert alert-success" style="margin-top:12px"><i class="fas fa-check-circle"></i><div><strong>Deployment optimization complete.</strong> Network rebalancing recommended: Consolidate 3 partial loads, re-route Delhi?Lucknow via Agra hub. Annual transport saving: ?74.4L.</div></div>
   \`;
   depWbTab('results');
   btn.innerHTML = '<i class="fas fa-rocket"></i> Run Optimization';
@@ -11036,12 +10042,12 @@ async function runDepOpt() {
 }
 document.addEventListener('DOMContentLoaded', () => depWbTab('objectives'));
 `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Deployment – Optimization Workbench" activeModule="dep-workbench" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Deployment ? Optimization Workbench" activeModule="dep-workbench" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#38BDF8)"><i class="fas fa-sliders-h"></i></div>
         <div>
-          <div class="page-title">Deployment — Optimization Workbench</div>
+          <div class="page-title">Deployment ? Optimization Workbench</div>
           <div class="page-subtitle">Set objectives, constraints, run network optimization engine & compare scenarios</div>
         </div>
       </div>
@@ -11062,12 +10068,12 @@ document.addEventListener('DOMContentLoaded', () => depWbTab('objectives'));
       <div class="depwb-panel" data-panel="objectives" style="padding:20px">
         <p style="font-size:12px;color:#64748B;margin-bottom:16px">Select deployment optimization objectives from Excel Deployment Planning specs</p>
         {[
-          ['OTD ≥93%','On-Time Delivery','Maximize on-time delivery to all markets and DCs','high'],
-          ['Truck Utilization ≥88%','Load Efficiency','Maximize truck fill rate — reduce empty and partial loads','high'],
-          ['Transport Cost ↓10–15%','Cost Optimization','Consolidate loads, optimize routes, reduce spot freight','high'],
-          ['Safety Stock at DCs ≤15 days','Inventory Efficiency','Right-size safety stock at each distribution center','medium'],
-          ['Inter-DC Transfers ↓20%','Network Efficiency','Reduce lateral transfers via improved demand planning','medium'],
-          ['CO2 per Case ↓12%','Sustainability','Reduce carbon footprint through route and load optimization','low'],
+          ['OTD â‰¥93%','On-Time Delivery','Maximize on-time delivery to all markets and DCs','high'],
+          ['Truck Utilization â‰¥88%','Load Efficiency','Maximize truck fill rate ? reduce empty and partial loads','high'],
+          ['Transport Cost â†“10?15%','Cost Optimization','Consolidate loads, optimize routes, reduce spot freight','high'],
+          ['Safety Stock at DCs â‰¤15 days','Inventory Efficiency','Right-size safety stock at each distribution center','medium'],
+          ['Inter-DC Transfers â†“20%','Network Efficiency','Reduce lateral transfers via improved demand planning','medium'],
+          ['CO2 per Case â†“12%','Sustainability','Reduce carbon footprint through route and load optimization','low'],
         ].map(([target, label, desc, pri], i) =>
           <div key={label} style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px">
             <input type="checkbox" defaultChecked={i < 4} style="width:16px;height:16px" />
@@ -11086,7 +10092,7 @@ document.addEventListener('DOMContentLoaded', () => depWbTab('objectives'));
         {[
           ['Min Truck Fill','65','%'],
           ['Max Route Distance','800','km per trip'],
-          ['Delivery Window','6:00–22:00','hours'],
+          ['Delivery Window','6:00?22:00','hours'],
           ['DC Safety Stock Floor','7','days'],
           ['Cold Chain Max Duration','18','hours'],
           ['Carrier SLA Minimum','90','% OTD'],
@@ -11104,24 +10110,24 @@ document.addEventListener('DOMContentLoaded', () => depWbTab('objectives'));
         <div id="depwb-results"><div class="alert alert-info"><i class="fas fa-info-circle"></i><div>Run the optimization engine to see results here.</div></div></div>
       </div>
       <div class="depwb-panel" data-panel="scenarios" style="padding:20px;display:none">
-        <p style="font-size:12px;color:#64748B;margin-bottom:16px">Compare deployment outcomes across planning scenarios (Excel S1–S6)</p>
+        <p style="font-size:12px;color:#64748B;margin-bottom:16px">Compare deployment outcomes across planning scenarios (Excel S1?S6)</p>
         <table class="data-table">
           <thead><tr><th>Scenario</th><th>Driver</th><th>OTD</th><th>Truck Util</th><th>Transport Cost</th><th>DC Stock DOI</th><th>Transfers</th><th>Risk</th></tr></thead>
           <tbody>
             {[
-              ['S1 – Baseline','Current Network','91.4%','84.2%','₹0','14.8 days','12/wk','Medium'],
-              ['S2 – Route Opt.','Shortest Path','93.1%','87.8%','−₹4.2L/mo','14.8 days','12/wk','Low'],
-              ['S3 – Load Consolidation','Batch Dispatch','92.8%','91.4%','−₹6.2L/mo','15.2 days','8/wk','Low'],
-              ['S4 – Demand Surge +20%','Peak Season','88.2%','92.6%','+₹8.4L/mo','11.2 days','22/wk','High'],
-              ['S5 – DC Expansion','New Lucknow DC','94.2%','88.6%','−₹3.8L/mo','12.4 days','6/wk','Low'],
-              ['S6 – Hub & Spoke','Network Redesign','93.8%','90.2%','−₹9.6L/mo','13.6 days','4/wk','Low'],
+              ['S1 ? Baseline','Current Network','91.4%','84.2%','?0','14.8 days','12/wk','Medium'],
+              ['S2 ? Route Opt.','Shortest Path','93.1%','87.8%','âˆ’?4.2L/mo','14.8 days','12/wk','Low'],
+              ['S3 ? Load Consolidation','Batch Dispatch','92.8%','91.4%','âˆ’?6.2L/mo','15.2 days','8/wk','Low'],
+              ['S4 ? Demand Surge +20%','Peak Season','88.2%','92.6%','+?8.4L/mo','11.2 days','22/wk','High'],
+              ['S5 ? DC Expansion','New Lucknow DC','94.2%','88.6%','âˆ’?3.8L/mo','12.4 days','6/wk','Low'],
+              ['S6 ? Hub & Spoke','Network Redesign','93.8%','90.2%','âˆ’?9.6L/mo','13.6 days','4/wk','Low'],
             ].map(([sc,dr,otd,tu,tc,doi,tf,ri]) =>
               <tr key={sc}>
                 <td><strong>{sc}</strong></td>
                 <td style="font-size:12px;color:#64748B">{dr}</td>
                 <td><span class={`badge badge-${Number(otd.replace('%',''))>=93?'success':Number(otd.replace('%',''))>=90?'warning':'critical'}`}>{otd}</span></td>
                 <td><span class={`badge badge-${Number(tu.replace('%',''))>=88?'success':Number(tu.replace('%',''))>=82?'warning':'critical'}`}>{tu}</span></td>
-                <td style={`color:${tc==='₹0'||tc.startsWith('−')?'#059669':'#DC2626'}`}>{tc}</td>
+                <td style={`color:${tc==='?0'||tc.startsWith('âˆ’')?'#059669':'#DC2626'}`}>{tc}</td>
                 <td>{doi}</td><td>{tf}</td>
                 <td><span class={`badge badge-${ri==='High'?'warning':ri==='Low'?'success':'info'}`}>{ri}</span></td>
               </tr>
@@ -11133,7 +10139,7 @@ document.addEventListener('DOMContentLoaded', () => depWbTab('objectives'));
   </Layout>)
 })
 
-// ------ 8. CAPACITY – Optimization Workbench (new alias) ------
+// ------ 8. CAPACITY ? Optimization Workbench (new alias) ------
 // Note: /capacity/optimization already IS the full 4-tab workbench.
 // This alias provides a consistent /capacity/optimization-workbench URL
 // that links from the updated NAV_MODULES without touching the existing page.
@@ -11142,7 +10148,7 @@ app.get('/capacity/optimization-workbench', (c) => c.redirect('/capacity/optimiz
 // ============================================================
 // ADMIN DATA MANAGEMENT
 // ============================================================
-// Dataset catalogue — single source of truth for the UI and validation
+// Dataset catalogue ? single source of truth for the UI and validation
 const DATASET_CATALOGUE = [
   {
     key: 'demand',
@@ -11349,7 +10355,7 @@ const DATASET_CATALOGUE = [
   },
 ]
 
-// ── API: GET upload status for all datasets ──────────────────────────────────
+// â”€â”€ API: GET upload status for all datasets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/admin/upload-status', async (c) => {
   try {
     const db = c.env.DB
@@ -11368,7 +10374,7 @@ app.get('/api/admin/upload-status', async (c) => {
   }
 })
 
-// ── API: POST upload a CSV dataset ──────────────────────────────────────────
+// â”€â”€ API: POST upload a CSV dataset â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.post('/api/admin/upload', async (c) => {
   const _u = getUser(c)
   if (!_u) return c.json({ ok: false, error: 'Unauthorized' }, 401)
@@ -11442,7 +10448,7 @@ async function _recordUpload(
   } catch { /* DB might not have migration applied yet in local dev */ }
 }
 
-// ── API: DELETE (reset) a dataset to default ────────────────────────────────
+// â”€â”€ API: DELETE (reset) a dataset to default â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.post('/api/admin/reset-dataset', async (c) => {
   const _u = getUser(c)
   if (!_u) return c.json({ ok: false, error: 'Unauthorized' }, 401)
@@ -11453,7 +10459,7 @@ app.post('/api/admin/reset-dataset', async (c) => {
   return c.json({ ok: true })
 })
 
-// ── API: GET catalogue metadata ──────────────────────────────────────────────
+// â”€â”€ API: GET catalogue metadata â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/admin/catalogue', (c) => {
   return c.json(DATASET_CATALOGUE.map(d => ({
     key: d.key, label: d.label, icon: d.icon, color: d.color,
@@ -11463,12 +10469,12 @@ app.get('/api/admin/catalogue', (c) => {
   })))
 })
 
-// ── PAGE: /admin/data-management ────────────────────────────────────────────
+// â”€â”€ PAGE: /admin/data-management â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/admin/data-management', (c) => {
   const _u = getUser(c)
 
   const scripts = `
-// ── Admin page CSS ──
+// â”€â”€ Admin page CSS â”€â”€
 (function() {
   const s = document.createElement('style');
   s.textContent = \`
@@ -11483,12 +10489,12 @@ app.get('/admin/data-management', (c) => {
   \`;
   document.head.appendChild(s);
 })();
-// ── State ──
+// â”€â”€ State â”€â”€
 let catalogue = [];
-let uploadStatus = {};   // key → row from upload_registry
-let useDefaultMap = {};  // key → boolean (local toggle state)
+let uploadStatus = {};   // key ? row from upload_registry
+let useDefaultMap = {};  // key ? boolean (local toggle state)
 
-// ── Boot ──
+// â”€â”€ Boot â”€â”€
 document.addEventListener('DOMContentLoaded', async () => {
   await Promise.all([loadCatalogue(), loadStatus()]);
   renderAll();
@@ -11504,20 +10510,20 @@ async function loadStatus() {
   rows.forEach(r => { uploadStatus[r.dataset_key] = r; });
 }
 
-// ── Tab switching ──
+// â”€â”€ Tab switching â”€â”€
 function switchAdminTab(tab) {
   document.querySelectorAll('.adm-tab').forEach(b => b.classList.toggle('active', b.dataset.tab===tab));
   document.querySelectorAll('.adm-panel').forEach(p => { p.style.display = p.dataset.panel===tab ? 'block' : 'none'; });
 }
 
-// ── Render entire page ──
+// â”€â”€ Render entire page â”€â”€
 function renderAll() {
   renderStatusGrid();
   renderUploadCards();
   renderMappingTable();
 }
 
-// ── 1. Status summary grid (overview tab) ──
+// â”€â”€ 1. Status summary grid (overview tab) â”€â”€
 function renderStatusGrid() {
   const total    = catalogue.length;
   const uploaded = catalogue.filter(d => uploadStatus[d.key]?.status === 'uploaded').length;
@@ -11535,8 +10541,8 @@ function renderStatusGrid() {
     const status   = s ? s.status : 'not_uploaded';
     const badgeCls = status==='uploaded'?'success':status==='failed'?'critical':'warning';
     const icon     = status==='uploaded'?'check-circle':status==='failed'?'times-circle':'clock';
-    const label    = status==='uploaded'?'Uploaded':status==='failed'?'Failed – Using Default':'Not Uploaded';
-    const detail   = s ? \`\${s.file_name} · \${s.row_count?.toLocaleString()||0} rows · \${(s.uploaded_at||'').slice(0,16)}\` : 'No file uploaded — using built-in default data';
+    const label    = status==='uploaded'?'Uploaded':status==='failed'?'Failed ? Using Default':'Not Uploaded';
+    const detail   = s ? \`\${s.file_name} ? \${s.row_count?.toLocaleString()||0} rows ? \${(s.uploaded_at||'').slice(0,16)}\` : 'No file uploaded ? using built-in default data';
     const errHtml  = (status==='failed' && s?.error_message) ? \`<div style="font-size:11px;color:#DC2626;margin-top:4px"><i class="fas fa-exclamation-circle"></i> \${s.error_message}</div>\` : '';
     return \`<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #F1F5F9">
       <div style="width:36px;height:36px;border-radius:8px;background:\${d.color}18;display:flex;align-items:center;justify-content:center;flex-shrink:0">
@@ -11560,7 +10566,7 @@ function renderStatusGrid() {
   }).join('');
 }
 
-// ── 2. Upload cards (upload tab) ──
+// â”€â”€ 2. Upload cards (upload tab) â”€â”€
 function renderUploadCards() {
   const el = document.getElementById('upload-cards');
   el.innerHTML = catalogue.map(d => {
@@ -11594,7 +10600,7 @@ function renderUploadCards() {
             <div style="font-size:11px;color:#64748B">Expected file: <code>\${d.file_name}</code></div>
           </div>
         </div>
-        <span class="badge badge-\${badgeCls}">\${status==='uploaded'?'✓ Uploaded':status==='failed'?'✗ Failed':'⏳ Not Uploaded'}</span>
+        <span class="badge badge-\${badgeCls}">\${status==='uploaded'?'âœ“ Uploaded':status==='failed'?'âœ— Failed':'? Not Uploaded'}</span>
       </div>
       <div class="card-body">
         <p style="font-size:13px;color:#475569;margin-bottom:14px">\${d.description}</p>
@@ -11636,7 +10642,7 @@ function renderUploadCards() {
         \${status==='uploaded' ? \`
           <div class="alert alert-success" style="margin-bottom:14px">
             <i class="fas fa-check-circle"></i>
-            <div><strong>\${s.file_name}</strong> — \${(s.row_count||0).toLocaleString()} rows uploaded successfully
+            <div><strong>\${s.file_name}</strong> ? \${(s.row_count||0).toLocaleString()} rows uploaded successfully
             on \${(s.uploaded_at||'').slice(0,16)} by \${s.uploaded_by}</div>
           </div>\` : ''}
 
@@ -11649,7 +10655,7 @@ function renderUploadCards() {
           onclick="document.getElementById('file-\${d.key}').click()">
           <i class="fas fa-cloud-upload-alt" style="font-size:28px;color:#94A3B8;display:block;margin-bottom:8px"></i>
           <div style="font-size:13px;font-weight:600;color:#475569">Drop CSV here or click to browse</div>
-          <div style="font-size:11px;color:#94A3B8;margin-top:4px">CSV only · Max 10 MB</div>
+          <div style="font-size:11px;color:#94A3B8;margin-top:4px">CSV only ? Max 10 MB</div>
           <input type="file" id="file-\${d.key}" accept=".csv" style="display:none" onchange="handleFile(event,'\${d.key}')">
         </div>
 
@@ -11667,7 +10673,7 @@ function renderUploadCards() {
             <div style="background:#E2E8F0;border-radius:9px;height:6px;overflow:hidden">
               <div id="prog-bar-\${d.key}" style="height:100%;background:\${d.color};width:0%;transition:width 0.3s;border-radius:9px"></div>
             </div>
-            <div id="prog-label-\${d.key}" style="font-size:11px;color:#64748B;margin-top:4px">Validating…</div>
+            <div id="prog-label-\${d.key}" style="font-size:11px;color:#64748B;margin-top:4px">Validating?</div>
           </div>
         </div>
       </div>
@@ -11675,7 +10681,7 @@ function renderUploadCards() {
   }).join('');
 }
 
-// ── 3. Module mapping table ──
+// â”€â”€ 3. Module mapping table â”€â”€
 function renderMappingTable() {
   const allModules = [...new Set(catalogue.flatMap(d => d.modules))].sort();
   const el = document.getElementById('mapping-table');
@@ -11713,7 +10719,7 @@ function renderMappingTable() {
   </table>\`;
 }
 
-// ── File handling ──
+// â”€â”€ File handling â”€â”€
 function handleDrop(event, key) {
   event.preventDefault();
   document.getElementById('dz-'+key).style.borderColor = '#CBD5E1';
@@ -11739,7 +10745,7 @@ async function uploadFile(key, file) {
   // Show progress
   if (progDiv) progDiv.style.display = 'block';
   if (dz) dz.style.borderColor = '#2563EB';
-  animateProgress(progBar, progLbl, 0, 60, 'Validating structure…');
+  animateProgress(progBar, progLbl, 0, 60, 'Validating structure?');
 
   const fd = new FormData();
   fd.append('dataset_key', key);
@@ -11747,7 +10753,7 @@ async function uploadFile(key, file) {
   fd.append('file', file);
 
   try {
-    animateProgress(progBar, progLbl, 60, 90, 'Uploading…');
+    animateProgress(progBar, progLbl, 60, 90, 'Uploading?');
     const res = await axios.post('/api/admin/upload', fd, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
@@ -11755,7 +10761,7 @@ async function uploadFile(key, file) {
     animateProgress(progBar, progLbl, 90, 100, 'Done');
 
     if (d.ok) {
-      showAdminToast(d.dataset.toUpperCase() + ' — ' + d.rows.toLocaleString() + ' rows uploaded ✓', 'success');
+      showAdminToast(d.dataset.toUpperCase() + ' ? ' + d.rows.toLocaleString() + ' rows uploaded âœ“', 'success');
     } else {
       showAdminToast('Upload failed: ' + d.error, 'error');
     }
@@ -11805,7 +10811,7 @@ function showAdminToast(msg, type) {
 }
   `.trim()
 
-  return c.html(<Layout user={_u} title="Admin – Data Management" activeModule="admin" scripts={scripts}>
+  return c.html(<Layout user={_u} title="Admin ? Data Management" activeModule="admin" scripts={scripts}>
     {/* Toast */}
     <div id="admin-toast" style="display:none;position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 20px;border-radius:10px;color:white;font-size:13px;font-weight:600;max-width:380px;box-shadow:0 4px 20px rgba(0,0,0,0.2);transition:opacity 0.4s"></div>
 
@@ -11814,7 +10820,7 @@ function showAdminToast(msg, type) {
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#1E3A8A,#2563EB)"><i class="fas fa-database"></i></div>
         <div>
-          <div class="page-title">Admin — Data Management</div>
+          <div class="page-title">Admin ? Data Management</div>
           <div class="page-subtitle">Upload, validate and manage CSV datasets across all supply-chain modules</div>
         </div>
       </div>
@@ -11834,7 +10840,7 @@ function showAdminToast(msg, type) {
       ].map(([label, id, cls, icon]) =>
         <div key={id} class={`kpi-card ${cls}`}>
           <div class="kpi-label"><i class={`fas ${icon}`} style="margin-right:5px"></i>{label}</div>
-          <div class={`kpi-value ${cls}`} id={id}>—</div>
+          <div class={`kpi-value ${cls}`} id={id}>?</div>
         </div>
       )}
     </div>
@@ -11854,12 +10860,12 @@ function showAdminToast(msg, type) {
         )}
       </div>
 
-      {/* ── Tab 1: Status Overview ── */}
+      {/* â”€â”€ Tab 1: Status Overview â”€â”€ */}
       <div class="adm-panel" data-panel="overview" style="padding:20px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
           <div>
             <div style="font-size:15px;font-weight:700">Dataset Status</div>
-            <div style="font-size:12px;color:#64748B">Current state of each dataset — click <i class="fas fa-upload"></i> to upload</div>
+            <div style="font-size:12px;color:#64748B">Current state of each dataset ? click <i class="fas fa-upload"></i> to upload</div>
           </div>
           <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#64748B">
             <span class="badge badge-success"><i class="fas fa-check-circle"></i> Uploaded</span>
@@ -11871,28 +10877,28 @@ function showAdminToast(msg, type) {
           <i class="fas fa-info-circle"></i>
           <div>
             <strong>Safe fallback is always on.</strong> When a dataset is not uploaded or fails validation,
-            the system automatically uses built-in default data — no module functionality is lost.
+            the system automatically uses built-in default data ? no module functionality is lost.
           </div>
         </div>
         <div id="status-list"><div class="spinner"></div></div>
       </div>
 
-      {/* ── Tab 2: Upload Datasets ── */}
+      {/* â”€â”€ Tab 2: Upload Datasets â”€â”€ */}
       <div class="adm-panel" data-panel="upload" style="padding:20px;display:none">
         <div style="margin-bottom:16px">
           <div style="font-size:15px;font-weight:700;margin-bottom:4px">Upload CSV Datasets</div>
           <div style="font-size:12px;color:#64748B">
             Drag-and-drop or click to select a CSV. Each card shows the required columns, sample format and which modules use the data.
-            <br/>The <strong>"Use default data if upload fails"</strong> toggle is enabled by default — safe to upload without risk.
+            <br/>The <strong>"Use default data if upload fails"</strong> toggle is enabled by default ? safe to upload without risk.
           </div>
         </div>
         <div id="upload-cards"><div class="spinner"></div></div>
       </div>
 
-      {/* ── Tab 3: Module Mapping ── */}
+      {/* â”€â”€ Tab 3: Module Mapping â”€â”€ */}
       <div class="adm-panel" data-panel="mapping" style="padding:20px;display:none">
         <div style="margin-bottom:14px">
-          <div style="font-size:15px;font-weight:700;margin-bottom:4px">Dataset → Module Dependency Map</div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:4px">Dataset ? Module Dependency Map</div>
           <div style="font-size:12px;color:#64748B">
             Shows which planning modules consume each dataset. A <i class="fas fa-check" style="color:#2563EB"></i> means the module depends on this data.
             The status icon shows the current upload state of each dataset.
@@ -11901,14 +10907,14 @@ function showAdminToast(msg, type) {
         <div style="overflow-x:auto" id="mapping-table"><div class="spinner"></div></div>
         <div style="margin-top:16px;display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:#64748B">
           <span><i class="fas fa-check-circle" style="color:#059669"></i> Uploaded</span>
-          <span><i class="fas fa-times-circle" style="color:#DC2626"></i> Failed – using default</span>
-          <span><i class="fas fa-minus-circle" style="color:#94A3B8"></i> Not uploaded – using default</span>
+          <span><i class="fas fa-times-circle" style="color:#DC2626"></i> Failed ? using default</span>
+          <span><i class="fas fa-minus-circle" style="color:#94A3B8"></i> Not uploaded ? using default</span>
           <span><i class="fas fa-check" style="color:#2563EB"></i> Dataset feeds this module</span>
         </div>
       </div>
     </div>
 
-    {/* Info card — how it works */}
+    {/* Info card ? how it works */}
     <div class="card">
       <div class="card-header">
         <span class="card-title"><i class="fas fa-shield-alt"></i> How Data Upload Works</span>
@@ -11934,6 +10940,7 @@ function showAdminToast(msg, type) {
 })
 
 export default app
+
 
 
 

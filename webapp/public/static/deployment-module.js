@@ -227,10 +227,14 @@ function generateShipments() {
 function optimizeLoad(btn, id) {
   const target = btn && btn.tagName ? btn : (typeof event !== 'undefined' ? event.target.closest('button') : null);
   if (!target) return;
-  target.innerHTML = '<i class="fas fa-check"></i>';
-  target.style.background = '#059669';
-  target.style.color = 'white';
-  setTimeout(() => { target.innerHTML = '<i class="fas fa-compress-arrows-alt"></i>'; target.removeAttribute('style'); }, 2000);
+  target.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  setTimeout(() => {
+    target.innerHTML = '<i class="fas fa-check"></i>';
+    target.style.background = '#059669';
+    target.style.color = 'white';
+    depToast('Load optimization applied for shipment ' + id + '. Suggested route and truck mix updated in mock mode.', 'success');
+    setTimeout(() => { target.innerHTML = '<i class="fas fa-compress-arrows-alt"></i>'; target.removeAttribute('style'); }, 2000);
+  }, 2000);
 }
 
 // ── Route Optimization ─────────────────────────────────────────────────
@@ -307,7 +311,11 @@ function reoptimizeRoute(btn, id) {
   const target = btn && btn.tagName ? btn : (typeof event !== 'undefined' ? event.target.closest('button') : null);
   if (!target) return;
   target.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-  setTimeout(() => { target.innerHTML = '<i class="fas fa-check"></i> Done'; target.className = 'btn btn-sm btn-success'; }, 2000);
+  setTimeout(() => {
+    target.innerHTML = '<i class="fas fa-check"></i> Done';
+    target.className = 'btn btn-sm btn-success';
+    depToast('Route ' + id + ' reoptimized. ETA improved and cost profile refreshed in mock mode.', 'success');
+  }, 2000);
 }
 
 // ── Load Planning ─────────────────────────────────────────────────────
@@ -381,6 +389,7 @@ function optimizeLoadPlan(btn, id) {
   setTimeout(() => {
     target.innerHTML = '<i class="fas fa-check"></i> +3.2%';
     target.className = 'btn btn-sm btn-success';
+    depToast('Load plan ' + id + ' optimized. Mock utilization improved by 3.2%.', 'success');
   }, 2000);
 }
 
@@ -462,7 +471,11 @@ function initDeployScenarios() {
 
 function runDeployScenario(btn) {
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Running...';
-  setTimeout(() => { btn.innerHTML = '<i class="fas fa-check"></i> Done'; btn.className = 'btn btn-sm btn-success'; }, 2500);
+  setTimeout(() => {
+    btn.innerHTML = '<i class="fas fa-check"></i> Done';
+    btn.className = 'btn btn-sm btn-success';
+    depToast('Deployment scenario executed. Mock reroute summary updated with expected savings.', 'success');
+  }, 2500);
 }
 
 // ── ML Models ─────────────────────────────────────────────────────────

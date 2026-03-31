@@ -183,9 +183,10 @@ function generateMPSRows() {
 function firmOrder(btn, id) {
   const target = btn && btn.tagName ? btn : (typeof event !== 'undefined' ? event.target.closest('button') : null);
   if (!target) return;
-  target.textContent = '✓ Firmed';
+  target.textContent = '? Firmed';
   target.className = 'btn btn-sm btn-success';
   target.disabled = true;
+  prodToast('MPS order ' + id + ' firmed. Mock production slot locked and downstream demand refreshed.', 'success');
   setTimeout(() => { target.textContent = 'Firm'; target.className = 'btn btn-sm btn-secondary'; target.disabled = false; }, 3000);
 }
 
@@ -348,9 +349,12 @@ function generateWorkbenchJobs() {
 }
 
 function resequence(btn) {
-  btn.innerHTML = '<i class="fas fa-check"></i>';
-  btn.className = 'btn btn-sm btn-success';
-  setTimeout(() => { btn.innerHTML = '<i class="fas fa-exchange-alt"></i>'; btn.className = 'btn btn-sm btn-secondary'; }, 2000);
+  const target = btn && btn.tagName ? btn : (typeof event !== 'undefined' ? event.target.closest('button') : null);
+  if (!target) return;
+  target.innerHTML = '<i class="fas fa-check"></i>';
+  target.className = 'btn btn-sm btn-success';
+  prodToast('Job resequenced. Mock schedule updated to improve flow and reduce changeover.', 'success');
+  setTimeout(() => { target.innerHTML = '<i class="fas fa-exchange-alt"></i>'; target.className = 'btn btn-sm btn-secondary'; }, 2000);
 }
 
 // ── Scenarios ─────────────────────────────────────────────────────────
@@ -395,7 +399,11 @@ function runScenario(btn, id) {
   const target = btn && btn.tagName ? btn : (typeof event !== 'undefined' ? event.target.closest('button') : null);
   if (!target) return;
   target.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Running...';
-  setTimeout(() => { target.innerHTML = '<i class="fas fa-check"></i> Done'; target.className = 'btn btn-sm btn-success'; }, 2500);
+  setTimeout(() => {
+    target.innerHTML = '<i class="fas fa-check"></i> Done';
+    target.className = 'btn btn-sm btn-success';
+    prodToast('Production scenario ' + id + ' executed. Mock output and ATP views refreshed.', 'success');
+  }, 2500);
 }
 
 window.commitATP = function(btn, sku) {

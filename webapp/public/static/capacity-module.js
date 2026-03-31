@@ -4,13 +4,38 @@
 // ======================================================
 'use strict';
 
-document.addEventListener('DOMContentLoaded', async () => {
+function getCapEl() {
+  for (let i = 0; i < arguments.length; i++) {
+    const el = document.getElementById(arguments[i]);
+    if (el) return el;
+  }
+  return null;
+}
+
+function getMetricValue(row, keys, fallback) {
+  for (const key of keys) {
+    const value = row && row[key];
+    if (value !== undefined && value !== null && value !== '') return Number(value);
+  }
+  return fallback;
+}
+
+function runWhenReady(fn) {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', fn);
+  } else {
+    fn();
+  }
+}
+runWhenReady(async () => {
   if (document.getElementById('cap-kpi-grid')) await loadCapKPIs();
   if (document.getElementById('cap-util-chart')) await loadCapUtilChart();
   if (document.getElementById('cap-oee-chart')) await loadCapOEEChart();
   if (document.getElementById('cap-bottleneck-chart')) await loadCapBottleneckChart();
   if (document.getElementById('cap-waterfall')) loadCapWaterfall();
-  if (document.getElementById('cap-plant-table')) await loadPlantTable();
+  if (document.getElementById('cap-plant-table') || document.getElementById('plants-table-body')) await loadPlantTable();
+  if (document.getElementById('bottlenecks-list')) await loadBottleneckList();
+  if (document.getElementById('recs-list')) await loadRecommendations();
   if (document.getElementById('cap-line-util-chart')) await loadLineUtilChart();
   if (document.getElementById('cap-trend-chart')) await loadCapTrendChart();
   if (document.getElementById('cap-heatmap')) await loadCapHeatmap();
@@ -106,10 +131,10 @@ async function loadCapOEEChart() {
       data = fallbackLines.map(l=>({line_name:l,oee_pct:68+Math.random()*18,availability_pct:82+Math.random()*12,performance_pct:85+Math.random()*10,quality_pct:96+Math.random()*3}));
     }
     const lines = [...new Set(data.map(o => o.line_name))].slice(0, 10);
-    const avgOEE = lines.map(l => { const ld = data.filter(o=>o.line_name===l); return ld.length ? +(ld.reduce((a,b)=>a+(b.oee_pct||0),0)/ld.length).toFixed(1) : 0; });
-    const avgAvail = lines.map(l => { const ld = data.filter(o=>o.line_name===l); return ld.length ? +(ld.reduce((a,b)=>a+(b.availability_pct||0),0)/ld.length).toFixed(1) : 0; });
-    const avgPerf = lines.map(l => { const ld = data.filter(o=>o.line_name===l); return ld.length ? +(ld.reduce((a,b)=>a+(b.performance_pct||0),0)/ld.length).toFixed(1) : 0; });
-    const avgQual = lines.map(l => { const ld = data.filter(o=>o.line_name===l); return ld.length ? +(ld.reduce((a,b)=>a+(b.quality_pct||0),0)/ld.length).toFixed(1) : 0; });
+    const avgOEE = lines.map(l => { const ld = data.filter(o=>o.line_name===l); return ld.length ? +(ld.reduce((a,b)=>a+getMetricValue(b, ['oee_pct'], 0),0)/ld.length).toFixed(1) : 0; });
+    const avgAvail = lines.map(l => { const ld = data.filter(o=>o.line_name===l); return ld.length ? +(ld.reduce((a,b)=>a+getMetricValue(b, ['availability_pct','availability'], 0),0)/ld.length).toFixed(1) : 0; });
+    const avgPerf = lines.map(l => { const ld = data.filter(o=>o.line_name===l); return ld.length ? +(ld.reduce((a,b)=>a+getMetricValue(b, ['performance_pct','performance'], 0),0)/ld.length).toFixed(1) : 0; });
+    const avgQual = lines.map(l => { const ld = data.filter(o=>o.line_name===l); return ld.length ? +(ld.reduce((a,b)=>a+getMetricValue(b, ['quality_pct','quality'], 0),0)/ld.length).toFixed(1) : 0; });
     new Chart(ctx, {
       type: 'bar',
       data: {
@@ -200,13 +225,13 @@ function loadCapWaterfall() {
 
 // ── Plant Table ────────────────────────────────────────────────────────────────
 async function loadPlantTable() {
-  const tbody = document.getElementById('cap-plant-table');
+  const tbody = getCapEl('cap-plant-table', 'plants-table-body');
   if (!tbody) return;
   try {
     const res = await axios.get('/api/capacity/plants');
     const plants = res.data;
     tbody.innerHTML = plants.map(p => {
-      const util = p.utilization_pct || (60 + Math.random()*30);
+      const util = getMetricValue(p, ['utilization_pct', 'avg_util', 'utilization'], 60 + Math.random()*30);
       const st = util >= 90 ? 'critical' : util >= 75 ? 'warning' : 'healthy';
       return `<tr>
         <td><strong>${p.plant_name}</strong><br><small style="color:var(--color-text-muted)">${p.location||''}</small></td>
@@ -234,7 +259,10 @@ async function loadLineUtilChart() {
     const lines = [...new Set(data.map(d => d.line_name))].slice(0, 12);
     const utils = lines.map(l => {
       const ld = data.filter(d => d.line_name === l);
-      return ld.length ? +(ld.reduce((a,b)=>a+(b.availability_pct||80),0)/ld.length * (b=>b)(ld.reduce((a,b)=>a+(b.performance_pct||85),0)/ld.length) / 100).toFixed(1) : 70 + Math.random()*20;
+      if (!ld.length) return 70 + Math.random()*20;
+      const avail = ld.reduce((a,b)=>a+getMetricValue(b, ['availability_pct','availability'], 80),0)/ld.length;
+      const perf = ld.reduce((a,b)=>a+getMetricValue(b, ['performance_pct','performance'], 85),0)/ld.length;
+      return +((avail * perf) / 100).toFixed(1);
     });
     new Chart(ctx, {
       type: 'bar',
@@ -318,7 +346,8 @@ async function loadCapHeatmap() {
       html += `<td style="padding:6px 10px;font-weight:600;color:#1E293B;white-space:nowrap">${line}</td>`;
       days.forEach((_,di) => {
         const base = data.filter(d=>d.line_name===line).slice(-1)[0];
-        const val = base ? Math.max(40, Math.min(100, (base.availability_pct||80) - 5 + di*3 + (Math.random()*10-5))) : 60+Math.random()*30;
+        const util = base ? getMetricValue(base, ['availability_pct','availability'], 80) : 80;
+        const val = base ? Math.max(40, Math.min(100, util - 5 + di*3 + (Math.random()*10-5))) : 60+Math.random()*30;
         const color = val>=90?'#DC2626':val>=80?'#D97706':val>=70?'#2563EB':'#059669';
         const bg = val>=90?'#FEF2F2':val>=80?'#FFFBEB':val>=70?'#EFF6FF':'#ECFDF5';
         html += `<td style="padding:4px 6px;text-align:center"><div style="background:${bg};color:${color};border-radius:4px;padding:3px 0;font-weight:700;font-size:11px">${val.toFixed(0)}%</div></td>`;
@@ -350,4 +379,63 @@ async function loadCapRadarChart() {
       scales: { r: { min:50, max:100, ticks:{ stepSize:10, font:{size:9} }, pointLabels:{ font:{size:10} } } }
     }
   });
+}
+
+async function loadBottleneckList() {
+  const el = getCapEl('bottlenecks-list', 'bn-list');
+  if (!el) return;
+  try {
+    const res = await axios.get('/api/capacity/bottlenecks');
+    const bns = Array.isArray(res.data) ? res.data : [];
+    const list = bns.length ? bns : [{
+      line_name: 'All Lines',
+      plant_name: 'Network',
+      bottleneck_type: 'capacity',
+      severity: 'healthy',
+      description: 'No active bottlenecks detected.',
+      recommended_action: 'Continue monitoring.'
+    }];
+    el.innerHTML = list.map(b => {
+      const sc = b.severity === 'critical' ? 'critical' : b.severity === 'high' ? 'warning' : 'healthy';
+      return `<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid #F1F5F9">
+        <div style="width:10px;height:10px;border-radius:50%;background:${sc==='critical'?'#DC2626':sc==='warning'?'#D97706':'#059669'};margin-top:5px;flex-shrink:0"></div>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
+            <strong style="font-size:13px;color:#1E293B">${b.line_name||'Line'}</strong>
+            <span class="badge badge-${sc}" style="font-size:10px">${(b.severity||'healthy').toUpperCase()}</span>
+          </div>
+          <div style="font-size:12px;color:#64748B">${b.plant_name||''} · ${b.bottleneck_type||'capacity'}</div>
+          <div style="font-size:12px;margin-top:4px">${b.description||b.recommended_action||'Monitor closely.'}</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch (e) {
+    el.innerHTML = '<div style="color:#64748B;padding:12px 0">Unable to load bottleneck list</div>';
+  }
+}
+
+async function loadRecommendations() {
+  const el = getCapEl('recs-list', 'cap-recommendations');
+  if (!el) return;
+  try {
+    const res = await axios.get('/api/recommendations?module=capacity');
+    const recs = Array.isArray(res.data) ? res.data : [];
+    const rows = recs.length ? recs : [
+      { title: 'Shift 8K cases from MUM-L2 to MUM-L1', description: 'Balance overload on Mumbai L2.', impact: 'critical' },
+      { title: 'Review weekend overtime in Delhi', description: 'Smooth demand peak with planned overtime.', impact: 'high' }
+    ];
+    el.innerHTML = rows.map(r => {
+      const severity = r.impact === 'critical' ? 'critical' : r.impact === 'high' ? 'warning' : 'healthy';
+      return `<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid #F1F5F9">
+        <div style="width:28px;height:28px;border-radius:50%;background:${severity==='critical'?'#DC2626':severity==='warning'?'#D97706':'#059669'};color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0"><i class="fas fa-lightbulb"></i></div>
+        <div style="flex:1">
+          <div style="font-weight:700;color:#1E293B;font-size:13px">${r.title || r.description || 'Recommendation'}</div>
+          <div style="font-size:12px;color:#64748B;margin-top:3px">${r.description || r.impact || ''}</div>
+        </div>
+        <span class="badge badge-${severity}" style="font-size:10px">${(r.impact || severity).toUpperCase()}</span>
+      </div>`;
+    }).join('');
+  } catch (e) {
+    el.innerHTML = '<div style="color:#64748B;padding:12px 0">Unable to load recommendations</div>';
+  }
 }
