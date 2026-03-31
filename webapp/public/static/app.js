@@ -3,6 +3,19 @@
 
 (function() {
   'use strict';
+const DEMO_SEED = 20260331;
+function createSeededRandom(seed) {
+  let state = seed >>> 0;
+  return function() {
+    state = (1664525 * state + 1013904223) >>> 0;
+    return state / 4294967296;
+  };
+}
+if (!window.__SYDIAI_DEMO_RANDOMIZED__) {
+  window.__SYDIAI_DEMO_RANDOMIZED__ = true;
+  Math.random = createSeededRandom(DEMO_SEED);
+}
+
 
   // ── MOCK DATA FALLBACK + AXIOS INTERCEPTOR ───────────────────────────────
   function isEmptyData(data) {

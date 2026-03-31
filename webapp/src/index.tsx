@@ -1,4 +1,4 @@
-﻿import { Hono } from 'hono'
+import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
 import {
@@ -11,12 +11,33 @@ const app = new Hono<{ Bindings: Bindings }>()
 
 app.use('/api/*', cors())
 
+const DEMO_PASSWORD = 'demo-access'
+const DEMO_SEED = 20260331
+
+function demoHash(input: string): number {
+  let hash = DEMO_SEED
+  for (let i = 0; i < input.length; i++) {
+    hash ^= input.charCodeAt(i)
+    hash = Math.imul(hash, 16777619)
+  }
+  return hash >>> 0
+}
+
+function demoFloat(key: string, min: number, max: number): number {
+  const ratio = demoHash(key) / 0xffffffff
+  return min + (max - min) * ratio
+}
+
+function demoInt(key: string, min: number, max: number): number {
+  return Math.floor(demoFloat(key, min, max + 1))
+}
+
 // ============================================================
 // AUTH
 // ============================================================
 const USERS: Record<string, { name: string; initials: string; role: string; password: string }> = {
-  'sankar': { name: 'Sankar Mamidela', initials: 'SM', role: 'Supply Chain Director', password: 'password' },
-  'vikrant': { name: 'Vikrant Hole', initials: 'VH', role: 'SC Technology Consultant', password: 'password' },
+  'sankar': { name: 'Sankar Mamidela', initials: 'SM', role: 'Supply Chain Director', password: DEMO_PASSWORD },
+  'vikrant': { name: 'Vikrant Hole', initials: 'VH', role: 'SC Technology Consultant', password: DEMO_PASSWORD },
 }
 
 function getUser(c: any) {
@@ -36,7 +57,7 @@ app.get('/login', (c) => {
   const err = c.req.query('error')
   return c.html(`<!DOCTYPE html><html lang="en"><head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Login ? SYDIAI Supply Chain Suite</title>
+<title>Demo Login - SYDIAI Supply Chain Suite</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
@@ -72,7 +93,7 @@ body::after{content:'';position:absolute;width:400px;height:400px;border-radius:
     <div class="logo-box">SI</div>
     <div class="login-title">SYDIAI<span>Supply Chain Intelligence Suite</span></div>
   </div>
-  <p class="login-subtitle">Sign in to access your supply chain planning workspace. All modules, real-time data and AI insights in one place.</p>
+  <p class="login-subtitle">Use the demo access below to walk customers through the planning workspace. All modules, data and AI insights are ready for presentation.</p>
   ${err ? `<div class="error-box"><i class="fas fa-exclamation-circle"></i> Invalid username or password. Please try again.</div>` : ''}
   <form method="POST" action="/login">
     <div class="field"><label>Username</label><div class="field-wrap"><i class="fas fa-user"></i><input type="text" name="username" placeholder="Enter your username" autocomplete="username" required/></div></div>
@@ -80,7 +101,7 @@ body::after{content:'';position:absolute;width:400px;height:400px;border-radius:
     <button type="submit" class="login-btn"><i class="fas fa-sign-in-alt" style="margin-right:8px"></i>Sign In to Dashboard</button>
   </form>
   <div class="users-hint">
-    <p>Quick Access</p>
+    <p>Demo Accounts</p>
     <div style="display:flex;flex-wrap:wrap;justify-content:center">
       <div class="user-chip" onclick="fillLogin('sankar')"><div class="avatar" style="background:linear-gradient(135deg,#1E3A8A,#3B82F6)">SM</div><span>Sankar Mamidela</span></div>
       <div class="user-chip" onclick="fillLogin('vikrant')"><div class="avatar" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)">VH</div><span>Vikrant Hole</span></div>
@@ -88,7 +109,7 @@ body::after{content:'';position:absolute;width:400px;height:400px;border-radius:
   </div>
 </div>
 <script>
-function fillLogin(u){document.querySelector('input[name=username]').value=u;document.querySelector('input[name=password]').value='password';document.querySelector('input[name=username]').focus()}
+function fillLogin(u){document.querySelector('input[name=username]').value=u;document.querySelector('input[name=password]').value='demo-access';document.querySelector('input[name=username]').focus()}
 </script>
 </body></html>`)
 })
@@ -266,7 +287,7 @@ const Layout = ({ title, activeModule = 'home', scripts = '', user = null as any
       <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>{title} ? SYDIAI Supply Chain Suite</title>
+        <title>{title} - SYDIAI Supply Chain Suite</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
         <script src="/static/vendor/chart.umd.min.js"></script>
@@ -1615,8 +1636,8 @@ app.post('/api/production/optimize', async (c) => {
     const schedule = lines.flatMap(line =>
       weeks.map((w,i) => ({
         line, week: w,
-        load_pct: Math.round(60 + Math.random()*28),
-        planned_qty: Math.round((6000 + Math.random()*8000)/100)*100,
+        load_pct: Math.round(60 + demoFloat('capacity-load-' + i, 0, 28)),
+        planned_qty: Math.round((6000 + demoFloat('capacity-plan-' + i, 0, 8000))/100)*100,
         sku: ['SKU-500-PET','SKU-1L-PET','SKU-200-MANGO','SKU-250-CAN'][i%4]
       }))
     )
@@ -2553,7 +2574,7 @@ async function init() {
     const [kpiRes, utilRes] = await Promise.allSettled([axios.get('/api/capacity/kpis'), axios.get('/api/capacity/utilization')]);
     const kpis = kpiRes.status==='fulfilled' ? kpiRes.value.data : [];
     let util = utilRes.status==='fulfilled' ? utilRes.value.data : [];
-    if (!util.length) { const base=[82,84,86,88,87,89,91,90,88,86,85,84,87,89]; util=base.map((v,i)=>{const d=new Date('2026-03-03');d.setDate(d.getDate()+i);return{date:d.toISOString().split('T')[0],avg_util:v+Math.random()*3-1,total_ot:v>85?2:0.5};});}
+    if (!util.length) { const base=[82,84,86,88,87,89,91,90,88,86,85,84,87,89]; util=base.map((v,i)=>{const d=new Date('2026-03-03');d.setDate(d.getDate()+i);return{date:d.toISOString().split('T')[0],avg_util:v+demoFloat('util-' + i, -1, 2),total_ot:v>85?2:0.5};});}
     const grid = document.getElementById('kpi-grid');
     if (grid && kpis.length) grid.innerHTML = kpis.slice(0,8).map(k => {
       const sc = k.metric_status || 'warning';
@@ -3708,7 +3729,7 @@ function renderExpl(expl) {
   '</tr>').join('') || '<tr><td colspan="10" style="text-align:center;color:#64748B">No explosion data available. Run MRP or review source data.</td></tr>';
 }
 function raisePOExpl(material, qty) {
-  const poNum = 'PO-EXP-' + String(Math.floor(Math.random() * 9000) + 1000);
+  const poNum = 'PO-EXP-' + String(demoInt('po-exp', 1000, 9999));
   if (window.showToast) window.showToast('PO ' + poNum + ' raised for ' + material + ': ' + Number(qty).toLocaleString() + ' units. Draft - pending approval.', 'success');
 }
 function recalcExplode(btn) {
@@ -3801,7 +3822,7 @@ function addBOMComponent() {
   const tbody = document.getElementById('bom-table');
   if (sku && material && tbody) {
     const tr = document.createElement('tr');
-    tr.innerHTML = '<td><strong>' + sku + '</strong></td><td>MAT-NEW-' + Math.floor(Math.random() * 900 + 100) + '</td><td>' + material + '</td><td>' + qty + ' kg</td><td>' + waste + '%</td><td>v1</td><td><span class="badge badge-success">OK</span></td><td><button class="btn btn-sm btn-secondary" onclick="window.showToast(\'BOM row moved to draft edit mode\',\'info\')">Edit</button></td>';
+    tr.innerHTML = '<td><strong>' + sku + '</strong></td><td>MAT-NEW-' + demoInt('bom-new-' + sku, 100, 999) + '</td><td>' + material + '</td><td>' + qty + ' kg</td><td>' + waste + '%</td><td>v1</td><td><span class="badge badge-success">OK</span></td><td><button class="btn btn-sm btn-secondary" onclick="window.showToast(\'BOM row moved to draft edit mode\',\'info\')">Edit</button></td>';
     tbody.insertBefore(tr, tbody.firstChild);
     if (window.showToast) window.showToast('BOM component added: ' + material + ' for ' + sku + '. Saved to draft ? approve to activate.', 'success');
   }
@@ -6345,7 +6366,7 @@ function addNewJob() {
   const qty = prompt('Enter quantity (cases):');
   if (!qty) return;
   const line = prompt('Assign to line (e.g., MUM-L1, MUM-L2, DEL-L1):') || 'MUM-L1';
-  const jobNum = 'JOB-' + line.replace('-','') + '-' + new Date().toISOString().slice(5,10).replace('-','') + '-' + String(Math.floor(Math.random()*900)+100);
+  const jobNum = 'JOB-' + line.replace('-','') + '-' + new Date().toISOString().slice(5,10).replace('-','') + '-' + String(demoInt('job-' + line, 100, 999));
   window.showToast('Job ' + jobNum + ' created: ' + sku + ' x ' + Number(qty).toLocaleString() + ' cases to ' + line + '. Status: Scheduled.', 'success');
 }
 function filterSKUTable(query) {
@@ -7115,7 +7136,7 @@ function createShipment() {
   const dest = prompt('Destination DC (e.g., Pune, Jaipur, Coimbatore):');
   if (!dest) return;
   const qty = prompt('Quantity (cases):') || '1000';
-  const id = 'SHP-' + new Date().toISOString().slice(5,10).replace('-','') + '-' + String(Math.floor(Math.random()*900)+100);
+  const id = 'SHP-' + new Date().toISOString().slice(5,10).replace('-','') + '-' + String(demoInt('shipment-' + origin + '-' + dest, 100, 999));
   window.showToast('Shipment ' + id + ' created: ' + origin + ' to ' + dest + ', ' + Number(qty).toLocaleString() + ' cases. Carrier assignment in progress.', 'success');
 }
 document.addEventListener('DOMContentLoaded', initWorkbench);
@@ -7881,7 +7902,7 @@ app.post('/api/scenario-lab/run', async (c) => {
     scenario_id: `SCN-${Date.now()}`,
     name: body.name || `Scenario ${new Date().toLocaleTimeString()}`,
     type,
-    run_time_ms: Math.round(800 + Math.random()*400),
+    run_time_ms: Math.round(800 + demoFloat('scenario-run-ms-' + name + '-' + type, 0, 400)),
     solver: 'Heuristic-MIP',
     baseline: { otd:baseOTD, fill:baseFill, cost:baseCost, util:baseUtil, output:150200 },
     optimized: {
@@ -7896,10 +7917,10 @@ app.post('/api/scenario-lab/run', async (c) => {
       `Adjust safety stock buffers by +${Math.round(magnitude*0.8)}% at high-risk DCs`,
       `Pre-position ${Math.round(magnitude*800)} cases at WH-DEL and WH-MUM before surge`,
     ],
-    week_schedule: ['W1','W2','W3','W4','W5','W6','W7','W8'].map(w => ({
+    week_schedule: ['W1','W2','W3','W4','W5','W6','W7','W8'].map((w, i) => ({
       week: w,
-      output: Math.round(18000 + Math.random()*4000 + deltaFactor*18000*0.5),
-      util: Math.round(75 + Math.random()*15 + deltaFactor*10),
+      output: Math.round(18000 + demoFloat('scenario-output-' + name + '-' + i, 0, 4000) + deltaFactor*18000*0.5),
+      util: Math.round(75 + demoFloat('scenario-util-' + name + '-' + i, 0, 15) + deltaFactor*10),
     }))
   }
   return c.json(result)
@@ -7922,7 +7943,7 @@ app.get('/api/demand/intelligence', async (c) => {
       p50: Math.round(350000 + i*8000 + Math.sin(i*0.5)*12000),
       p10: Math.round(310000 + i*8000 + Math.sin(i*0.5)*12000),
       p90: Math.round(395000 + i*8000 + Math.sin(i*0.5)*12000),
-      actual: i < 4 ? Math.round(340000 + i*8000 + (Math.random()-0.5)*15000) : null,
+      actual: i < 4 ? Math.round(340000 + i*8000 + demoFloat('scenario-actual-' + w + '-' + i, -7500, 7500)) : null,
     })),
     drivers: [
       { driver:'Temperature',    impact_pct:+18.4, confidence:92, signal:'strong' },
@@ -7940,7 +7961,7 @@ app.post('/api/optimization/network', async (c) => {
   return c.json({
     status: 'optimal',
     solver: 'Network-Flow LP + MIP',
-    run_time_ms: Math.round(1200 + Math.random()*600),
+    run_time_ms: Math.round(1200 + demoFloat('scenario-summary-ms-' + name + '-' + type, 0, 600)),
     objective_value: 284200000,
     improvements: {
       cost_reduction_pct: -7.8,
@@ -9237,14 +9258,14 @@ function editPackSize(sku) {
 }
 if (document.readyState === 'loading') { if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); } } else { init(); }
   `.trim()
-  const _u = getUser(c); return c.html(<Layout user={_u} title="Pack-Size Master" activeModule="audit" scripts={scripts}>
+  const _u = getUser(c); return c.html(<Layout user={_u} title="Inventory Master" activeModule="inv-master" scripts={scripts}>
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-icon" style="background:linear-gradient(135deg,#475569,#64748B)"><i class="fas fa-ruler"></i></div>
-        <div><div class="page-title">Pack-Size Master</div><div class="page-subtitle">Cases per pallet ? Truck capacity ? Weight & volume per case ? SKU master dimensions</div></div>
+        <div><div class="page-title">Inventory Master</div><div class="page-subtitle">Cases per pallet, truck capacity, weight and volume per case, and SKU master dimensions</div></div>
       </div>
       <div class="page-header-right">
-        <a href="/inventory/master" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Inventory Master</a>
+        <a href="/inventory/operations" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Inventory</a>
       </div>
     </div>
     <div class="card">
@@ -9267,11 +9288,321 @@ if (document.readyState === 'loading') { if (document.readyState === 'loading') 
 // ============================================================
 
 // ------ 1. INVENTORY - Optimization Workbench ------
-app.get('/inventory', (c) => c.redirect('/inventory/optimization-workbench'))
-app.get('/inventory/operations', (c) => c.redirect('/inventory'))
-app.get('/inventory/analytics', (c) => c.redirect('/inventory'))
-app.get('/inventory/scenarios', (c) => c.redirect('/inventory/optimization-workbench'))
-app.get('/inventory/optimization', (c) => c.redirect('/inventory/optimization-workbench'))
+app.get('/inventory', (c) => c.redirect('/inventory/operations'))
+app.get('/inventory/operations', (c) => {
+  const _u = getUser(c)
+  const stockRows = [...inventoryData].map(item => {
+    const coverage = item.safetyStock ? Math.round((item.onHand / item.safetyStock) * 100) : 0
+    const status = item.onHand <= item.safetyStock ? 'critical' : coverage <= 125 ? 'warning' : 'healthy'
+    return (
+      <tr>
+        <td><strong>{item.sku}</strong><br/><span style="font-size:11px;color:#64748B">{item.name}</span></td>
+        <td>{item.type}</td>
+        <td>{item.onHand.toLocaleString()}</td>
+        <td>{item.inTransit.toLocaleString()}</td>
+        <td>{item.safetyStock.toLocaleString()}</td>
+        <td>{item.location}</td>
+        <td style={"font-weight:600;color:" + (coverage <= 100 ? '#DC2626' : coverage <= 125 ? '#D97706' : '#059669')}>{coverage}%</td>
+        <td><span class={"badge badge-" + status}>{status}</span></td>
+      </tr>
+    )
+  })
+
+  const atRisk = inventoryData.filter(item => item.onHand <= item.safetyStock).length
+  const healthy = inventoryData.length - atRisk
+  const totalOnHand = inventoryData.reduce((sum, item) => sum + item.onHand, 0)
+  const totalSafety = inventoryData.reduce((sum, item) => sum + item.safetyStock, 0)
+  const averageCoverage = totalSafety ? Math.round((totalOnHand / totalSafety) * 100) : 0
+  const locations = Array.from(new Set(inventoryData.map(item => item.location))).length
+
+  return c.html(<Layout user={_u} title="Inventory Operations" activeModule="inv-operations">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#059669,#10B981)"><i class="fas fa-tachometer-alt"></i></div>
+        <div>
+          <div class="page-title">Inventory Operations</div>
+          <div class="page-subtitle">Live stock positions, safety stock, in-transit inventory and coverage by SKU</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <a href="/inventory/analytics" class="btn btn-primary"><i class="fas fa-chart-bar"></i> Analytics</a>
+        <a href="/inventory/optimization-workbench" class="btn btn-secondary"><i class="fas fa-sliders-h"></i> Optimization Workbench</a>
+      </div>
+    </div>
+
+    <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+      {[
+        ['Total SKUs', inventoryData.length, 'info', 'fa-boxes'],
+        ['At Risk SKUs', atRisk, 'critical', 'fa-exclamation-triangle'],
+        ['Healthy SKUs', healthy, 'healthy', 'fa-check-circle'],
+        ['Avg Coverage', averageCoverage + '%', 'warning', 'fa-layer-group'],
+      ].map(([label, value, cls, icon]) => (
+        <div class={"kpi-card " + cls}>
+          <div class="kpi-label"><i class={"fas " + icon} style="margin-right:5px"></i>{label}</div>
+          <div class={"kpi-value " + cls}>{value}</div>
+        </div>
+      ))}
+    </div>
+
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-header">
+        <span class="card-title"><i class="fas fa-table"></i> Stock Positions</span>
+        <span style="font-size:12px;color:#64748B">{locations} locations tracked</span>
+      </div>
+      <div class="card-body compact">
+        <table class="data-table">
+          <thead><tr><th>SKU</th><th>Type</th><th>On Hand</th><th>In Transit</th><th>Safety Stock</th><th>Location</th><th>Coverage</th><th>Status</th></tr></thead>
+          <tbody>{stockRows}</tbody>
+        </table>
+      </div>
+    </div>
+  </Layout>)
+})
+
+app.get('/inventory/analytics', (c) => {
+  const _u = getUser(c)
+  const totalOnHand = inventoryData.reduce((sum, item) => sum + item.onHand, 0)
+  const totalTransit = inventoryData.reduce((sum, item) => sum + item.inTransit, 0)
+  const totalSafety = inventoryData.reduce((sum, item) => sum + item.safetyStock, 0)
+  const atRisk = inventoryData.filter(item => item.onHand <= item.safetyStock).length
+  const byLocation = Array.from(new Set(inventoryData.map(item => item.location))).map(location => {
+    const items = inventoryData.filter(item => item.location === location)
+    const stock = items.reduce((sum, item) => sum + item.onHand, 0)
+    const risk = items.filter(item => item.onHand <= item.safetyStock).length
+    return { location, items: items.length, stock, risk }
+  })
+  const topRisks = [...inventoryData]
+    .sort((a, b) => (a.onHand / a.safetyStock) - (b.onHand / b.safetyStock))
+    .slice(0, 6)
+
+  return c.html(<Layout user={_u} title="Inventory Analytics" activeModule="inv-analytics">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#0891B2,#22D3EE)"><i class="fas fa-chart-bar"></i></div>
+        <div>
+          <div class="page-title">Inventory Analytics</div>
+          <div class="page-subtitle">Coverage, excess, risk, and location-level stock concentration</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <a href="/inventory/operations" class="btn btn-primary"><i class="fas fa-tachometer-alt"></i> Operations</a>
+        <a href="/inventory/master" class="btn btn-secondary"><i class="fas fa-database"></i> Master Data</a>
+      </div>
+    </div>
+
+    <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+      {[
+        ['On Hand', totalOnHand.toLocaleString(), 'healthy', 'fa-warehouse'],
+        ['In Transit', totalTransit.toLocaleString(), 'info', 'fa-truck'],
+        ['Safety Stock', totalSafety.toLocaleString(), 'warning', 'fa-shield-alt'],
+        ['At Risk SKUs', atRisk, 'critical', 'fa-exclamation-triangle'],
+      ].map(([label, value, cls, icon]) => (
+        <div class={"kpi-card " + cls}>
+          <div class="kpi-label"><i class={"fas " + icon} style="margin-right:5px"></i>{label}</div>
+          <div class={"kpi-value " + cls}>{value}</div>
+        </div>
+      ))}
+    </div>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-map-marker-alt"></i> Stock by Location</span></div>
+        <div class="card-body compact">
+          <table class="data-table">
+            <thead><tr><th>Location</th><th>SKUs</th><th>Total Stock</th><th>Risk SKUs</th></tr></thead>
+            <tbody>
+              {byLocation.map(row => (
+                <tr>
+                  <td><strong>{row.location}</strong></td>
+                  <td>{row.items}</td>
+                  <td>{row.stock.toLocaleString()}</td>
+                  <td><span class={"badge badge-" + (row.risk > 0 ? 'warning' : 'healthy')}>{row.risk}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-bolt"></i> Highest Priority SKUs</span></div>
+        <div class="card-body compact">
+          <table class="data-table">
+            <thead><tr><th>SKU</th><th>Location</th><th>Coverage</th><th>Status</th></tr></thead>
+            <tbody>
+              {topRisks.map(item => {
+                const coverage = item.safetyStock ? Math.round((item.onHand / item.safetyStock) * 100) : 0
+                const status = item.onHand <= item.safetyStock ? 'critical' : coverage <= 125 ? 'warning' : 'healthy'
+                return (
+                  <tr>
+                    <td><strong>{item.sku}</strong><br/><span style="font-size:11px;color:#64748B">{item.name}</span></td>
+                    <td>{item.location}</td>
+                    <td style={"font-weight:600;color:" + (coverage <= 100 ? '#DC2626' : coverage <= 125 ? '#D97706' : '#059669')}>{coverage}%</td>
+                    <td><span class={"badge badge-" + status}>{status}</span></td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </Layout>)
+})
+
+app.get('/inventory/optimization', (c) => {
+  const _u = getUser(c)
+  const lowStock = [...inventoryData]
+    .filter(item => item.onHand <= item.safetyStock * 1.25)
+    .sort((a, b) => (a.onHand / a.safetyStock) - (b.onHand / b.safetyStock))
+
+  return c.html(<Layout user={_u} title="Inventory Replenishment" activeModule="inv-optimization">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#059669,#10B981)"><i class="fas fa-sync-alt"></i></div>
+        <div>
+          <div class="page-title">Inventory Replenishment</div>
+          <div class="page-subtitle">Review reorder candidates, coverage gaps and replenishment priorities</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <a href="/inventory/optimization-workbench" class="btn btn-primary"><i class="fas fa-sliders-h"></i> Open Workbench</a>
+        <a href="/inventory/scenarios" class="btn btn-secondary"><i class="fas fa-layer-group"></i> Scenarios</a>
+      </div>
+    </div>
+
+    <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+      {[
+        ['Reorder Candidates', lowStock.length, 'critical', 'fa-exclamation-triangle'],
+        ['Healthy SKUs', inventoryData.length - lowStock.length, 'healthy', 'fa-check-circle'],
+        ['Total On Hand', inventoryData.reduce((sum, item) => sum + item.onHand, 0).toLocaleString(), 'info', 'fa-warehouse'],
+        ['Avg Coverage', Math.round(inventoryData.reduce((sum, item) => sum + item.onHand, 0) / inventoryData.reduce((sum, item) => sum + item.safetyStock, 0) * 100) + '%', 'warning', 'fa-layer-group'],
+      ].map(([label, value, cls, icon]) => (
+        <div class={"kpi-card " + cls}>
+          <div class="kpi-label"><i class={"fas " + icon} style="margin-right:5px"></i>{label}</div>
+          <div class={"kpi-value " + cls}>{value}</div>
+        </div>
+      ))}
+    </div>
+
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-header"><span class="card-title"><i class="fas fa-shopping-cart"></i> Replenishment Queue</span></div>
+      <div class="card-body compact">
+        <table class="data-table">
+          <thead><tr><th>SKU</th><th>Plant</th><th>On Hand</th><th>Safety Stock</th><th>Coverage</th><th>Action</th></tr></thead>
+          <tbody>
+            {lowStock.map(item => {
+              const coverage = item.safetyStock ? Math.round((item.onHand / item.safetyStock) * 100) : 0
+              const orderQty = Math.max(item.safetyStock * 2 - item.onHand, 0)
+              return (
+                <tr>
+                  <td><strong>{item.sku}</strong><br/><span style="font-size:11px;color:#64748B">{item.name}</span></td>
+                  <td>{item.location}</td>
+                  <td>{item.onHand.toLocaleString()}</td>
+                  <td>{item.safetyStock.toLocaleString()}</td>
+                  <td style={"font-weight:600;color:" + (coverage <= 100 ? '#DC2626' : coverage <= 125 ? '#D97706' : '#059669')}>{coverage}%</td>
+                  <td><button class="btn btn-sm btn-primary" onclick={"window.showToast('Draft replenishment created for " + item.sku + ": " + orderQty.toLocaleString() + " cases.','success')"}>Create Draft PO</button></td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-bolt"></i> Priority Rules</span></div>
+        <div class="card-body">
+          <ul style="margin-left:18px;line-height:1.8;color:#475569">
+            <li>Prioritize SKUs below safety stock first.</li>
+            <li>Flag FEFO-sensitive SKUs before release.</li>
+            <li>Use expedited replenishment for critical coverage gaps.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-route"></i> Next Actions</span></div>
+        <div class="card-body">
+          <div class="alert alert-info"><i class="fas fa-info-circle"></i><div>Open the Workbench to adjust objectives and constraints, or move to Scenarios for what-if comparison.</div></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <a class="btn btn-primary" href="/inventory/optimization-workbench">Optimization Workbench</a>
+            <a class="btn btn-secondary" href="/inventory/scenarios">Scenarios</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Layout>)
+})
+
+app.get('/inventory/scenarios', (c) => {
+  const _u = getUser(c)
+  const scenarioRows = [
+    { name: 'Base Policy', driver: 'Current safety stock', fill: '96.8%', turns: '18.2x', stock: '0%', risk: 'Low' },
+    { name: 'Demand Surge', driver: '+15% demand', fill: '92.4%', turns: '21.1x', stock: '+18%', risk: 'Medium' },
+    { name: 'Lead Time Delay', driver: '+5 days', fill: '90.7%', turns: '16.9x', stock: '+25%', risk: 'High' },
+    { name: 'Service Level Push', driver: '98% target', fill: '98.1%', turns: '15.4x', stock: '+12%', risk: 'Medium' },
+  ]
+  return c.html(<Layout user={_u} title="Inventory Scenarios" activeModule="inv-scenarios">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-icon" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)"><i class="fas fa-sitemap"></i></div>
+        <div>
+          <div class="page-title">Inventory Scenarios</div>
+          <div class="page-subtitle">Compare replenishment policies and risk trade-offs across planning assumptions</div>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <a href="/inventory/optimization" class="btn btn-primary"><i class="fas fa-sync-alt"></i> Replenishment</a>
+        <a href="/inventory/optimization-workbench" class="btn btn-secondary"><i class="fas fa-sliders-h"></i> Workbench</a>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-layer-group"></i> Scenario Summary</span></div>
+        <div class="card-body">
+          <div class="alert alert-success"><i class="fas fa-check-circle"></i><div>Use scenarios to compare service level, inventory turns and working capital impact before changing replenishment policy.</div></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="window.showToast('Scenario comparison refreshed','success')">Refresh Comparison</button>
+            <button class="btn btn-secondary" onclick="window.showToast('New inventory scenario created','info')">Create Scenario</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-pie"></i> Policy Guide</span></div>
+        <div class="card-body">
+          <ul style="margin-left:18px;line-height:1.8;color:#475569">
+            <li>Base policy is the current operating standard.</li>
+            <li>Surge policy protects service at the cost of extra stock.</li>
+            <li>Delay policy highlights supplier risk buffers.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-title"><i class="fas fa-table"></i> Scenario Comparison</span></div>
+      <div class="card-body compact">
+        <table class="data-table">
+          <thead><tr><th>Scenario</th><th>Driver</th><th>Fill Rate</th><th>Turns</th><th>Stock Change</th><th>Risk</th></tr></thead>
+          <tbody>
+            {scenarioRows.map(row => (
+              <tr>
+                <td><strong>{row.name}</strong></td>
+                <td>{row.driver}</td>
+                <td>{row.fill}</td>
+                <td>{row.turns}</td>
+                <td>{row.stock}</td>
+                <td><span class={"badge badge-" + (row.risk === 'High' ? 'critical' : row.risk === 'Medium' ? 'warning' : 'healthy')}>{row.risk}</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </Layout>)
+})
+
 app.get('/inventory/master', (c) => c.redirect('/pack-size-master'))
 app.get('/mrp/analytics', (c) => c.redirect('/mrp'))
 app.get('/mrp/shortage-alerts', (c) => c.redirect('/mrp/explosion'))
