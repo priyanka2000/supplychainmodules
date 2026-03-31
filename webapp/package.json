@@ -17,7 +17,10 @@
     "db:setup": "npm run db:migrate:local && npm run db:seed"
   },
   "dependencies": {
-    "hono": "^4.12.2"
+    "axios": "^1.14.0",
+    "chart.js": "^4.5.1",
+    "hono": "^4.12.2",
+    "jsdom": "^29.0.1"
   },
   "devDependencies": {
     "@hono/vite-build": "^1.2.0",

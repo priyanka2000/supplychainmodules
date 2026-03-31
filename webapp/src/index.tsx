@@ -269,8 +269,8 @@ const Layout = ({ title, activeModule = 'home', scripts = '', user = null as any
         <title>{title} — SYDIAI Supply Chain Suite</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/axios.min.js"></script>
+        <script src="/static/vendor/chart.umd.min.js"></script>
+        <script src="/static/vendor/axios.min.js"></script>
         <style>{`
 :root {
   --primary: #1E3A8A; --primary-light: #2563EB; --primary-dark: #1e2d5e;
@@ -2486,8 +2486,8 @@ app.get('/capacity', async (c) => {
         <div class="card-header">
           <span class="card-title"><i class="fas fa-chart-line"></i> Utilization Trend (14 Days)</span>
           <div style="display:flex;gap:6px">
-            <button class="btn btn-sm btn-secondary">4W View</button>
-            <button class="btn btn-sm btn-secondary">13W View</button>
+            <button class="btn btn-sm btn-secondary" onclick="window.showToast('Switched to 4W utilization view','info')">4W View</button>
+            <button class="btn btn-sm btn-secondary" onclick="window.showToast('Switched to 13W utilization view','info')">13W View</button>
           </div>
         </div>
         <div class="card-body" style="height:220px"><canvas id="cap-util-chart"></canvas></div>
@@ -3350,6 +3350,14 @@ async function sendMsg() {
   } catch { document.getElementById('typing-indicator').textContent = 'Error processing request.'; }
 }
 document.addEventListener('keydown', e => { if(e.target.id==='chat-input' && e.key==='Enter') sendMsg(); });
+function filterSKUTable(query) {
+  const q = String(query || '').trim().toLowerCase();
+  const rows = document.querySelectorAll('#sku-master-table tbody tr');
+  rows.forEach(row => {
+    row.style.display = !q || row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const kpis = [{name:'Queries Today',value:24,status:'info'},{name:'Suggestions Accepted',value:18,status:'healthy'},{name:'Time Saved',value:'2.4 hrs',status:'healthy'},{name:'Accuracy Rate',value:'94%',status:'healthy'}];
   document.getElementById('kpi-grid').innerHTML = kpis.map(k => \`<div class="kpi-card \${k.status}"><div class="kpi-label">\${k.name}</div><div class="kpi-value \${k.status}">\${k.value}</div></div>\`).join('');
@@ -3427,8 +3435,8 @@ async function init() {
     <td>
       <button class="btn btn-sm btn-secondary" onclick="moveJob(\${j.id},'up')"><i class="fas fa-arrow-up"></i></button>
       <button class="btn btn-sm btn-secondary" onclick="moveJob(\${j.id},'down')"><i class="fas fa-arrow-down"></i></button>
-      <button class="btn btn-sm btn-warning">Split</button>
-      <button class="btn btn-sm btn-danger"><i class="fas fa-lock"></i></button>
+      <button class="btn btn-sm btn-warning" onclick="window.showToast('Split job action queued','success')">Split</button>
+      <button class="btn btn-sm btn-danger" onclick="window.showToast('Job locked for sequencing','info')"><i class="fas fa-lock"></i></button>
     </td>
   </tr>\`).join('') || '<tr><td colspan="8" style="text-align:center">No jobs</td></tr>';
 }
@@ -3483,8 +3491,8 @@ app.get('/sequencing/scenarios', (c) => {
               </div>
             )}
             <div style="margin-top:12px;display:flex;gap:8px">
-              <button class="btn btn-sm btn-primary">Activate</button>
-              <button class="btn btn-sm btn-secondary">Compare</button>
+              <button class="btn btn-sm btn-primary" onclick="window.showToast('Scenario activated','success')">Activate</button>
+              <button class="btn btn-sm btn-secondary" onclick="window.showToast('Scenario comparison opened','info')">Compare</button>
             </div>
           </div>
         </div>
@@ -3495,6 +3503,14 @@ app.get('/sequencing/scenarios', (c) => {
 
 app.get('/sequencing/analytics', (c) => {
   const scripts = `
+function filterSKUTable(query) {
+  const q = String(query || '').trim().toLowerCase();
+  const rows = document.querySelectorAll('#sku-master-table tbody tr');
+  rows.forEach(row => {
+    row.style.display = !q || row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   new Chart(document.getElementById('delay-chart'), {
     type:'bar',data:{labels:['Equipment','Changeover','Material','Labour','Other'],datasets:[{label:'Delay Mins',data:[87,42,18,15,8],backgroundColor:['#DC2626','#D97706','#0891B2','#7C3AED','#64748B']}]},
@@ -3721,7 +3737,7 @@ function renderBOM(bom) {
     <td>\${b.waste_percentage}%</td>
     <td>\${b.version||'v1'}</td>
     <td><span class="badge badge-\${b.current_stock<=b.reorder_point?'critical':'success'}">\${b.current_stock<=b.reorder_point?'Below ROP':'OK'}</span></td>
-    <td><button class="btn btn-sm btn-secondary">Edit</button></td>
+    <td><button class="btn btn-sm btn-secondary" onclick="window.showToast(\'BOM row moved to draft edit mode\',\'info\')">Edit</button></td>
   </tr>\`).join('') || '<tr><td colspan="8" style="text-align:center">No BOM data</td></tr>';
 }
 async function filterBOM() {
@@ -3739,7 +3755,7 @@ function addBOMComponent() {
     const tbody = document.getElementById('bom-table');
     if (tbody) {
       const tr = document.createElement('tr');
-      tr.innerHTML = '<td><strong>' + sku + '</strong></td><td>MAT-NEW-' + Math.floor(Math.random()*900+100) + '</td><td>' + material + '</td><td>' + qty + ' kg</td><td>' + waste + '%</td><td>v1</td><td><span class="badge badge-success">OK</span></td><td><button class="btn btn-sm btn-secondary">Edit</button></td>';
+      tr.innerHTML = '<td><strong>' + sku + '</strong></td><td>MAT-NEW-' + Math.floor(Math.random()*900+100) + '</td><td>' + material + '</td><td>' + qty + ' kg</td><td>' + waste + '%</td><td>v1</td><td><span class="badge badge-success">OK</span></td><td><button class="btn btn-sm btn-secondary" onclick="window.showToast(\'BOM row moved to draft edit mode\',\'info\')">Edit</button></td>';
       tbody.insertBefore(tr, tbody.firstChild);
       if (window.showToast) window.showToast('BOM component added: ' + material + ' for ' + sku + '. Saved to draft — approve to activate.', 'success');
     }
@@ -3783,8 +3799,8 @@ async function init() {
     <td>\${p.delivery_date||p.period}</td>
     <td><span class="badge badge-\${p.status==='approved'?'success':p.status==='draft'?'warning':'info'}">\${p.status}</span></td>
     <td><div style="display:flex;gap:6px">
-      \${p.status==='draft'?'<button class="btn btn-sm btn-success">Approve</button>':''}
-      <button class="btn btn-sm btn-secondary">View</button>
+      \${p.status==='draft'?'<button class="btn btn-sm btn-success" onclick="approvePO(this)">Approve</button>':''}
+      <button class="btn btn-sm btn-secondary" onclick="window.showToast(\'Opening PO details\',\'info\')">View</button>
     </div></td>
   </tr>\`).join('') || '<tr><td colspan="8" style="text-align:center">No POs</td></tr>';
 }
@@ -3799,7 +3815,7 @@ function openCreatePOModal() {
     const tbody = document.getElementById('po-table');
     if (tbody && tbody.innerHTML.includes('No POs') === false) {
       const tr = document.createElement('tr');
-      tr.innerHTML = '<td><strong>' + poNum + '</strong></td><td>' + mat + '</td><td>' + supplier + '</td><td>' + Number(qty).toLocaleString() + ' units</td><td>₹' + (Number(qty)*0.00018).toFixed(1) + 'L</td><td>' + new Date(Date.now()+7*86400000).toISOString().slice(0,10) + '</td><td><span class="badge badge-warning">draft</span></td><td><div style="display:flex;gap:6px"><button class="btn btn-sm btn-success" onclick="approvePO(this)">Approve</button><button class="btn btn-sm btn-secondary">View</button></div></td>';
+      tr.innerHTML = '<td><strong>' + poNum + '</strong></td><td>' + mat + '</td><td>' + supplier + '</td><td>' + Number(qty).toLocaleString() + ' units</td><td>₹' + (Number(qty)*0.00018).toFixed(1) + 'L</td><td>' + new Date(Date.now()+7*86400000).toISOString().slice(0,10) + '</td><td><span class="badge badge-warning">draft</span></td><td><div style="display:flex;gap:6px"><button class="btn btn-sm btn-success" onclick="approvePO(this)">Approve</button><button class="btn btn-sm btn-secondary" onclick="window.showToast(\'Opening PO details\',\'info\')">View</button></div></td>';
       tbody.insertBefore(tr, tbody.firstChild);
     }
   }
@@ -3888,6 +3904,14 @@ document.addEventListener('DOMContentLoaded', init);
 
 app.get('/mrp/analytics', (c) => {
   const scripts = `
+function filterSKUTable(query) {
+  const q = String(query || '').trim().toLowerCase();
+  const rows = document.querySelectorAll('#sku-master-table tbody tr');
+  rows.forEach(row => {
+    row.style.display = !q || row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   new Chart(document.getElementById('coverage-chart'), {
     type:'bar',data:{labels:['PET Resin','Mango Conc.','Orange Conc.','HDPE Cap','Label Film','Secondary Carton'],
@@ -4630,6 +4654,14 @@ async function applyInvRecommendation(btn) {
   }
   btn.innerHTML = '<i class="fas fa-check"></i> Apply Recommendation'; btn.disabled = false;
 }
+function filterSKUTable(query) {
+  const q = String(query || '').trim().toLowerCase();
+  const rows = document.querySelectorAll('#sku-master-table tbody tr');
+  rows.forEach(row => {
+    row.style.display = !q || row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // Service-level impact chart
   new Chart(document.getElementById('svc-impact-chart'), {
@@ -4770,6 +4802,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 app.get('/inventory/analytics', (c) => {
   const scripts = `
+function filterSKUTable(query) {
+  const q = String(query || '').trim().toLowerCase();
+  const rows = document.querySelectorAll('#sku-master-table tbody tr');
+  rows.forEach(row => {
+    row.style.display = !q || row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   new Chart(document.getElementById('abc-chart'), {
     type:'pie',data:{labels:['A-Class (4 SKUs)','B-Class (4 SKUs)','C-Class (4 SKUs)'],
@@ -4801,6 +4841,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 app.get('/inventory/master', (c) => {
   const scripts = `
+function filterSKUTable(query) {
+  const q = String(query || '').trim().toLowerCase();
+  const rows = document.querySelectorAll('#sku-master-table tbody tr');
+  rows.forEach(row => {
+    row.style.display = !q || row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // ABC pie chart
   new Chart(document.getElementById('abc-policy-chart'), {
@@ -4855,8 +4903,8 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="card-header">
         <span class="card-title"><i class="fas fa-boxes"></i> SKU Master Table</span>
         <div style="display:flex;gap:8px">
-          <input class="form-input" style="width:200px;padding:5px 10px;font-size:12px" placeholder="Search SKU..." oninput="filterSKUTable(this.value)" />
-          <button class="btn btn-sm btn-secondary"><i class="fas fa-filter"></i> Filter</button>
+          <input id="sku-master-search" class="form-input" style="width:200px;padding:5px 10px;font-size:12px" placeholder="Search SKU..." oninput="filterSKUTable(this.value)" />
+          <button class="btn btn-sm btn-secondary" onclick="filterSKUTable(document.getElementById('sku-master-search').value)"><i class="fas fa-filter"></i> Filter</button>
         </div>
       </div>
       <div class="card-body compact">
@@ -5096,6 +5144,14 @@ async function runProcOptLegacy(btn) {
   } catch(e) { window.showToast('Optimization complete — ₹4.2L savings identified','success'); }
   btn.innerHTML = '<i class="fas fa-rocket"></i> Run Optimizer'; btn.disabled = false;
 }
+function filterSKUTable(query) {
+  const q = String(query || '').trim().toLowerCase();
+  const rows = document.querySelectorAll('#sku-master-table tbody tr');
+  rows.forEach(row => {
+    row.style.display = !q || row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // Multi-supplier allocation chart
   new Chart(document.getElementById('alloc-chart'), {
@@ -5202,6 +5258,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 app.get('/procurement/analytics', (c) => {
   const scripts = `
+function filterSKUTable(query) {
+  const q = String(query || '').trim().toLowerCase();
+  const rows = document.querySelectorAll('#sku-master-table tbody tr');
+  rows.forEach(row => {
+    row.style.display = !q || row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // Spend by category (bar)
   new Chart(document.getElementById('spend-chart'), {
@@ -5615,6 +5679,14 @@ async function runResourceOptimizer(btn) {
   }
   btn.innerHTML = '<i class="fas fa-rocket"></i> Run Optimizer'; btn.disabled = false;
 }
+function filterSKUTable(query) {
+  const q = String(query || '').trim().toLowerCase();
+  const rows = document.querySelectorAll('#sku-master-table tbody tr');
+  rows.forEach(row => {
+    row.style.display = !q || row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // Overtime reduction waterfall
   new Chart(document.getElementById('ot-waterfall'), {
@@ -5721,6 +5793,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 app.get('/resource/scenarios', (c) => {
   const scripts = `
+function filterSKUTable(query) {
+  const q = String(query || '').trim().toLowerCase();
+  const rows = document.querySelectorAll('#sku-master-table tbody tr');
+  rows.forEach(row => {
+    row.style.display = !q || row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   new Chart(document.getElementById('headcount-scenario-chart'), {
     type: 'bar',
@@ -5829,6 +5909,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 app.get('/resource/analytics', (c) => {
   const scripts = `
+function filterSKUTable(query) {
+  const q = String(query || '').trim().toLowerCase();
+  const rows = document.querySelectorAll('#sku-master-table tbody tr');
+  rows.forEach(row => {
+    row.style.display = !q || row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   new Chart(document.getElementById('ot-trend'), {
     type:'line',data:{labels:['W19','W20','W21','W22','W23','W24'],datasets:[
@@ -6310,6 +6398,14 @@ document.addEventListener('DOMContentLoaded', init);
 
 app.get('/sop/analytics', (c) => {
   const scripts = `
+function filterSKUTable(query) {
+  const q = String(query || '').trim().toLowerCase();
+  const rows = document.querySelectorAll('#sku-master-table tbody tr');
+  rows.forEach(row => {
+    row.style.display = !q || row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   new Chart(document.getElementById('sop-kpi-trend'), {
     type:'line',data:{labels:['Oct','Nov','Dec','Jan','Feb','Mar'],datasets:[
@@ -6880,7 +6976,7 @@ app.get('/production', (c) => {
       </div>
     </div>
     <script src="/static/production-module.js"></script>
-    <script>document.body.dataset.page='production-home';</script>
+    <script dangerouslySetInnerHTML={{ __html: "document.body.dataset.page='production-home';" }}></script>
   </Layout>)
 })
 
@@ -7072,7 +7168,7 @@ app.get('/production/atp', (c) => {
       </div>
     </div>
     <script src="/static/production-module.js"></script>
-    <script>document.body.dataset.page='production-atp';</script>
+    <script dangerouslySetInnerHTML={{ __html: "document.body.dataset.page='production-atp';" }}></script>
   </Layout>)
 })
 
@@ -7148,7 +7244,7 @@ app.get('/production/rccp', (c) => {
       </div>
     </div>
     <script src="/static/production-module.js"></script>
-    <script>document.body.dataset.page='production-rccp';</script>
+    <script dangerouslySetInnerHTML={{ __html: "document.body.dataset.page='production-rccp';" }}></script>
   </Layout>)
 })
 
@@ -7291,6 +7387,14 @@ function addNewJob() {
   const jobNum = 'JOB-' + line.replace('-','') + '-' + new Date().toISOString().slice(5,10).replace('-','') + '-' + String(Math.floor(Math.random()*900)+100);
   window.showToast('Job ' + jobNum + ' created: ' + sku + ' x ' + Number(qty).toLocaleString() + ' cases to ' + line + '. Status: Scheduled.', 'success');
 }
+function filterSKUTable(query) {
+  const q = String(query || '').trim().toLowerCase();
+  const rows = document.querySelectorAll('#sku-master-table tbody tr');
+  rows.forEach(row => {
+    row.style.display = !q || row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   loadVariance('W1');
 });
@@ -7463,7 +7567,7 @@ app.get('/production/ml-models', (c) => {
       </div>
     </div>
     <script src="/static/production-module.js"></script>
-    <script>document.body.dataset.page='production-mlmodels';</script>
+    <script dangerouslySetInnerHTML={{ __html: "document.body.dataset.page='production-mlmodels';" }}></script>
   </Layout>)
 })
 
@@ -7546,7 +7650,7 @@ app.get('/production/analytics', (c) => {
       </div>
     </div>
     <script src="/static/production-module.js"></script>
-    <script>document.body.dataset.page='production-analytics';</script>
+    <script dangerouslySetInnerHTML={{ __html: "document.body.dataset.page='production-analytics';" }}></script>
   </Layout>)
 })
 
@@ -7595,7 +7699,7 @@ app.get('/production/copilot', (c) => {
       </div>
     </div>
     <script src="/static/production-module.js"></script>
-    <script>document.body.dataset.page='production-copilot';</script>
+    <script dangerouslySetInnerHTML={{ __html: "document.body.dataset.page='production-copilot';" }}></script>
   </Layout>)
 })
 
@@ -7759,7 +7863,7 @@ app.get('/deployment', (c) => {
       </div>
     </div>
     <script src="/static/deployment-module.js"></script>
-    <script>document.body.dataset.page='deployment-home';</script>
+    <script dangerouslySetInnerHTML={{ __html: "document.body.dataset.page='deployment-home';" }}></script>
   </Layout>)
 })
 
@@ -7819,7 +7923,7 @@ app.get('/deployment/network', (c) => {
       </div>
     </div>
     <script src="/static/deployment-module.js"></script>
-    <script>document.body.dataset.page='deployment-network';</script>
+    <script dangerouslySetInnerHTML={{ __html: "document.body.dataset.page='deployment-network';" }}></script>
   </Layout>)
 })
 
@@ -8281,7 +8385,7 @@ app.get('/deployment/carriers', (c) => {
       </div>
     </div>
     <script src="/static/deployment-module.js"></script>
-    <script>document.body.dataset.page='deployment-carriers';</script>
+    <script dangerouslySetInnerHTML={{ __html: "document.body.dataset.page='deployment-carriers';" }}></script>
   </Layout>)
 })
 
@@ -8448,7 +8552,7 @@ app.get('/deployment/ml-models', (c) => {
       </div>
     </div>
     <script src="/static/deployment-module.js"></script>
-    <script>document.body.dataset.page='deployment-mlmodels';</script>
+    <script dangerouslySetInnerHTML={{ __html: "document.body.dataset.page='deployment-mlmodels';" }}></script>
   </Layout>)
 })
 
@@ -8599,7 +8703,7 @@ app.get('/ai-copilot', (c) => {
       </div>
     </div>
     <script src="/static/production-module.js"></script>
-    <script>document.body.dataset.page='production-copilot';</script>
+    <script dangerouslySetInnerHTML={{ __html: "document.body.dataset.page='production-copilot';" }}></script>
   </Layout>)
 })
 
@@ -8672,7 +8776,7 @@ app.get('/deployment/analytics', (c) => {
                 <td>{r.carrier}</td>
                 <td><span class={`badge badge-${r.issues === 0 ? 'success' : r.issues <= 1 ? 'warning' : 'critical'}`}>{r.issues}</span></td>
                 <td style="font-size:18px">{r.trend}</td>
-                <td><button class="btn btn-sm btn-secondary"><i class="fas fa-route"></i> Optimize</button></td>
+                <td><button class="btn btn-sm btn-secondary" onclick="window.location.href='/deployment/routes'"><i class="fas fa-route"></i> Optimize</button></td>
               </tr>
             ))}
           </tbody>
@@ -8680,7 +8784,7 @@ app.get('/deployment/analytics', (c) => {
       </div>
     </div>
     <script src="/static/deployment-module.js"></script>
-    <script>document.body.dataset.page='deployment-analytics';</script>
+    <script dangerouslySetInnerHTML={{ __html: "document.body.dataset.page='deployment-analytics';" }}></script>
   </Layout>)
 })
 
@@ -8963,7 +9067,7 @@ async function initControlTower() {
         const sc = n.status==='critical'?'#DC2626':n.status==='warning'?'#D97706':'#059669';
         const metric = n.type==='plant' ? n.util+'% util' : n.fill+'% fill';
         const icon = n.type==='plant' ? 'fa-industry' : 'fa-warehouse';
-        nodeGrid.innerHTML += '<div class="ct-node '+n.status+'" onclick="showNodeDetail(\''+n.id+'\')">' +
+        nodeGrid.innerHTML += '<div class="ct-node '+n.status+'" data-node-id="'+n.id+'">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
           '<i class="fas '+icon+'" style="color:'+sc+';font-size:16px"></i>' +
           '<span class="badge badge-'+n.status+'" style="font-size:9px">'+n.status.toUpperCase()+'</span>' +
@@ -8971,6 +9075,9 @@ async function initControlTower() {
           '<div style="font-size:12px;font-weight:600;color:#1E293B;margin-bottom:2px">'+n.label+'</div>' +
           '<div style="font-size:13px;font-weight:800;color:'+sc+'">'+metric+'</div>' +
           '</div>';
+      });
+      nodeGrid.querySelectorAll('.ct-node').forEach(node => {
+        node.addEventListener('click', () => showNodeDetail(node.getAttribute('data-node-id') || ''));
       });
     }
   }
@@ -8984,8 +9091,11 @@ async function initControlTower() {
         '<td>'+Number(l.vol || 0).toLocaleString()+' cs</td>' +
         '<td style="font-weight:700;color:'+sc+'">'+l.otd+'%</td>' +
         '<td><span class="badge badge-'+l.status+'">'+l.status+'</span></td>' +
-        '<td><button class="btn btn-sm btn-secondary" onclick="optimizeLane(\''+l.from+'\',\''+l.to+'\')"><i class="fas fa-route"></i> Optimize</button></td></tr>';
+        '<td><button class="btn btn-sm btn-secondary ct-opt-btn" data-from="'+l.from+'" data-to="'+l.to+'"><i class="fas fa-route"></i> Optimize</button></td></tr>';
     }).join('') : '<tr><td colspan="5" style="text-align:center;color:#64748B">No lane data available</td></tr>';
+    lanesTbl.querySelectorAll('.ct-opt-btn').forEach(btn => {
+      btn.addEventListener('click', () => optimizeLane(btn.getAttribute('data-from') || '', btn.getAttribute('data-to') || ''));
+    });
   }
 
   // Exceptions
@@ -9005,10 +9115,13 @@ async function initControlTower() {
         '<div style="flex:1"><div style="font-weight:600;font-size:13px">'+e.title+'</div>' +
         '<div style="font-size:12px;color:#64748B;margin-top:2px">'+e.detail+'</div>' +
         '<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">' +
-        '<button class="btn btn-sm btn-primary" onclick="resolveException(\''+e.id+'\')"><i class="fas fa-check"></i> '+e.action+'</button>' +
+        '<button class="btn btn-sm btn-primary ct-resolve-btn" data-ex-id="'+e.id+'"><i class="fas fa-check"></i> '+e.action+'</button>' +
         '<a href="'+modUrl+'" class="btn btn-sm btn-secondary"><i class="fas fa-external-link-alt"></i> View in '+e.module+'</a>' +
         '</div></div></div>';
     }).join('') || '<div style="font-size:12px;color:#64748B;padding:10px">No open exceptions</div>';
+    exList.querySelectorAll('.ct-resolve-btn').forEach(btn => {
+      btn.addEventListener('click', () => resolveException(btn.getAttribute('data-ex-id') || ''));
+    });
   }
 
   // Supply chain flow
@@ -9063,13 +9176,12 @@ async function initControlTower() {
 }
 
 function showNodeDetail(id) {
+  const base = id.split('-')[0];
   const nodeModuleMap = {
     'MUM':'production','DEL':'production','CHN':'production','BAN':'production',
-    'MUM-WH':'inventory','DEL-WH':'inventory','CHN-WH':'inventory','BAN-WH':'inventory'
+    'WH':'inventory','MKT':'deployment','SUP':'procurement'
   };
-  const prefix = id.split('-').slice(0,2).join('-');
-  const base = id.split('-')[0];
-  const url = nodeModuleMap[prefix] || nodeModuleMap[base] || 'control-tower';
+  const url = nodeModuleMap[base] || 'control-tower';
   window.showToast('Opening '+id+' details in '+url.charAt(0).toUpperCase()+url.slice(1)+'...','info');
   setTimeout(() => { window.location.href = '/'+url; }, 800);
 }
@@ -11822,3 +11934,10 @@ function showAdminToast(msg, type) {
 })
 
 export default app
+
+
+
+
+
+
+

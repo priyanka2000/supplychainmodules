@@ -137,7 +137,7 @@ async function initMPS() {
         <td>${Number(r.available_qty || r.available || 0).toLocaleString()}</td>
         <td><span class="status-dot ${r.status === 'firm' ? 'healthy' : r.status === 'planned' ? 'warning' : 'draft'}"></span>${r.status || 'planned'}</td>
         <td>${r.line || r.line_name || 'MUM-L1'}</td>
-        <td><button class="btn btn-sm btn-secondary" onclick="firmOrder('${r.id || r.sku_code}')">Firm</button></td>
+        <td><button class="btn btn-sm btn-secondary" onclick="firmOrder(this, '${r.id || r.sku_code}')">Firm</button></td>
       </tr>`).join('');
   }
 
@@ -180,12 +180,13 @@ function generateMPSRows() {
   return rows.slice(0, 15);
 }
 
-function firmOrder(id) {
-  const btn = event.target;
-  btn.textContent = '✓ Firmed';
-  btn.className = 'btn btn-sm btn-success';
-  btn.disabled = true;
-  setTimeout(() => { btn.textContent = 'Firm'; btn.className = 'btn btn-sm btn-secondary'; btn.disabled = false; }, 3000);
+function firmOrder(btn, id) {
+  const target = btn && btn.tagName ? btn : (typeof event !== 'undefined' ? event.target.closest('button') : null);
+  if (!target) return;
+  target.textContent = '✓ Firmed';
+  target.className = 'btn btn-sm btn-success';
+  target.disabled = true;
+  setTimeout(() => { target.textContent = 'Firm'; target.className = 'btn btn-sm btn-secondary'; target.disabled = false; }, 3000);
 }
 
 // ── ATP ───────────────────────────────────────────────────────────────
@@ -204,7 +205,7 @@ async function initATP() {
         <td><strong style="color:${(r.atp || 0) < 0 ? '#DC2626' : '#059669'}">${Number(r.atp || 0).toLocaleString()}</strong></td>
         <td>${r.commit_date || 'W1'}</td>
         <td><span class="badge badge-${r.atp >= 0 ? 'success' : 'critical'}">${r.atp >= 0 ? 'Available' : 'Constrained'}</span></td>
-        <td><button class="btn btn-sm btn-primary">Commit</button></td>
+        <td><button class="btn btn-sm btn-primary" onclick="commitATP(this, '${r.sku}')">Commit</button></td>
       </tr>`).join('');
   }
 
@@ -364,8 +365,8 @@ async function initScenarios() {
           <span class="card-title"><i class="fas fa-layer-group"></i> ${s.name}</span>
           <div style="display:flex;gap:8px">
             <span class="badge badge-${s.status === 'active' ? 'success' : s.status === 'draft' ? 'neutral' : 'info'}">${s.status || 'draft'}</span>
-            <button class="btn btn-sm btn-primary" onclick="runScenario('${s.id || s.name}')"><i class="fas fa-play"></i> Run</button>
-            <button class="btn btn-sm btn-secondary"><i class="fas fa-copy"></i> Clone</button>
+            <button class="btn btn-sm btn-primary" onclick="runScenario(this, '${s.id || s.name}')"><i class="fas fa-play"></i> Run</button>
+            <button class="btn btn-sm btn-secondary" onclick="cloneProductionScenario(this, '${s.name}')"><i class="fas fa-copy"></i> Clone</button>
           </div>
         </div>
         <div class="card-body">
@@ -390,11 +391,39 @@ function generateProductionScenarios() {
   ];
 }
 
-function runScenario(id) {
-  const btn = event.target.closest('button');
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Running...';
-  setTimeout(() => { btn.innerHTML = '<i class="fas fa-check"></i> Done'; btn.className = 'btn btn-sm btn-success'; }, 2500);
+function runScenario(btn, id) {
+  const target = btn && btn.tagName ? btn : (typeof event !== 'undefined' ? event.target.closest('button') : null);
+  if (!target) return;
+  target.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Running...';
+  setTimeout(() => { target.innerHTML = '<i class="fas fa-check"></i> Done'; target.className = 'btn btn-sm btn-success'; }, 2500);
 }
+
+window.commitATP = function(btn, sku) {
+  const target = btn && btn.tagName ? btn : null;
+  const row = target ? target.closest('tr') : null;
+  if (row && row.cells[6]) {
+    row.cells[6].innerHTML = '<span class="badge badge-success">Committed</span>';
+  }
+  if (target) {
+    target.textContent = 'Committed';
+    target.className = 'btn btn-sm btn-success';
+    target.disabled = true;
+  }
+  prodToast('ATP committed for ' + sku + '. Mock order confirmed.', 'success');
+};
+
+window.cloneProductionScenario = function(btn, scenarioName) {
+  const card = btn && btn.closest ? btn.closest('.card.mb-4') : null;
+  if (card && card.parentNode) {
+    const clone = card.cloneNode(true);
+    const title = clone.querySelector('.card-title');
+    const badge = clone.querySelector('.badge');
+    if (title) title.innerHTML = '<i class="fas fa-layer-group"></i> Clone of ' + scenarioName;
+    if (badge) badge.textContent = 'draft';
+    card.parentNode.insertBefore(clone, card.nextSibling);
+  }
+  prodToast('Cloned production scenario "' + scenarioName + '".', 'success');
+};
 
 // ── ML Models ─────────────────────────────────────────────────────────
 function initMLModels() {

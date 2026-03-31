@@ -157,7 +157,7 @@ function initNetwork() {
         <td>${n.lanes} active</td>
         <td style="font-weight:600;color:${n.otd >= 93 ? '#059669' : '#D97706'}">${n.otd}%</td>
         <td><span class="badge badge-${n.status}">${n.status === 'critical' ? 'Capacity Alert' : n.status === 'warning' ? 'Monitor' : 'Optimal'}</span></td>
-        <td><button class="btn btn-sm btn-secondary"><i class="fas fa-map-marker-alt"></i> Details</button></td>
+        <td><button class="btn btn-sm btn-secondary" onclick="showHubDetails(this, '${n.hub}')"><i class="fas fa-map-marker-alt"></i> Details</button></td>
       </tr>`).join('');
   }
 }
@@ -180,8 +180,8 @@ async function initDeployWorkbench() {
         <td>${s.eta}</td>
         <td><span class="badge badge-${s.status === 'in_transit' ? 'success' : s.status === 'planned' ? 'info' : s.status === 'delayed' ? 'critical' : 'neutral'}">${s.status}</span></td>
         <td>
-          <button class="btn btn-sm btn-secondary" onclick="optimizeLoad('${s.id || s.shipment_id}')"><i class="fas fa-compress-arrows-alt"></i></button>
-          <button class="btn btn-sm btn-secondary"><i class="fas fa-eye"></i></button>
+          <button class="btn btn-sm btn-secondary" onclick="optimizeLoad(this, '${s.id || s.shipment_id}')"><i class="fas fa-compress-arrows-alt"></i></button>
+          <button class="btn btn-sm btn-secondary" onclick="previewShipment(this, '${s.id || s.shipment_id}')"><i class="fas fa-eye"></i></button>
         </td>
       </tr>`).join('');
   }
@@ -224,12 +224,13 @@ function generateShipments() {
   });
 }
 
-function optimizeLoad(id) {
-  const btn = event.target.closest('button');
-  btn.innerHTML = '<i class="fas fa-check"></i>';
-  btn.style.background = '#059669';
-  btn.style.color = 'white';
-  setTimeout(() => { btn.innerHTML = '<i class="fas fa-compress-arrows-alt"></i>'; btn.removeAttribute('style'); }, 2000);
+function optimizeLoad(btn, id) {
+  const target = btn && btn.tagName ? btn : (typeof event !== 'undefined' ? event.target.closest('button') : null);
+  if (!target) return;
+  target.innerHTML = '<i class="fas fa-check"></i>';
+  target.style.background = '#059669';
+  target.style.color = 'white';
+  setTimeout(() => { target.innerHTML = '<i class="fas fa-compress-arrows-alt"></i>'; target.removeAttribute('style'); }, 2000);
 }
 
 // ── Route Optimization ─────────────────────────────────────────────────
@@ -249,7 +250,7 @@ async function initRoutes() {
         <td>${r.carrier}</td>
         <td><span class="badge badge-${r.optimization_score >= 90 ? 'success' : r.optimization_score >= 75 ? 'warning' : 'critical'}">${r.optimization_score}%</span></td>
         <td>
-          <button class="btn btn-sm btn-primary" onclick="reoptimizeRoute('${r.route_id}')"><i class="fas fa-route"></i> Optimize</button>
+          <button class="btn btn-sm btn-primary" onclick="reoptimizeRoute(this, '${r.route_id}')"><i class="fas fa-route"></i> Optimize</button>
         </td>
       </tr>`).join('');
   }
@@ -302,10 +303,11 @@ function generateRoutes() {
   }));
 }
 
-function reoptimizeRoute(id) {
-  const btn = event.target.closest('button');
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-  setTimeout(() => { btn.innerHTML = '<i class="fas fa-check"></i> Done'; btn.className = 'btn btn-sm btn-success'; }, 2000);
+function reoptimizeRoute(btn, id) {
+  const target = btn && btn.tagName ? btn : (typeof event !== 'undefined' ? event.target.closest('button') : null);
+  if (!target) return;
+  target.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  setTimeout(() => { target.innerHTML = '<i class="fas fa-check"></i> Done'; target.className = 'btn btn-sm btn-success'; }, 2000);
 }
 
 // ── Load Planning ─────────────────────────────────────────────────────
@@ -366,18 +368,19 @@ function initLoadPlanning() {
         </td>
         <td>${p.depart}</td>
         <td>
-          <button class="btn btn-sm btn-primary" onclick="optimizeLoadPlan('${p.id}')"><i class="fas fa-magic"></i> Optimize</button>
+          <button class="btn btn-sm btn-primary" onclick="optimizeLoadPlan(this, '${p.id}')"><i class="fas fa-magic"></i> Optimize</button>
         </td>
       </tr>`).join('');
   }
 }
 
-function optimizeLoadPlan(id) {
-  const btn = event.target.closest('button');
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Optimizing...';
+function optimizeLoadPlan(btn, id) {
+  const target = btn && btn.tagName ? btn : (typeof event !== 'undefined' ? event.target.closest('button') : null);
+  if (!target) return;
+  target.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Optimizing...';
   setTimeout(() => {
-    btn.innerHTML = '<i class="fas fa-check"></i> +3.2%';
-    btn.className = 'btn btn-sm btn-success';
+    target.innerHTML = '<i class="fas fa-check"></i> +3.2%';
+    target.className = 'btn btn-sm btn-success';
   }, 2000);
 }
 
@@ -420,7 +423,7 @@ function initCarriers() {
         <td>⭐ ${c.rating}</td>
         <td>${c.spend_share}%</td>
         <td><span class="badge badge-${c.status === 'preferred' ? 'success' : c.status === 'approved' ? 'info' : 'warning'}">${c.status}</span></td>
-        <td><button class="btn btn-sm btn-primary"><i class="fas fa-file-contract"></i> Contract</button></td>
+        <td><button class="btn btn-sm btn-primary" onclick="openCarrierContract(this, '${c.name}')"><i class="fas fa-file-contract"></i> Contract</button></td>
       </tr>`).join('');
   }
 }
@@ -443,7 +446,7 @@ function initDeployScenarios() {
         <div style="display:flex;gap:8px">
           <span class="badge badge-${s.status === 'active' ? 'success' : s.status === 'draft' ? 'neutral' : 'info'}">${s.status}</span>
           <button class="btn btn-sm btn-primary" onclick="runDeployScenario(this)"><i class="fas fa-play"></i> Run</button>
-          <button class="btn btn-sm btn-secondary"><i class="fas fa-copy"></i> Clone</button>
+          <button class="btn btn-sm btn-secondary" onclick="cloneDeployScenario(this, '${s.name}')"><i class="fas fa-copy"></i> Clone</button>
         </div>
       </div>
       <div class="card-body">
@@ -463,6 +466,45 @@ function runDeployScenario(btn) {
 }
 
 // ── ML Models ─────────────────────────────────────────────────────────
+window.showHubDetails = function(btn, hubName) {
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-check"></i> Opened';
+    btn.className = 'btn btn-sm btn-success';
+  }
+  depToast('Opening ' + hubName + ' details in analytics...', 'info');
+  setTimeout(() => { window.location.href = '/deployment/analytics'; }, 700);
+};
+
+window.previewShipment = function(btn, shipmentId) {
+  if (btn) {
+    btn.innerHTML = '<i class="fas fa-check"></i>';
+    btn.className = 'btn btn-sm btn-success';
+  }
+  depToast('Shipment ' + shipmentId + ' details opened.', 'info');
+};
+
+window.openCarrierContract = function(btn, carrierName) {
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-check"></i> Sent';
+    btn.className = 'btn btn-sm btn-success';
+  }
+  depToast('Contract action sent for ' + carrierName + '. Mock approval workflow started.', 'success');
+};
+
+window.cloneDeployScenario = function(btn, scenarioName) {
+  const card = btn && btn.closest ? btn.closest('.card.mb-4') : null;
+  if (card && card.parentNode) {
+    const clone = card.cloneNode(true);
+    const title = clone.querySelector('.card-title');
+    const badge = clone.querySelector('.badge');
+    if (title) title.innerHTML = '<i class="fas fa-layer-group"></i> Clone of ' + scenarioName;
+    if (badge) badge.textContent = 'draft';
+    card.parentNode.insertBefore(clone, card.nextSibling);
+  }
+  depToast('Cloned deployment scenario "' + scenarioName + '".', 'success');
+};
 function initDeployMLModels() {
   const perf = document.getElementById('dep-ml-perf-chart');
   if (perf) {
